@@ -1,16 +1,12 @@
-from fastapi import FastAPI, Request
-from pony.orm import Database
+from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from .models import db, Database, Student
 
 
 def create_app():
     app = FastAPI()
     
-    db = Database()
-
-    db.bind(provider='mysql', host='161.246.127.24', user='dbproject', passwd='db', db='db', port=9031)
-    db.generate_mapping(create_tables=True)
     templates = Jinja2Templates(directory="C:\\Users\\USER\\Desktop\\Project\\coding\\PedProPiTakSukSa\\templates")
     
 
@@ -21,6 +17,29 @@ def create_app():
     @app.get('/register/student', response_class=HTMLResponse)
     def register_student(request: Request):
         return templates.TemplateResponse('register_student.html', {'request': request})
+    
+    @app.post('/register/success')
+    async def register(name: str = Form(...), email: str = Form(...), password: str = Form(...), Lname: str = Form(...), \
+            Nname: str = Form(...), SnationNumber: str = Form(...), Sphone: str = Form(...), Saddress: str = Form(...), Scity: str = Form(...), Szip: str = Form(...)):
+    # Create a new Student entity and save it to the database
+        new_student = Student(
+        Sname=name,
+        Semail=email,
+        Spassword=password,
+        Slastname=Lname,
+        Snickname=Nname,
+        SnationNumber=SnationNumber,
+        Sphone=Sphone,
+        Saddress=Saddress,
+        Scity=Scity,
+        Szip=Szip,
+        Sstatus= "Student"
+        )
+        db.commit()  # Save the new student to the database
+
+        # You can implement additional logic here, such as sending a confirmation email
+    
+        return {"message": "Registration successful"}
 
     @app.get('/register/teacher', response_class=HTMLResponse)
     def register_teacher(request: Request):

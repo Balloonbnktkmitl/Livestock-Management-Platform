@@ -16,6 +16,9 @@ class Student(db.Entity):
     Szip = Required(str)
     Sstatus = Required(str)
     
+    def __repr__(self):
+        return f"Student(StudentID={self.StudentID}, Sname='{self.Sname}', Slastname='{self.Slastname}', Snickname='{self.Snickname}', Semail='{self.Semail}', Spassword='{self.Spassword}', SnationNumber='{self.SnationNumber}', Sphone='{self.Sphone}', Saddress='{self.Saddress}', Scity='{self.Scity}', Szip='{self.Szip}', Sstatus='{self.Sstatus}')"
+    
 class Teacher(db.Entity):
     TeacherID = PrimaryKey(int, auto=True)
     Tname = Required(str)
@@ -42,7 +45,6 @@ class Grade(db.Entity):
     StudentID = Required(int)
     TeacherID = Required(int)
     Grade = Required(str)
-    
-    
-    
-    
+
+db.bind(provider='mysql', host='161.246.127.24', user='dbproject', passwd='db', db='db', port=9031)
+db.generate_mapping(check_tables=True, create_tables=True)  
