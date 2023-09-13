@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from .models import db, Database, Student
+from .models import db, Database
 
 
 def create_app():
@@ -22,22 +22,6 @@ def create_app():
     async def register(name: str = Form(...), email: str = Form(...), password: str = Form(...), Lname: str = Form(...), \
             Nname: str = Form(...), SnationNumber: str = Form(...), Sphone: str = Form(...), Saddress: str = Form(...), Scity: str = Form(...), Szip: str = Form(...)):
     # Create a new Student entity and save it to the database
-        new_student = Student(
-        Sname=name,
-        Semail=email,
-        Spassword=password,
-        Slastname=Lname,
-        Snickname=Nname,
-        SnationNumber=SnationNumber,
-        Sphone=Sphone,
-        Saddress=Saddress,
-        Scity=Scity,
-        Szip=Szip,
-        Sstatus= "Student"
-        )
-        db.commit()  # Save the new student to the database
-
-        # You can implement additional logic here, such as sending a confirmation email
     
         return {"message": "Registration successful"}
 
