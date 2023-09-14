@@ -1,8 +1,9 @@
-from pony.orm import Database, Required, PrimaryKey, Set, Optional, sql_debug    
+from pony.orm import Database, Required, PrimaryKey, Set, Optional, sql_debug 
 from datetime import datetime
+from enum import Enum
 
 db = Database()
-
+    
 class Regions(db.Entity):
     region_id = PrimaryKey(int, auto=True)
     region_name = Required(str)
@@ -12,7 +13,7 @@ class Countries(db.Entity):
     country_id = PrimaryKey(int, auto=True)
     country_name = Required(str)
     region_id = Required(Regions)
-    locations = Set('Locations')
+    locations = Set('Locations', nullable=True)
 
 class Locations(db.Entity):
     location_id = PrimaryKey(int, auto=True)
@@ -20,40 +21,39 @@ class Locations(db.Entity):
     city = Required(str)
     zip = Required(int)
     country_id = Required(Countries)
-    users = Set('Users')
-    farms = Set('Farms')
-    
-class Farms(db.Entity):
-    farm_id = PrimaryKey(int, auto=True)
-    FarmOwners_id = Required('FarmOwners', reverse='farms')
-    farm_name = Required(str)
-    farm_address = Required(str)
-    farm_city = Required(str)
-    farm_zip = Required(int)
-    farm_phone = Required(str)
-    farm_email = Required(str)
-    farm_location_id = Required(Locations)
-    farmOwners = Set('FarmOwners')
-    animals = Set('Animals')
-    products = Set('Products')
-    staffs = Set('Staffs')
+    users = Set('Users', nullable=True)
+    farms = Set('Farms', nullable=True)
     
 class Users(db.Entity):
     user_ID = PrimaryKey(int, auto=True)
     username = Required(str)
     password = Required(str)
-    role = Required(str)
     firstName = Required(str)
     lastName = Required(str)
-    DOB = Required(datetime)
+    gender = Required(str)
     phone = Required(str)
     email = Required(str)
+    role = Required(str)
     location_id = Required(Locations)
-    customers = Set('Customers')
-    farmOwners = Set('FarmOwners')
+    customers = Optional('Customers')
+    farmOwners = Optional('FarmOwners')
+    farms = Optional("Farms")
     
-    def __repr__(self):
-        return f"Student(StudentID={self.StudentID}, Sname='{self.Sname}', Slastname='{self.Slastname}', Snickname='{self.Snickname}', Semail='{self.Semail}', Spassword='{self.Spassword}', SnationNumber='{self.SnationNumber}', Sphone='{self.Sphone}', Saddress='{self.Saddress}', Scity='{self.Scity}', Szip='{self.Szip}', Sstatus='{self.Sstatus}')"
+class Farms(db.Entity):
+    farm_id = PrimaryKey(int, auto=True)
+    user_id = Optional(Users)
+    farm_name = Optional(str)
+    farm_address = Optional(str)
+    farm_city = Optional(str)
+    farm_zip = Optional(int)
+    farm_phone = Optional(str)
+    farm_email = Optional(str)
+    farm_location_id = Optional(Locations)
+    farmOwners = Set('FarmOwners')
+    animals = Set('Animals')
+    products = Set('Products')
+    staffs = Set('Staffs')
+    
 
 class Customers(db.Entity):
     customers_id = PrimaryKey(int, auto=True)
@@ -64,7 +64,6 @@ class FarmOwners(db.Entity):
     farmOwners_id = PrimaryKey(int, auto=True)
     user_id = Required(Users)
     farm_id = Required(Farms)
-    farms = Set('Farms')
 
 class Products(db.Entity):
     product_code = PrimaryKey(int, auto=True)
@@ -105,6 +104,6 @@ class Staffs(db.Entity):
     salary = Required(float)
     managed_staffs = Set('Staffs', reverse='manager_id')
     
-db.bind(provider='mysql', host='161.246.127.24', user='dbproject', passwd='db', db='db', port=9031)
+db.bind(provider='mysql', host='161.246.127.24', user='dbproject', password='db', db='db', port=9031)
 db.generate_mapping(check_tables=True, create_tables=True)  
 sql_debug(True)

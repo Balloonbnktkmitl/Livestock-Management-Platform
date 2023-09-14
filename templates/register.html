@@ -1,0 +1,111 @@
+<html>
+<head>
+    <title>Register</title>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <form method="POST" action="/register/success">
+        <div id="page1">
+            <input type="text" name="username" placeholder="Username" required>
+            <br>
+            <input type="text" name="password" placeholder="password" required>
+            <br>
+            <button type="button" onclick="nextPage()">ถัดไป</button>
+        </div>
+
+        <div id="page2" class="hidden">
+            <input type="text" name="firstname" placeholder="ชื่อ" required>
+            <br>
+            <input type="text" name="lastname" placeholder="นามสกุล" required>
+            <br>
+            <input type="text" name="email" placeholder="อีเมล" required>
+            <br>
+            <input type="text" name="phone" placeholder="เบอร์โทรศัพท์" required>
+            <br>
+            <input type="text" name="address" placeholder="ที่อยู่" required>
+            <br>
+            <input type="text" name="city" placeholder="อำเภอ" required>
+            <br>
+            <input type="text" name="country" placeholder="ประเทศ" required>
+            <br>
+            <input type="text" name="region" placeholder="จังหวัด" required>
+            <br>
+            <input type="text" name="zip" placeholder="รหัสไปรษณีย์" required>
+            <br>
+            <select name="gender" id="gender">
+                <option value="Man">ผู้ชาย</option>
+                <option value="Woman">ผู้หญิง</option>
+                <option value="Other">อื่นๆ</option>
+            </select>
+            <br>
+            <label for="role">บทบาท:</label>
+            <select name="role" id="role">
+                <option value="FarmOwner">เจ้าของฟาร์ม</option>
+                <option value="Customer">ลูกค้า</option>
+            </select>
+            <button type="button" onclick="nextPage()">ถัดไป</button>
+        </div>
+
+        <div id="page3" class="hidden">
+            <input type="text" name="farmname" placeholder="ชื่อฟาร์ม" required>
+            <br>
+            <input type="text" name="Femail" placeholder="อีเมล" required>
+            <br>
+            <input type="text" name="Fphone" placeholder="เบอร์โทรศัพท์" required>
+            <br>
+            <input type="text" name="Faddress" placeholder="ที่อยู่" required>
+            <br>
+            <input type="text" name="Fcity" placeholder="อำเภอ" required>
+            <br>
+            <input type="text" name="Fcountry" placeholder="ประเทศ" required>
+            <br>
+            <input type="text" name="Fregion" placeholder="จังหวัด" required>
+            <br>
+            <input type="text" name="Fzip" placeholder="รหัสไปรษณีย์" required>
+            <br>
+            <button type="button" onclick="nextPage()">ถัดไป</button>
+        </div>
+    </form>
+
+    <script>
+        var currentPage = 1;
+        var formPages = document.querySelectorAll("form > div");
+        var roleSelect = document.getElementById("role");
+
+        function nextPage() {
+                if (currentPage === 2) {
+                    // ตรวจสอบค่าของบทบาทที่ผู้ใช้เลือก
+                    if (roleSelect.value === "FarmOwner") {
+                        // ถ้าเป็น "FarmOwner" ให้ไปที่หน้า 3
+                        currentPage = 2;
+                    } else {
+                        document.querySelector("input[name='farmname']").value = null;
+                        document.querySelector("input[name='Femail']").value = null;
+                        document.querySelector("input[name='Fphone']").value = null;
+                        document.querySelector("input[name='Faddress']").value = null;
+                        document.querySelector("input[name='Fcity']").value = null;
+                        document.querySelector("input[name='Fcountry']").value = null;
+                        document.querySelector("input[name='Fregion']").value = null;
+                        document.querySelector("input[name='Fzip']").value = null;
+                        currentPage = 3;
+                    }
+                }
+
+                if (currentPage <= formPages.length) {
+                    formPages[currentPage - 1].classList.add("hidden");
+                    currentPage++;
+                    if (currentPage <= formPages.length) {
+                        formPages[currentPage - 1].classList.remove("hidden");
+                    } else {
+                        document.querySelector("form").submit();
+                    }
+                }
+            }
+    </script>
+</body>
+</html>
+
