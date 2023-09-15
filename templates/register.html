@@ -1,74 +1,55 @@
-<html>
+<!DOCTYPE html>
+<html lang="en","th">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <style>
-        .hidden {
-            display: none;
-        }
-    </style>
+    <!-- Include Tailwind CSS from CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
     <form method="POST" action="/register/success">
         <div id="page1">
-            <input type="text" name="username" placeholder="Username" required>
-            <br>
-            <input type="text" name="password" placeholder="password" required>
-            <br>
-            <button type="button" onclick="nextPage()">ถัดไป</button>
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="username" placeholder="Username" required>
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="password" placeholder="Password" required>
+            <button class="bg-blue-500 text-white p-2 m-2 rounded-md" type="button" onclick="check_data()">ถัดไป</button>
         </div>
 
         <div id="page2" class="hidden">
-            <input type="text" name="firstname" placeholder="ชื่อ" required>
-            <br>
-            <input type="text" name="lastname" placeholder="นามสกุล" required>
-            <br>
-            <input type="text" name="email" placeholder="อีเมล" required>
-            <br>
-            <input type="text" name="phone" placeholder="เบอร์โทรศัพท์" required>
-            <br>
-            <input type="text" name="address" placeholder="ที่อยู่" required>
-            <br>
-            <input type="text" name="city" placeholder="อำเภอ" required>
-            <br>
-            <input type="text" name="country" placeholder="ประเทศ" required>
-            <br>
-            <input type="text" name="region" placeholder="จังหวัด" required>
-            <br>
-            <input type="text" name="zip" placeholder="รหัสไปรษณีย์" required>
-            <br>
-            <select name="gender" id="gender">
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="firstname" placeholder="ชื่อ" required>
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="lastname" placeholder="นามสกุล" required>
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="email" placeholder="อีเมล" required>
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="phone" placeholder="เบอร์โทรศัพท์" required>
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="address" placeholder="ที่อยู่" required>
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="city" placeholder="อำเภอ" required>
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="country" placeholder="ประเทศ" required>
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="region" placeholder="จังหวัด" required>
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="zip" placeholder="รหัสไปรษณีย์" required>
+            <select class="border border-gray-300 rounded-md p-2 m-2" name="gender" id="gender">
                 <option value="Man">ผู้ชาย</option>
                 <option value="Woman">ผู้หญิง</option>
                 <option value="Other">อื่นๆ</option>
             </select>
-            <br>
-            <label for="role">บทบาท:</label>
-            <select name="role" id="role">
+            <label for="role" class="m-2">บทบาท:</label>
+            <select class="border border-gray-300 rounded-md p-2 m-2" name="role" id="role">
                 <option value="FarmOwner">เจ้าของฟาร์ม</option>
                 <option value="Customer">ลูกค้า</option>
             </select>
-            <button type="button" onclick="nextPage()">ถัดไป</button>
+            <button class="bg-blue-500 text-white p-2 m-2 rounded-md" type="button" onclick="check_data()">ถัดไป</button>
         </div>
 
         <div id="page3" class="hidden">
-            <input type="text" name="farmname" placeholder="ชื่อฟาร์ม" required>
-            <br>
-            <input type="text" name="Femail" placeholder="อีเมล" required>
-            <br>
-            <input type="text" name="Fphone" placeholder="เบอร์โทรศัพท์" required>
-            <br>
-            <input type="text" name="Faddress" placeholder="ที่อยู่" required>
-            <br>
-            <input type="text" name="Fcity" placeholder="อำเภอ" required>
-            <br>
-            <input type="text" name="Fcountry" placeholder="ประเทศ" required>
-            <br>
-            <input type="text" name="Fregion" placeholder="จังหวัด" required>
-            <br>
-            <input type="text" name="Fzip" placeholder="รหัสไปรษณีย์" required>
-            <br>
-            <button type="button" onclick="nextPage()">ถัดไป</button>
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="farm_name" placeholder="ชื่อฟาร์ม">
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="farm_email" placeholder="อีเมล">
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="farm_phone" placeholder="เบอร์โทรศัพท์">
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="farm_address" placeholder="ที่อยู่">
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="farm_city" placeholder="อำเภอ">
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="farm_country" placeholder="ประเทศ">
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="farm_region" placeholder="จังหวัด">
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="farm_zip" placeholder="รหัสไปรษณีย์">
+            <button class="bg-blue-500 text-white p-2 m-2 rounded-md" type="button" onclick="check_data()">ถัดไป</button>
         </div>
+
     </form>
 
     <script>
@@ -77,35 +58,101 @@
         var roleSelect = document.getElementById("role");
 
         function nextPage() {
-                if (currentPage === 2) {
-                    // ตรวจสอบค่าของบทบาทที่ผู้ใช้เลือก
-                    if (roleSelect.value === "FarmOwner") {
-                        // ถ้าเป็น "FarmOwner" ให้ไปที่หน้า 3
-                        currentPage = 2;
-                    } else {
-                        document.querySelector("input[name='farmname']").value = null;
-                        document.querySelector("input[name='Femail']").value = null;
-                        document.querySelector("input[name='Fphone']").value = null;
-                        document.querySelector("input[name='Faddress']").value = null;
-                        document.querySelector("input[name='Fcity']").value = null;
-                        document.querySelector("input[name='Fcountry']").value = null;
-                        document.querySelector("input[name='Fregion']").value = null;
-                        document.querySelector("input[name='Fzip']").value = null;
-                        currentPage = 3;
-                    }
+            if (currentPage <= formPages.length) {
+                formPages[currentPage - 1].classList.add("hidden");
+                currentPage++;
+                if (currentPage <= formPages.length) {
+                    formPages[currentPage - 1].classList.remove("hidden");
+                } else {
+                    document.querySelector("form").submit();
+                }
+            }
+        }
+
+        function check_data() {
+            var emailInput = document.querySelector("input[name='email']");
+            var phoneInput = document.querySelector("input[name='phone']");
+            var zipInput = document.querySelector("input[name='zip']");
+            var farm_emailInput = document.querySelector("input[name='farm_email']");
+            var farm_phoneInput = document.querySelector("input[name='farm_phone']");
+            var farm_zipInput = document.querySelector("input[name='farm_zip']");
+
+            if(currentPage === 1){
+                var usernameInput = document.querySelector("input[name='username']");
+
+                fetch(`/check-username/${usernameInput.value}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.exists){
+                            alert("ชื่อผู้ใช้งานนี้มีผู้ใช้งานแล้ว");
+                             // ไม่ไปหน้าถัดไปถ้าข้อมูลไม่ถูกต้อง
+                        }
+                        else{
+                            nextPage();}
+                    })
+                    .catch(error => {
+                        console.log("เกิดข้อผิดพลาดในการตรวจสอบ Username:", error);
+                    });
+            }
+
+            if (currentPage === 2) {
+                // ตรวจสอบค่าของอีเมลและเบอร์โทรศัพท์
+                if (!emailInput.value.includes("@")) {
+                    alert("กรุณากรอกอีเมลที่ถูกต้อง");
+                    return; // ไม่ไปหน้าถัดไปถ้าข้อมูลไม่ถูกต้อง
+                }
+                if(phoneInput.value.length !== 10){
+                    alert("กรุณากรอกเบอร์โทรศัพท์ 10 หลัก");
+                    return;
+                }
+                if(isNaN(zipInput.value) || zipInput.value.length !== 5){
+                    alert("กรุณากรอกรหัสไปรษณีย์ 5 หลัก และเป็นตัวเลข");//เช็คตัวเลข
+                    return;
+                }
+
+                // ตรวจสอบค่าของบทบาทที่ผู้ใช้เลือก
+                if (roleSelect.value === "FarmOwner") {
+                    currentPage = 2;
+                    // ถ้าเป็น "FarmOwner" ให้ไปที่หน้า 3
+                } else {
+                    document.querySelector("input[name='farmname']").value = " "; 
+                    document.querySelector("input[name='farm_email']").value = " "; 
+                    document.querySelector("input[name='farm_phone']").value = " "; 
+                    document.querySelector("input[name='farm_address']").value = " "; 
+                    document.querySelector("input[name='farm_city']").value = " ";
+                    document.querySelector("input[name='farm_country']").value = " ";
+                    document.querySelector("input[name='Fregion']").value = " "; 
+                    document.querySelector("input[name='farm_zip']").value = " ";
+                    currentPage = 3;
                 }
 
                 if (currentPage <= formPages.length) {
-                    formPages[currentPage - 1].classList.add("hidden");
-                    currentPage++;
-                    if (currentPage <= formPages.length) {
-                        formPages[currentPage - 1].classList.remove("hidden");
-                    } else {
-                        document.querySelector("form").submit();
-                    }
+                formPages[currentPage - 1].classList.add("hidden");
+                currentPage++;
+                if (currentPage <= formPages.length) {
+                    formPages[currentPage - 1].classList.remove("hidden");
+                } else {
+                    document.querySelector("form").submit();
                 }
+                }
+                nextPage();
             }
+            if(currentPage === 3){
+                if (!farm_emailInput.value.includes("@")) {
+                    alert("กรุณากรอกอีเมลที่ถูกต้อง2");
+                    return; // ไม่ไปหน้าถัดไปถ้าข้อมูลไม่ถูกต้อง
+                }
+                if(farm_phoneInput.value.length !== 10 || isNaN(farm_zipInput.value)){
+                    alert("กรุณากรอกเบอร์โทรศัพท์ 10 หลัก และเป็นตัวเลข");
+                    return;
+                }
+                if(isNaN(farm_zipInput.value) || farm_zipInput.value.length !== 5){
+                    alert("กรุณากรอกรหัสไปรษณีย์ 5 หลัก และเป็นตัวเลข");//เช็คตัวเลข
+                    return;
+                }
+                nextPage();
+            }
+        }
     </script>
 </body>
 </html>
-

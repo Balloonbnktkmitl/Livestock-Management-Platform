@@ -17,6 +17,15 @@ def create_app():
     @app.get('/register', response_class=HTMLResponse)
     def register_student(request: Request):
         return templates.TemplateResponse('register.html', {'request': request})
+    
+    @app.get("/check-username/{username}", response_model=dict)
+    async def check_username(username: str):
+        with db_session:
+            user = Users.get(username=username)
+            if user:
+                return {"exists": True}
+            else:
+                return {"exists": False}
 
     @app.get('/login', response_class=HTMLResponse)
     def login(request: Request):
@@ -36,14 +45,14 @@ def create_app():
                    country: str = Form(...),
                    region: str = Form(...),
                    gender: str = Form(...), 
-                   farmname: str = Form(...),
-                   Femail: str = Form(...), 
-                   Fphone: str = Form(...), 
-                   Faddress: str = Form(...), 
-                   Fcity: str = Form(...), 
-                   Fzip: str = Form(...),
-                   Fcountry: str = Form(...),
-                   Fregion: str = Form(...)):
+                   farm_name: str = Form(...),
+                   farm_email: str = Form(...), 
+                   farm_phone: str = Form(...), 
+                   farm_address: str = Form(...), 
+                   farm_city: str = Form(...), 
+                   farm_zip: str = Form(...),
+                   farm_country: str = Form(...),
+                   farm_region: str = Form(...)):
         with db_session:
             regions = Regions(region_name=region)
             countries = Countries(region_id = regions, country_name=country)
@@ -51,10 +60,10 @@ def create_app():
             user = Users(username=username, password=password, role=role, firstName=firstname, lastName=lastname,
                         email=email, phone=phone, gender=gender, location_id=location)
             if(role == "FarmOwner"):
-                regionsF = Regions(region_name=Fregion)
-                countryF = Countries(region_id=regionsF ,country_name=Fcountry)
-                locationF = Locations(address=Faddress, city=Fcity, zip=Fzip, country_id=countryF)
-                farm = Farms(farm_name=farmname, farm_address=Faddress, farm_city=Fcity, farm_zip=Fzip, farm_phone=Fphone, farm_email=Femail, farm_location_id=locationF, user_id=user)
+                regionsF = Regions(region_name=farm_region)
+                countryF = Countries(region_id=regionsF ,country_name=farm_country)
+                locationF = Locations(address=farm_address, city=farm_city, zip=farm_zip, country_id=countryF)
+                farm = Farms(farm_name=farm_name, farm_address=farm_address, farm_city=farm_city, farm_zip=farm_zip, farm_phone=farm_phone, farm_email=farm_email, farm_location_id=locationF, user_id=user)
                 framOwners = FarmOwners(user_id=user, farm_id=farm)
                 
             elif(role == "Customer"):
