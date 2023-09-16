@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en","th">
+<html lang="en, th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,8 +11,9 @@
     <form method="POST" action="/register/success">
         <div id="page1">
             <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="username" placeholder="Username" required>
-            <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="password" placeholder="Password" required>
+            <input class="border border-gray-300 rounded-md p-2 m-2" type="password" name="password" placeholder="Password" required>
             <button class="bg-blue-500 text-white p-2 m-2 rounded-md" type="button" onclick="check_data()">ถัดไป</button>
+            <button class="bg-blue-500 text-white p-2 m-2 rounded-md" type="button" onclick="goBack()">ย้อนกลับ</button>
         </div>
 
         <div id="page2" class="hidden">
@@ -36,6 +37,7 @@
                 <option value="Customer">ลูกค้า</option>
             </select>
             <button class="bg-blue-500 text-white p-2 m-2 rounded-md" type="button" onclick="check_data()">ถัดไป</button>
+            <button class="bg-blue-500 text-white p-2 m-2 rounded-md" type="button" onclick="goBack()">ย้อนกลับ</button>
         </div>
 
         <div id="page3" class="hidden">
@@ -48,6 +50,12 @@
             <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="farm_region" placeholder="จังหวัด">
             <input class="border border-gray-300 rounded-md p-2 m-2" type="text" name="farm_zip" placeholder="รหัสไปรษณีย์">
             <button class="bg-blue-500 text-white p-2 m-2 rounded-md" type="button" onclick="check_data()">ถัดไป</button>
+            <button class="bg-blue-500 text-white p-2 m-2 rounded-md" type="button" onclick="goBack()">ย้อนกลับ</button>
+        </div>
+
+        <div id="page4" class="hidden">
+            <p>ลงทะเบียนเสร็จสมบูรณ์!</p>
+            <button class="bg-blue-500 text-white p-2 m-2 rounded-md" type="submit" onclick="navigateNextPage()">หน้าแรก</button>
         </div>
 
     </form>
@@ -55,27 +63,45 @@
     <script>
         var currentPage = 1;
         var formPages = document.querySelectorAll("form > div");
+        var emailInput = document.querySelector("input[name='email']");
+        var phoneInput = document.querySelector("input[name='phone']");
+        var zipInput = document.querySelector("input[name='zip']");
+        var farm_emailInput = document.querySelector("input[name='farm_email']");
+        var farm_phoneInput = document.querySelector("input[name='farm_phone']");
+        var farm_zipInput = document.querySelector("input[name='farm_zip']");
         var roleSelect = document.getElementById("role");
 
-        function nextPage() {
+        //บัคอยู่รอแก้
+        function navigateNextPage() {
             if (currentPage <= formPages.length) {
                 formPages[currentPage - 1].classList.add("hidden");
                 currentPage++;
                 if (currentPage <= formPages.length) {
                     formPages[currentPage - 1].classList.remove("hidden");
-                } else {
-                    document.querySelector("form").submit();
                 }
+                if(roleSelect.value === "Customer" && currentPage === 3){
+                    fromPages[2].classList.add("hidden");
+                }
+            }
+        }
+        
+        function goBack() {
+            if(roleSelect.value === "Customer"){
+                currentPage = 2;
+            }
+            else{
+                currentPage = 3;
+            }
+            if (currentPage > 1) {
+                formPages[currentPage - 1].classList.add("hidden");
+                currentPage--;
+                formPages[currentPage - 1].classList.remove("hidden");
+            } else {
+                window.location.href = "/";
             }
         }
 
         function check_data() {
-            var emailInput = document.querySelector("input[name='email']");
-            var phoneInput = document.querySelector("input[name='phone']");
-            var zipInput = document.querySelector("input[name='zip']");
-            var farm_emailInput = document.querySelector("input[name='farm_email']");
-            var farm_phoneInput = document.querySelector("input[name='farm_phone']");
-            var farm_zipInput = document.querySelector("input[name='farm_zip']");
 
             if(currentPage === 1){
                 var usernameInput = document.querySelector("input[name='username']");
@@ -88,14 +114,13 @@
                              // ไม่ไปหน้าถัดไปถ้าข้อมูลไม่ถูกต้อง
                         }
                         else{
-                            nextPage();}
+                            navigateNextPage();
+                        }
                     })
                     .catch(error => {
                         console.log("เกิดข้อผิดพลาดในการตรวจสอบ Username:", error);
                     });
-            }
-
-            if (currentPage === 2) {
+            } else if (currentPage === 2) {
                 // ตรวจสอบค่าของอีเมลและเบอร์โทรศัพท์
                 if (!emailInput.value.includes("@")) {
                     alert("กรุณากรอกอีเมลที่ถูกต้อง");
@@ -111,33 +136,12 @@
                 }
 
                 // ตรวจสอบค่าของบทบาทที่ผู้ใช้เลือก
-                if (roleSelect.value === "FarmOwner") {
-                    currentPage = 2;
-                    // ถ้าเป็น "FarmOwner" ให้ไปที่หน้า 3
-                } else {
-                    document.querySelector("input[name='farmname']").value = " "; 
-                    document.querySelector("input[name='farm_email']").value = " "; 
-                    document.querySelector("input[name='farm_phone']").value = " "; 
-                    document.querySelector("input[name='farm_address']").value = " "; 
-                    document.querySelector("input[name='farm_city']").value = " ";
-                    document.querySelector("input[name='farm_country']").value = " ";
-                    document.querySelector("input[name='Fregion']").value = " "; 
-                    document.querySelector("input[name='farm_zip']").value = " ";
+                if (roleSelect.value === "Customer") {
                     currentPage = 3;
                 }
+                navigateNextPage();
 
-                if (currentPage <= formPages.length) {
-                formPages[currentPage - 1].classList.add("hidden");
-                currentPage++;
-                if (currentPage <= formPages.length) {
-                    formPages[currentPage - 1].classList.remove("hidden");
-                } else {
-                    document.querySelector("form").submit();
-                }
-                }
-                nextPage();
-            }
-            if(currentPage === 3){
+            } else if(currentPage === 3){
                 if (!farm_emailInput.value.includes("@")) {
                     alert("กรุณากรอกอีเมลที่ถูกต้อง2");
                     return; // ไม่ไปหน้าถัดไปถ้าข้อมูลไม่ถูกต้อง
@@ -150,7 +154,7 @@
                     alert("กรุณากรอกรหัสไปรษณีย์ 5 หลัก และเป็นตัวเลข");//เช็คตัวเลข
                     return;
                 }
-                nextPage();
+                navigateNextPage();
             }
         }
     </script>

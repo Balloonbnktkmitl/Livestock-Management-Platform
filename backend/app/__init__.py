@@ -32,7 +32,8 @@ def create_app():
         return templates.TemplateResponse('login.html', {'request': request})
     
     @app.post('/register/success')
-    async def register(username: str = Form(...), 
+    async def register(request: Request,
+                       username: str = Form(...), 
                        password: str = Form(...), 
                        role: str = Form(...), 
                    firstname: str = Form(...), 
@@ -45,14 +46,15 @@ def create_app():
                    country: str = Form(...),
                    region: str = Form(...),
                    gender: str = Form(...), 
-                   farm_name: str = Form(...),
-                   farm_email: str = Form(...), 
-                   farm_phone: str = Form(...), 
-                   farm_address: str = Form(...), 
-                   farm_city: str = Form(...), 
-                   farm_zip: str = Form(...),
-                   farm_country: str = Form(...),
-                   farm_region: str = Form(...)):
+                   farm_name: str = Form(None),
+                   farm_email: str = Form(None), 
+                   farm_phone: str = Form(None), 
+                   farm_address: str = Form(None), 
+                   farm_city: str = Form(None), 
+                   farm_zip: str = Form(None),
+                   farm_country: str = Form(None),
+                   farm_region: str = Form(None),
+                   ):
         with db_session:
             regions = Regions(region_name=region)
             countries = Countries(region_id = regions, country_name=country)
@@ -71,7 +73,7 @@ def create_app():
                 
             db.commit()
 
-            return {"message": "Registration successful"}
+            return templates.TemplateResponse('home.html', {'request': request})
     
     @app.post("/login")
     async def login(user_data: dict):
