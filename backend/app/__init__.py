@@ -3,16 +3,18 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from .models import db, Database, Users, Farms, Customers, FarmOwners, Staffs, Animals, Products, Locations, Countries, Regions
 from pony.orm import db_session
+from fastapi.staticfiles import StaticFiles
 
 def create_app():
     app = FastAPI()
     
-    templates = Jinja2Templates(directory="C:\\Users\\USER\\Desktop\\Project\\coding\\PedProPiTakSukSa\\templates")
-    
+    app.mount("/frontend", StaticFiles(directory="..\\frontend"), name="frontend")
+    templates = Jinja2Templates(directory="..\\templates")
+    frontend = Jinja2Templates(directory="..\\frontend\\src")
 
     @app.get('/', response_class=HTMLResponse)
     def home(request: Request):
-        return templates.TemplateResponse('home.html', {'request': request})
+        return frontend.TemplateResponse('index.html', {'request': request})
 
     @app.get('/register', response_class=HTMLResponse)
     def register_student(request: Request):
