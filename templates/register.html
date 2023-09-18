@@ -71,27 +71,24 @@
         var farm_zipInput = document.querySelector("input[name='farm_zip']");
         var roleSelect = document.getElementById("role");
 
-        //บัคอยู่รอแก้
         function navigateNextPage() {
-            if (currentPage <= formPages.length) {
+            if(roleSelect.value === "Customer"){
+                formPages[currentPage - 2].classList.add("hidden");
+                currentPage++;
+                if (currentPage <= formPages.length) {
+                    formPages[currentPage - 1].classList.remove("hidden");
+                }
+            }
+            else if (currentPage <= formPages.length) {
                 formPages[currentPage - 1].classList.add("hidden");
                 currentPage++;
                 if (currentPage <= formPages.length) {
                     formPages[currentPage - 1].classList.remove("hidden");
                 }
-                if(roleSelect.value === "Customer" && currentPage === 3){
-                    fromPages[2].classList.add("hidden");
-                }
             }
         }
         
         function goBack() {
-            if(roleSelect.value === "Customer"){
-                currentPage = 2;
-            }
-            else{
-                currentPage = 3;
-            }
             if (currentPage > 1) {
                 formPages[currentPage - 1].classList.add("hidden");
                 currentPage--;

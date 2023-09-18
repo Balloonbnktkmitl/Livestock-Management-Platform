@@ -14,7 +14,7 @@ def create_app():
 
     @app.get('/', response_class=HTMLResponse)
     def home(request: Request):
-        return frontend.TemplateResponse('index.html', {'request': request})
+        return frontend.TemplateResponse('login.html', {'request': request})
 
     @app.get('/register', response_class=HTMLResponse)
     def register_student(request: Request):
@@ -75,11 +75,15 @@ def create_app():
                 
             db.commit()
 
-            return templates.TemplateResponse('home.html', {'request': request})
+            return frontend.TemplateResponse('login.html', {'request': request})
     
     @app.post("/login")
     async def login(user_data: dict):
-
+        with db_session:
+            if(user_data["role"] == "FarmOwner"):
+                pass
+            else:
+                pass
         return {"message": "Logged in successfully"}
     
     return app
