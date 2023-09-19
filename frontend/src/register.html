@@ -51,19 +51,19 @@
                         <div class="grid grid-cols-2 gap-5 mb-[20px]">
                             <div class="mb-[1px]">
                                 <label class="block mb-2 font-medium">First Name</label>
-                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" id="firstname" name="firstname">
+                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" id="firstname" name="firstname" required>
                             </div>
                             <div class="mb-[1px]">
                                 <label class="block mb-2 font-medium">Last Name</label>
-                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" id="lastname" name="lastname">
+                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" id="lastname" name="lastname" required>
                             </div>
                             <div class="mb-[1px]">
                                 <label class="block mb-2 font-medium">Phone Number</label>
-                                <input type="tel" class="bg-gray-200 rounded-full w-full py-2 px-4" id="phone" name="phone">
+                                <input type="tel" class="bg-gray-200 rounded-full w-full py-2 px-4" id="phone" name="phone" required>
                             </div>
                             <div class="mb-[1px]">
                                 <label class="block mb-2 font-medium">Email</label>
-                                <input type="email" class="bg-gray-200 rounded-full w-full py-2 px-4" id="email" name="email">
+                                <input type="email" class="bg-gray-200 rounded-full w-full py-2 px-4" id="email" name="email" required>
                             </div>
 
                             <div class="block mb-3">
@@ -76,7 +76,7 @@
                         <div class="mb-4 grid grid-cols-2">
                             <div class="relative">
                                 <select
-                                    class="border-solid bg-gray-300 rounded-full py-2 px-4 w-full" name="gender" id="gender">
+                                    class="border-solid bg-gray-300 rounded-full py-2 px-4 w-full" name="gender" id="gender" required>
                                     <option>--select a gender--</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
@@ -94,7 +94,7 @@
                         <div class="mb-4 grid grid-cols-2">
                             <div class="relative">
                                 <select
-                                    class="border-solid bg-gray-300 rounded-full py-2 px-4 w-full" id="role" name="role">
+                                    class="border-solid bg-gray-300 rounded-full py-2 px-4 w-full" id="role" name="role" required>
                                     <option>--select a role--</option>
                                     <option value="Customer">Customer</option>
                                     <option value="FarmOwner">Farm Owner</option>
@@ -105,26 +105,26 @@
                         <div class="grid grid-cols-1 mb-[20px]">
                             <div>
                                 <label class="block mb-2 font-medium">Address</label>
-                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" name="address">
+                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" name="address" required>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-5">
                             <div class="mb-[1px]">
                                 <label class="block mb-2 font-medium">City</label>
-                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" name="city">
+                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" name="city" required>
                             </div>
                             <div class="mb-[1px]">
                                 <label class="block mb-2 font-medium">Country</label>
-                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" name="country">
+                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" name="country" required>
                             </div>
                             <div class="mb-[1px]">
                                 <label class="block mb-2 font-medium">Region</label>
-                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" name="region">
+                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" name="region" required>
                             </div>
                             <div class="mb-[1px]">
                                 <label class="block mb-2 font-medium">Zip</label>
-                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" name="zip">
+                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" name="zip" required>
                             </div>
                         </div>
 
@@ -247,6 +247,29 @@
             }
         }
 
+        function checkEnglishAndNumberLetters(text) {
+            var englishAndNumberPattern = /^[a-zA-Z0-9\s]*$/;
+            var isEnglish = englishLettersPattern.test(inputText);
+            
+            if (isEnglish) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function checkEnglishSpecialLetters(text) {
+            var englishAndNumberPattern = /^[a-zA-Z0-9\s!@#$%^&*()_+{}\[\]:;<>,.?~`-=|\\/'"]*$/;
+            var isEnglish = englishLettersPattern.test(inputText);
+            
+            if (isEnglish) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+
         function navigateNextPage() {
             if(roleSelect.value === "Customer"){
                 formPages[currentPage - 2].classList.add("hidden");
@@ -283,6 +306,16 @@
 
             if(currentPage === 1){
                 var usernameInput = document.querySelector("input[name='username']");
+                var passwordInput = document.querySelector("input[name='password']");
+                if(checkEnglishAndNumberLetters(usernameInput)){
+                    alert("กรุณากรอก Username ด้วยตัวอักษรภาษาอังกฤษหรือตัวเลขเท่านั้น");
+                    return;
+                }
+                if(checkEnglishSpecialLetters(text)){
+                    alert("กรุณากรอก Password ด้วยตัวอักษรภาษาอังกฤษ, ตัวเลข และอักขระพิเศษเท่านั้น");
+                    return;
+                }
+                
 
                 fetch(`/check-username/${usernameInput.value}`)
                     .then(response => response.json())
