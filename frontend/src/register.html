@@ -28,8 +28,8 @@
                             <!-- Previous button -->
                             <button 
                                 id="btn1-back"
-                                type="submit"
-                                
+                                type="button"
+                                onclick="goBack()"
                                 class="bg-orange-500 text-white font-bold rounded-full py-2 px-4 w-[130px] flex mx-auto">previous
                                  <img width="10" src="frontend/src/svg/arrow_left.svg" class="mt-2 ml-2"/>
                             </button>
@@ -77,7 +77,7 @@
                             <div class="relative">
                                 <select
                                     class="border-solid bg-gray-300 rounded-full py-2 px-4 w-full" name="gender" id="gender" required>
-                                    <option>--select a gender--</option>
+                                    <option value="null">--select a gender--</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                     <option value="Other">Other</option>
@@ -95,7 +95,7 @@
                             <div class="relative">
                                 <select
                                     class="border-solid bg-gray-300 rounded-full py-2 px-4 w-full" id="role" name="role" required>
-                                    <option>--select a role--</option>
+                                    <option value="null">--select a role--</option>
                                     <option value="Customer">Customer</option>
                                     <option value="FarmOwner">Farm Owner</option>
                                 </select>
@@ -133,9 +133,8 @@
                             id="btn2-back"
                             type="button"
                             onclick="goBack()"
-                            class="bg-orange-500 text-white font-bold rounded-full py-2 px-4 flex mr-[260px]">
+                            class="bg-orange-500 text-white font-bold rounded-full py-2 px-4 flex mr-[260px]">back page
                                 <img width="10" src="frontend/src/svg/arrow_left.svg" class="mt-2 mr-3"/>
-                                back page
                             </button>
                             <button 
                             id="btn2-next"
@@ -222,6 +221,12 @@
 
     <script>
         var currentPage = 1;
+        var firstnameInput = document.querySelector("input[name='firstname']");
+        var lastnameInput = document.querySelector("input[name='lastname']");
+        var addressInput = document.querySelector("input[name='address']");
+        var cityInput = document.querySelector("input[name='city']");
+        var countryInput = document.querySelector("input[name='country']");
+        var regionInput = document.querySelector("input[name='region']");
         var emailInput = document.querySelector("input[name='email']");
         var phoneInput = document.querySelector("input[name='phone']");
         var zipInput = document.querySelector("input[name='zip']");
@@ -234,7 +239,7 @@
         var page3Div = document.getElementById("page-3");
         var page4Div = document.getElementById("page-4");
         var formPages = [page1Div, page2Div, page3Div, page4Div];
-
+        var genderSelect = document.getElementById("gender");
 
         function navigateNextPage() {
             if(roleSelect.value === "Customer"){
@@ -265,9 +270,10 @@
                 window.location.href = "/";
             }
         }
+
         function isAlphanumeric(input) {
             // เราใช้ regular expression เพื่อตรวจสอบว่า input ประกอบด้วยตัวอักษรภาษาอังกฤษเท่านั้น
-            var alphanumericRegex =/^[a-zA-Z0-9]+$/;;
+            var alphanumericRegex =/^[a-zA-Z0-9]+$/;
             return alphanumericRegex.test(input);
         }
         
@@ -283,11 +289,12 @@
             if(currentPage === 1){
                 var usernameInput = document.querySelector("input[name='username']");
                 var passwordInput = document.querySelector("input[name='password']");
-                if(isAlphanumeric(usernameInput) || usernameInput.value.length < 2){
+                // ตรวจสอบค่าของ username และ password
+                if(!isAlphanumeric(usernameInput.value) || usernameInput.value.length < 2){
                     alert("กรุณากรอก Username ด้วยตัวอักษรภาษาอังกฤษหรือตัวเลขเท่านั้น");
                     return;
                 }
-                if(!passwordInput || isAlphanumeric(passwordInput)){
+                if(passwordInput.value.length < 2 || !isAlphanumeric(passwordInput.value)){
                     alert("กรุณากรอก Password ด้วยตัวอักษรภาษาอังกฤษหรือตัวเลขเท่านั้น");
                     return;
                 }
@@ -309,8 +316,15 @@
                     });
 
             } else if (currentPage === 2) {
+                //เช็คค่าว่าง
+                if(!firstnameInput.value.trim() || !lastnameInput.value.trim() || !addressInput.value.trim() 
+                || !cityInput.value.trim() || !countryInput.value.trim() || !regionInput.value.trim() || roleSelect.value === "null" || genderSelect.value === "null"){
+                    alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+                    return;
+                }
+
                 // ตรวจสอบค่าของอีเมลและเบอร์โทรศัพท์
-                if (isValidEmail(emailInput) || !emailInput.value.includes("@")) {
+                if (!isValidEmail(emailInput.value) || !emailInput.value.includes("@")) {
                     alert("กรุณากรอกอีเมลที่ถูกต้อง");
                     return; // ไม่ไปหน้าถัดไปถ้าข้อมูลไม่ถูกต้อง
                 }
@@ -323,6 +337,7 @@
                     return;
                 }
 
+
                 // ตรวจสอบค่าของบทบาทที่ผู้ใช้เลือก
                 if (roleSelect.value === "Customer") {
                     currentPage = 3;
@@ -330,8 +345,14 @@
                 navigateNextPage();
 
             } else if(currentPage === 3){
-                if (!emailInput.value.includes("@") || isValidEmail(emailInput)) {
-                    alert("กรุณากรอกอีเมลที่ถูกต้อง2");
+                //เช็คค่าว่าง
+                if(!farm_name.value.trim() || !farm_emailInput.value.trim() || !farm_phoneInput.value.trim() 
+                || !farm_address.value.trim() || !farm_city.value.trim() || !farm_country.value.trim() || !farm_region.value.trim() || !farm_zipInput.value.trim()){
+                    alert("กรุณากรอก Username ด้วยตัวอักษรภาษาอังกฤษหรือตัวเลขเท่านั้น");
+                    return;
+                }
+                if (!emailInput.value.includes("@") || !isValidEmail(emailInput)) {
+                    alert("กรุณากรอกอีเมลที่ถูกต้อง");
                     return; // ไม่ไปหน้าถัดไปถ้าข้อมูลไม่ถูกต้อง
                 }
                 if(farm_phoneInput.value.length !== 10 || isNaN(farm_zipInput.value)){
