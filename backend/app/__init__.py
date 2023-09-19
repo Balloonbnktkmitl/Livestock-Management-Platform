@@ -1,9 +1,13 @@
-from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from .models import db, Database, Users, Farms, Customers, FarmOwners, Staffs, Animals, Products, Locations, Countries, Regions
 from pony.orm import db_session
 from fastapi.staticfiles import StaticFiles
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import JWTError, jwt
+from datetime import datetime, timedelta
+from passlib.context import CryptContext
 
 def create_app():
     app = FastAPI()
@@ -18,7 +22,7 @@ def create_app():
 
     @app.get('/register', response_class=HTMLResponse)
     def register_student(request: Request):
-        return templates.TemplateResponse('register.html', {'request': request})
+        return frontend.TemplateResponse('register.html', {'request': request})
     
     @app.get("/check-username/{username}", response_model=dict)
     async def check_username(username: str):
@@ -28,10 +32,11 @@ def create_app():
                 return {"exists": True}
             else:
                 return {"exists": False}
-
+            
+     # เพิ่มเส้นทางสำหรับหน้าล็อกอิน
     @app.get('/login', response_class=HTMLResponse)
-    def login(request: Request):
-        return templates.TemplateResponse('login.html', {'request': request})
+    def login_page(request: Request):
+        return frontend.TemplateResponse('login.html', {'request': request})
     
     @app.post('/register/success')
     async def register(request: Request,
@@ -58,10 +63,12 @@ def create_app():
                    farm_region: str = Form(None),
                    ):
         with db_session:
+            hashed_password = get_password_hash(password)
+            
             regions = Regions(region_name=region)
             countries = Countries(region_id = regions, country_name=country)
             location = Locations(country_id = countries, address=address, city=city, zip=zip)
-            user = Users(username=username, password=password, role=role, firstName=firstname, lastName=lastname,
+            user = Users(username=username, password=hashed_password, role=role, firstName=firstname, lastName=lastname,
                         email=email, phone=phone, gender=gender, location_id=location)
             if(role == "FarmOwner"):
                 regionsF = Regions(region_name=farm_region)
@@ -77,17 +84,81 @@ def create_app():
 
             return frontend.TemplateResponse('login.html', {'request': request})
     
-    @app.post("/login")
-    async def login(user_data: dict):
+    # login
+    # อัพเดทคำสั่งสร้างฟังก์ชันตรวจสอบรหัสผ่าน
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+    def verify_password(plain_password, hashed_password):
+        return pwd_context.verify(plain_password, hashed_password)
+
+    def get_password_hash(password):
+        return pwd_context.hash(password)
+
+    SECRET_KEY = "your-secret-key"
+    ALGORITHM = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES = 30
+    
+    # สร้างฟังก์ชันเพื่อดึง Access Token จากคุกกี้หรือส่วนข้อมูลของคำขอ
+    def get_access_token(authorization: str = Cookie(None), request: Request = Depends()):
+        # กำหนดวิธีการดึง Access Token จากคุกกี้หรือส่วนข้อมูลของคำขอที่เหมาะสม
+        # ในที่นี้เราจะดึงจากคุกกี้แต่คุณสามารถปรับแต่งตามความต้องการ
+        if authorization:
+            return authorization
+        elif "access_token" in request.cookies:
+            return request.cookies["access_token"]
+        else:
+            return None
+    
+    # เพิ่มฟังก์ชันเพื่อดึงบทบาทของผู้ใช้จาก Access Token
+    def get_current_user_role(request: Request, token: str = Depends(get_access_token)):
+        # คุณสามารถใช้ request ในฟังก์ชันนี้เพื่อดึงข้อมูลจากคำขอ HTTP
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            return payload.get("role")  # ดึงบทบาทของผู้ใช้จาก payload
+        except JWTError:
+            raise HTTPException(status_code=401, detail="Could not validate credentials")
+    
+    def create_access_token(data: dict, expires_delta: timedelta = None):
+        to_encode = data.copy()
+        if expires_delta:
+            expire = datetime.utcnow() + expires_delta
+        else:
+            expire = datetime.utcnow() + timedelta(minutes=15)
+        to_encode.update({"exp": expire})
+        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+        return encoded_jwt
+
+    # เพิ่มเส้นทางสำหรับล็อกอิน
+    @app.post("/login", response_class=HTMLResponse)
+    async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends() ,username: str = Form(...),
+    password: str = Form(...),):
         with db_session:
-            if(user_data["role"] == "FarmOwner"):
-                pass
-            else:
-                pass
-        return {"message": "Logged in successfully"}
+            user = Users.get(username=form_data.username)
+            if not user or not verify_password(form_data.password, user.password):
+                raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+            access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            access_token = create_access_token(
+                data={"sub": user.username, "role": user.role},
+                expires_delta=access_token_expires
+            )
+            
+            response = frontend.TemplateResponse('dashboard.html', {'request': request})
+            response.set_cookie(key="access_token", value=access_token, httponly=True)
+            return response
+
+    @app.get('/dashboard', response_class=HTMLResponse)
+    def dashboard(request: Request):
+        role = get_current_user_role(request)  # ดึงบทบาทผู้ใช้โดยใช้ request
+        if role == "FarmOwner":
+            return frontend.TemplateResponse('farm_owner_dashboard.html', {'request': request})
+        elif role == "Customer":
+            return frontend.TemplateResponse('customer_dashboard.html', {'request': request})
+        else:
+            raise HTTPException(status_code=403, detail="Access Forbidden")
     
     return app
-
+    
 create_app()
 
 
