@@ -230,6 +230,11 @@
         var emailInput = document.querySelector("input[name='email']");
         var phoneInput = document.querySelector("input[name='phone']");
         var zipInput = document.querySelector("input[name='zip']");
+        var farm_name = document.querySelector("input[name='farm_name']");
+        var farm_address = document.querySelector("input[name='farm_address']");
+        var farm_city = document.querySelector("input[name='farm_city']");
+        var farm_country = document.querySelector("input[name='farm_country']");
+        var farm_region = document.querySelector("input[name='farm_region']");
         var farm_emailInput = document.querySelector("input[name='farm_email']");
         var farm_phoneInput = document.querySelector("input[name='farm_phone']");
         var farm_zipInput = document.querySelector("input[name='farm_zip']");
@@ -351,7 +356,7 @@
                     alert("กรุณากรอก Username ด้วยตัวอักษรภาษาอังกฤษหรือตัวเลขเท่านั้น");
                     return;
                 }
-                if (!emailInput.value.includes("@") || !isValidEmail(emailInput)) {
+                if (!farm_emailInput.value.includes("@") || !isValidEmail(farm_emailInput.value)) {
                     alert("กรุณากรอกอีเมลที่ถูกต้อง");
                     return; // ไม่ไปหน้าถัดไปถ้าข้อมูลไม่ถูกต้อง
                 }

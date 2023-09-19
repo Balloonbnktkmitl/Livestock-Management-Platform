@@ -1,12 +1,35 @@
-<!-- customer_dashboard.html -->
 <!DOCTYPE html>
 <html>
 <head>
-    <title>farmOwner Dashboard</title>
+    <title>Farm Owner Dashboard</title>
 </head>
 <body>
-    <h1>Welcome, Customer!</h1>
-    <!-- ตรวจสอบบทบาทเพื่อแสดงเนื้อหาที่เหมาะสม -->
-    <p>This is the dashboard for Customers.</p>
+    <h1>Farm Owner Dashboard</h1>
+    
+    <div id="user-info">
+        <h2>User Information</h2>
+        <p><strong>Username:</strong> <span id="username">Loading...</span></p>
+        <p><strong>Role:</strong> <span id="role">Loading...</span></p>
+        <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+        <!-- เพิ่มข้อมูลอื่น ๆ ตามต้องการ -->
+    </div>
+
+    <script>
+        // ใช้ JavaScript เพื่อดึงข้อมูลผู้ใช้จากคุกกี้และแสดงผลในหน้า HTML
+        const usernameElement = document.getElementById("username");
+        const roleElement = document.getElementById("role");
+        const emailElement = document.getElementById("email");
+
+        // ดึงข้อมูลจากคุกกี้ "user_role" และ "jwt_token"
+        const userRole = document.cookie.replace(/(?:(?:^|.*;\s*)user_role\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        const jwtToken = document.cookie.replace(/(?:(?:^|.*;\s*)jwt_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
+        // แสดงข้อมูลผู้ใช้ใน HTML
+        usernameElement.textContent = jwtToken ? "User" : "Loading...";
+        roleElement.textContent = userRole || "Loading...";
+        emailElement.textContent = "Email@example.com"; // เพิ่มอีเมลตามความเหมาะสม
+
+        // เพิ่มการดึงข้อมูลอื่น ๆ จากคุกกี้หรือ JWT Token และแสดงใน HTML ตามต้องการ
+    </script>
 </body>
 </html>
