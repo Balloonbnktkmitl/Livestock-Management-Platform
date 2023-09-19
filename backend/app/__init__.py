@@ -32,11 +32,6 @@ def create_app():
                 return {"exists": True}
             else:
                 return {"exists": False}
-            
-     # เพิ่มเส้นทางสำหรับหน้าล็อกอิน
-    @app.get('/login', response_class=HTMLResponse)
-    def login_page(request: Request):
-        return frontend.TemplateResponse('login.html', {'request': request})
     
     @app.post('/register/success')
     async def register(request: Request,
@@ -82,7 +77,7 @@ def create_app():
                 
             db.commit()
 
-            return frontend.TemplateResponse('login.html', {'request': request})
+            response = RedirectResponse(url="/")
     
     # login
     # อัพเดทคำสั่งสร้างฟังก์ชันตรวจสอบรหัสผ่าน
@@ -129,7 +124,7 @@ def create_app():
         return encoded_jwt
 
     # เพิ่มเส้นทางสำหรับล็อกอิน
-    @app.post("/login", response_class=HTMLResponse)
+    @app.post("/", response_class=HTMLResponse)
     async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends() ,username: str = Form(...),
     password: str = Form(...),):
         with db_session:
@@ -143,13 +138,29 @@ def create_app():
                 expires_delta=access_token_expires
             )
             
-            response = frontend.TemplateResponse('dashboard.html', {'request': request})
+            encoded_jwt = jwt.encode({"sub": user.username, "role": user.role}, SECRET_KEY, algorithm=ALGORITHM)
+            
+            response = RedirectResponse(url="/dashboard")
             response.set_cookie(key="access_token", value=access_token, httponly=True)
+            response.set_cookie(key="user_role", value=user.role, httponly=True)
+            response.set_cookie(key="jwt_token", value=encoded_jwt, httponly=True)
             return response
 
     @app.get('/dashboard', response_class=HTMLResponse)
     def dashboard(request: Request):
-        role = get_current_user_role(request)  # ดึงบทบาทผู้ใช้โดยใช้ request
+        pass
+    
+    @app.post("/dashboard", response_class=HTMLResponse)
+    def post_dashboard(request: Request):
+        jwt_token = request.cookies.get("jwt_token")
+
+        try:
+            payload = jwt.decode(jwt_token, SECRET_KEY, algorithms=[ALGORITHM])
+            role = payload.get("role", "Unknown")
+        except jwt.ExpiredSignatureError:
+            # Handle token expiration
+            role = "Expired"
+        
         if role == "FarmOwner":
             return frontend.TemplateResponse('farm_owner_dashboard.html', {'request': request})
         elif role == "Customer":
