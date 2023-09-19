@@ -77,8 +77,8 @@ def create_app():
                 
             db.commit()
 
-            response = RedirectResponse(url="/")
-    
+            raise HTTPException(status_code=303, detail="See Other", headers={"Location": "/"})
+        
     # login
     # อัพเดทคำสั่งสร้างฟังก์ชันตรวจสอบรหัสผ่าน
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

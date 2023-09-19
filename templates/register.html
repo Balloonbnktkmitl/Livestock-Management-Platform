@@ -70,7 +70,7 @@
         var farm_phoneInput = document.querySelector("input[name='farm_phone']");
         var farm_zipInput = document.querySelector("input[name='farm_zip']");
         var roleSelect = document.getElementById("role");
-
+        
         function navigateNextPage() {
             if(roleSelect.value === "Customer"){
                 formPages[currentPage - 2].classList.add("hidden");
@@ -119,14 +119,6 @@
                     });
             } else if (currentPage === 2) {
                 // ตรวจสอบค่าของอีเมลและเบอร์โทรศัพท์
-                if (!emailInput.value.includes("@")) {
-                    alert("กรุณากรอกอีเมลที่ถูกต้อง");
-                    return; // ไม่ไปหน้าถัดไปถ้าข้อมูลไม่ถูกต้อง
-                }
-                if(phoneInput.value.length !== 10){
-                    alert("กรุณากรอกเบอร์โทรศัพท์ 10 หลัก");
-                    return;
-                }
                 if(isNaN(zipInput.value) || zipInput.value.length !== 5){
                     alert("กรุณากรอกรหัสไปรษณีย์ 5 หลัก และเป็นตัวเลข");//เช็คตัวเลข
                     return;
@@ -139,14 +131,6 @@
                 navigateNextPage();
 
             } else if(currentPage === 3){
-                if (!farm_emailInput.value.includes("@")) {
-                    alert("กรุณากรอกอีเมลที่ถูกต้อง2");
-                    return; // ไม่ไปหน้าถัดไปถ้าข้อมูลไม่ถูกต้อง
-                }
-                if(farm_phoneInput.value.length !== 10 || isNaN(farm_zipInput.value)){
-                    alert("กรุณากรอกเบอร์โทรศัพท์ 10 หลัก และเป็นตัวเลข");
-                    return;
-                }
                 if(isNaN(farm_zipInput.value) || farm_zipInput.value.length !== 5){
                     alert("กรุณากรอกรหัสไปรษณีย์ 5 หลัก และเป็นตัวเลข");//เช็คตัวเลข
                     return;
