@@ -13,7 +13,6 @@ def create_app():
     app = FastAPI()
     
     app.mount("/frontend", StaticFiles(directory="..\\frontend"), name="frontend")
-    templates = Jinja2Templates(directory="..\\templates")
     frontend = Jinja2Templates(directory="..\\frontend\\src")
 
     @app.get('/', response_class=HTMLResponse)

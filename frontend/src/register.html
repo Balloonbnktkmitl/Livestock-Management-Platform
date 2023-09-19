@@ -28,8 +28,8 @@
                             <!-- Previous button -->
                             <button 
                                 id="btn1-back"
-                                type="button"
-                                onclick="goBack()"
+                                type="submit"
+                                
                                 class="bg-orange-500 text-white font-bold rounded-full py-2 px-4 w-[130px] flex mx-auto">previous
                                  <img width="10" src="frontend/src/svg/arrow_left.svg" class="mt-2 ml-2"/>
                             </button>
@@ -220,7 +220,6 @@
         </div>
     </form>
 
-
     <script>
         var currentPage = 1;
         var emailInput = document.querySelector("input[name='email']");
@@ -236,46 +235,12 @@
         var page4Div = document.getElementById("page-4");
         var formPages = [page1Div, page2Div, page3Div, page4Div];
 
-        function checkEmail(email) {
-
-            var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
-            if (emailPattern.test(email)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        function checkEnglishAndNumberLetters(text) {
-            var englishAndNumberPattern = /^[a-zA-Z0-9\s]*$/;
-            var isEnglish = englishLettersPattern.test(inputText);
-            
-            if (isEnglish) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        function checkEnglishSpecialLetters(text) {
-            var englishAndNumberPattern = /^[a-zA-Z0-9\s!@#$%^&*()_+{}\[\]:;<>,.?~`-=|\\/'"]*$/;
-            var isEnglish = englishLettersPattern.test(inputText);
-            
-            if (isEnglish) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
 
         function navigateNextPage() {
             if(roleSelect.value === "Customer"){
                 formPages[currentPage - 2].classList.add("hidden");
                 currentPage++;
                 if (currentPage <= formPages.length) {
-                    alert(currentPage)
                     formPages[currentPage - 1].classList.remove("hidden");
                 }
             }
@@ -285,7 +250,7 @@
                     formPages[currentPage - 2].classList.add("hidden");
                     formPages[currentPage - 1].classList.remove("hidden");
                 }
-        }
+            }
         }
         
         function goBack() {
@@ -300,6 +265,17 @@
                 window.location.href = "/";
             }
         }
+        function isAlphanumeric(input) {
+            // เราใช้ regular expression เพื่อตรวจสอบว่า input ประกอบด้วยตัวอักษรภาษาอังกฤษเท่านั้น
+            var alphanumericRegex =/^[a-zA-Z0-9]+$/;;
+            return alphanumericRegex.test(input);
+        }
+        
+        function isValidEmail(email) {
+            // เราใช้ regular expression เพื่อตรวจสอบรูปแบบของอีเมล
+            var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email);
+        }
 
 
         function check_data() {
@@ -307,15 +283,14 @@
             if(currentPage === 1){
                 var usernameInput = document.querySelector("input[name='username']");
                 var passwordInput = document.querySelector("input[name='password']");
-                if(checkEnglishAndNumberLetters(usernameInput)){
+                if(isAlphanumeric(usernameInput) || usernameInput.value.length < 2){
                     alert("กรุณากรอก Username ด้วยตัวอักษรภาษาอังกฤษหรือตัวเลขเท่านั้น");
                     return;
                 }
-                if(checkEnglishSpecialLetters(text)){
-                    alert("กรุณากรอก Password ด้วยตัวอักษรภาษาอังกฤษ, ตัวเลข และอักขระพิเศษเท่านั้น");
+                if(!passwordInput || isAlphanumeric(passwordInput)){
+                    alert("กรุณากรอก Password ด้วยตัวอักษรภาษาอังกฤษหรือตัวเลขเท่านั้น");
                     return;
                 }
-                
 
                 fetch(`/check-username/${usernameInput.value}`)
                     .then(response => response.json())
@@ -330,11 +305,12 @@
                     })
                     .catch(error => {
                         console.log("เกิดข้อผิดพลาดในการตรวจสอบ Username:", error);
+                        throw error;
                     });
 
             } else if (currentPage === 2) {
                 // ตรวจสอบค่าของอีเมลและเบอร์โทรศัพท์
-                if (checkEmail(emailInput.value) === false || !emailInput.value.includes("@")) {
+                if (isValidEmail(emailInput) || !emailInput.value.includes("@")) {
                     alert("กรุณากรอกอีเมลที่ถูกต้อง");
                     return; // ไม่ไปหน้าถัดไปถ้าข้อมูลไม่ถูกต้อง
                 }
@@ -354,7 +330,7 @@
                 navigateNextPage();
 
             } else if(currentPage === 3){
-                if (checkEmail(farm_emailInput.value) === false || !emailInput.value.includes("@")) {
+                if (!emailInput.value.includes("@") || isValidEmail(emailInput)) {
                     alert("กรุณากรอกอีเมลที่ถูกต้อง2");
                     return; // ไม่ไปหน้าถัดไปถ้าข้อมูลไม่ถูกต้อง
                 }
@@ -369,6 +345,7 @@
                 navigateNextPage();
             }
         }
+        
     </script>
 
 </body>
