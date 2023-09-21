@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie
+from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from .models import db, Database, Users, Farms, Customers, FarmOwners, Staffs, Animals, Products, Locations, Countries, Regions
@@ -8,6 +8,46 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
+from typing import Optional
+
+# login
+# อัพเดทคำสั่งสร้างฟังก์ชันตรวจสอบรหัสผ่าน
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+SECRET_KEY = "your-secret-key"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+def verify_password(plain_password, hashed_password):
+        return pwd_context.verify(plain_password, hashed_password)
+
+def get_password_hash(password):
+        return pwd_context.hash(password)
+    
+def get_user_info(access_token: str):
+    try:
+        # ทำการตรวจสอบความถูกต้องของ Access Token
+        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+        # ในกรณีนี้คุณสามารถใช้ข้อมูลจาก payload เพื่อดึงข้อมูลผู้ใช้งานจากฐานข้อมูล
+        # สมมติว่าคุณมีโมเดล User ในการเก็บข้อมูลผู้ใช้
+        user = Users.get(username=payload.get("sub"))  # สมมติว่า "sub" เก็บ username ใน Token
+        if user:
+            return user.to_dict()  # สมมติว่ามีฟังก์ชัน to_dict() เพื่อแปลงข้อมูลผู้ใช้ให้อยู่ในรูปแบบ JSON
+        else:
+            return None
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+def create_access_token(data: dict, expires_delta: timedelta = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
 def create_app():
     app = FastAPI()
@@ -18,19 +58,33 @@ def create_app():
     @app.get('/', response_class=HTMLResponse)
     def home(request: Request):
         return frontend.TemplateResponse('login.html', {'request': request})
+    
+    # เพิ่มเส้นทางสำหรับล็อกอิน
+    @app.post("/", response_class=HTMLResponse)
+    async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends() ,username: str = Form(...),
+    password: str = Form(...),):
+        with db_session:
+            user = Users.get(username=form_data.username)
+            if not user or not verify_password(form_data.password, user.password):
+                raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+            access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            access_token = create_access_token(
+                data={"sub": user.username, "role": user.role},
+                expires_delta=access_token_expires
+            )
+            
+            encoded_jwt = jwt.encode({"sub": user.username, "role": user.role}, SECRET_KEY, algorithm=ALGORITHM)
+            
+            response = RedirectResponse(url="/dashboard")
+            response.set_cookie(key="access_token", value=access_token, httponly=True)
+            response.set_cookie(key="user_role", value=user.role, httponly=True)
+            response.set_cookie(key="jwt_token", value=encoded_jwt, httponly=True)
+            return response
 
     @app.get('/register', response_class=HTMLResponse)
-    def register_student(request: Request):
+    def register_users(request: Request):
         return frontend.TemplateResponse('register.html', {'request': request})
-    
-    @app.get("/check-username/{username}", response_model=dict)
-    async def check_username(username: str):
-        with db_session:
-            user = Users.get(username=username)
-            if user:
-                return {"exists": True}
-            else:
-                return {"exists": False}
     
     @app.post('/register/success')
     async def register(request: Request,
@@ -77,78 +131,17 @@ def create_app():
             db.commit()
 
             raise HTTPException(status_code=303, detail="See Other", headers={"Location": "/"})
-        
-    # login
-    # อัพเดทคำสั่งสร้างฟังก์ชันตรวจสอบรหัสผ่าน
-    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-    def verify_password(plain_password, hashed_password):
-        return pwd_context.verify(plain_password, hashed_password)
-
-    def get_password_hash(password):
-        return pwd_context.hash(password)
-
-    SECRET_KEY = "your-secret-key"
-    ALGORITHM = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES = 30
-    
-    # สร้างฟังก์ชันเพื่อดึง Access Token จากคุกกี้หรือส่วนข้อมูลของคำขอ
-    def get_access_token(authorization: str = Cookie(None), request: Request = Depends()):
-        # กำหนดวิธีการดึง Access Token จากคุกกี้หรือส่วนข้อมูลของคำขอที่เหมาะสม
-        # ในที่นี้เราจะดึงจากคุกกี้แต่คุณสามารถปรับแต่งตามความต้องการ
-        if authorization:
-            return authorization
-        elif "access_token" in request.cookies:
-            return request.cookies["access_token"]
-        else:
-            return None
-    
-    # เพิ่มฟังก์ชันเพื่อดึงบทบาทของผู้ใช้จาก Access Token
-    def get_current_user_role(request: Request, token: str = Depends(get_access_token)):
-        # คุณสามารถใช้ request ในฟังก์ชันนี้เพื่อดึงข้อมูลจากคำขอ HTTP
-        try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            return payload.get("role")  # ดึงบทบาทของผู้ใช้จาก payload
-        except JWTError:
-            raise HTTPException(status_code=401, detail="Could not validate credentials")
-    
-    def create_access_token(data: dict, expires_delta: timedelta = None):
-        to_encode = data.copy()
-        if expires_delta:
-            expire = datetime.utcnow() + expires_delta
-        else:
-            expire = datetime.utcnow() + timedelta(minutes=15)
-        to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-        return encoded_jwt
-
-    # เพิ่มเส้นทางสำหรับล็อกอิน
-    @app.post("/", response_class=HTMLResponse)
-    async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends() ,username: str = Form(...),
-    password: str = Form(...),):
+    @app.get("/check-username/{username}", response_model=dict)
+    async def check_username(username: str):
         with db_session:
-            user = Users.get(username=form_data.username)
-            if not user or not verify_password(form_data.password, user.password):
-                raise HTTPException(status_code=400, detail="Incorrect username or password")
-
-            access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-            access_token = create_access_token(
-                data={"sub": user.username, "role": user.role},
-                expires_delta=access_token_expires
-            )
-            
-            encoded_jwt = jwt.encode({"sub": user.username, "role": user.role}, SECRET_KEY, algorithm=ALGORITHM)
-            
-            response = RedirectResponse(url="/dashboard")
-            response.set_cookie(key="access_token", value=access_token, httponly=True)
-            response.set_cookie(key="user_role", value=user.role, httponly=True)
-            response.set_cookie(key="jwt_token", value=encoded_jwt, httponly=True)
-            return response
-
-    @app.get('/dashboard', response_class=HTMLResponse)
-    def dashboard(request: Request):
-        pass
+            user = Users.get(username=username)
+            if user:
+                return {"exists": True}
+            else:
+                return {"exists": False}
     
+   
     @app.post("/dashboard", response_class=HTMLResponse)
     def post_dashboard(request: Request):
         jwt_token = request.cookies.get("jwt_token")
@@ -166,6 +159,27 @@ def create_app():
             return frontend.TemplateResponse('customer_dashboard.html', {'request': request})
         else:
             raise HTTPException(status_code=403, detail="Access Forbidden")
+    
+    @app.get("/user-profile", response_class=HTMLResponse)
+    async def user_profile(request: Request):
+        # ตรวจสอบค่า request เพื่อให้แน่ใจว่ามีคุกกี้และค่า "access_token" อยู่
+        if "access_token" in request.cookies:
+            access_token = request.cookies.get("access_token")
+            user_info = get_user_info(access_token)
+            if not user_info:
+                raise HTTPException(status_code=401, detail="User not authenticated")
+        else:
+            raise HTTPException(status_code=401, detail="User not authenticated")
+
+        return frontend.TemplateResponse("user_profile.html", {"request": request, "user_info": user_info})
+    
+    @app.get("/logout")
+    async def logout(response: Response):
+        # ลบคุกกี้ Access Token
+        response.delete_cookie("access_token")
+
+        # รีเดอิเร็กต์ผู้ใช้ไปยังหน้าล็อกอินหลังจากล็อกเอ้า
+        return RedirectResponse(url="/")
     
     return app
     
