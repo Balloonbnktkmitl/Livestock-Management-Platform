@@ -22,12 +22,13 @@ def get_or_create_region(region_name):
 
 def get_or_create_country(country_name, region_id):
     with db_session:
-        existing_country = Countries.get(country_name=country_name)
+        existing_country = Countries.get(country_name=country_name, region_id=region_id)
         if existing_country is None:
             existing_country = Countries(country_name=country_name, region_id=region_id)
             db.commit()    
     country_id = existing_country.country_id
-    return country_id
+    region_id = existing_country.region_id
+    return country_id, region_id
 
 def get_or_create_location(address, city, zip, country_id):
     with db_session:
@@ -36,7 +37,8 @@ def get_or_create_location(address, city, zip, country_id):
             existing_location = Locations(address=address, city=city, zip=zip, country_id=country_id)
             db.commit()
     location_id = existing_location.location_id
-    return location_id
+    country_id = existing_location.country_id
+    return location_id, country_id
 
 # login
 # อัพเดทคำสั่งสร้างฟังก์ชันตรวจสอบรหัสผ่าน
@@ -142,9 +144,9 @@ def create_app():
             # ตรวจสอบว่ามี Region อยู่แล้วหรือไม่
             region = get_or_create_region(region)
 
-            country = get_or_create_country(country, region)
+            country, region = get_or_create_country(country, region)
 
-            location = get_or_create_location(address, city, zip, country)
+            location, country = get_or_create_location(address, city, zip, country)
             
             hashed_password = get_password_hash(password)
             
@@ -153,8 +155,8 @@ def create_app():
             
             if(role == "FarmOwner"):
                 farm_region = get_or_create_region(farm_region)
-                farm_country = get_or_create_country(farm_country, farm_region)
-                farm_location = get_or_create_location(farm_address, farm_city, farm_zip, farm_country)
+                farm_country, farm_region = get_or_create_country(farm_country, farm_region)
+                farm_location, farm_country = get_or_create_location(farm_address, farm_city, farm_zip, farm_country)
                 
                 farm = Farms(farm_name=farm_name, farm_phone=farm_phone, farm_email=farm_email, location_id=farm_location, user_id=user)
                 farmOwners = FarmOwners(user_id=user, farm_id=farm)
