@@ -1,6 +1,5 @@
 from pony.orm import Database, Required, PrimaryKey, Set, Optional, sql_debug 
 from datetime import datetime
-from enum import Enum
 
 db = Database()
     
@@ -38,28 +37,26 @@ class Users(db.Entity):
     customers = Optional('Customers')
     farmOwners = Optional('FarmOwners')
     farms = Optional("Farms")
+    Orders = Set('Orders')
     
 class Farms(db.Entity):
     farm_id = PrimaryKey(int, auto=True)
     user_id = Optional(Users)
     farm_name = Optional(str, nullable=True)
-    farm_address = Optional(str, nullable=True)
-    farm_city = Optional(str, nullable=True)
-    farm_zip = Optional(int, nullable=True)
     farm_phone = Optional(str, nullable=True)
     farm_email = Optional(str, nullable=True)
-    farm_location_id = Optional(Locations, nullable=True)
+    location_id = Optional(Locations, nullable=True)
     farmOwners = Set('FarmOwners')
     animals = Set('Animals')
     products = Set('Products')
     staffs = Set('Staffs')
+    Orders = Set('Orders')
     
 
 class Customers(db.Entity):
     customers_id = PrimaryKey(int, auto=True)
     user_id = Required(Users)
     
-
 class FarmOwners(db.Entity):
     farmOwners_id = PrimaryKey(int, auto=True)
     user_id = Required(Users)
@@ -70,39 +67,55 @@ class Products(db.Entity):
     product_name = Required(str)
     farm_id = Required(Farms)
     product_price = Required(float)
-    makefrom = Required(str) #เชื่อมFarmOwners ไหม
-    status = Required(str)
-    exportations = Set('Exportations')
+    product_detail = Required(str)
+    product_status = Required(str)
+    animal_id = Optional("Animals")
+    quantity = Required(int)
+    product_image = Required(bytes)
+    Orders = Set('Orders')
    
-class Exportations(db.Entity):
-    export_id = PrimaryKey(int, auto=True)
-    product_code = Required(Products)
-    export_date = Required(datetime)
-    
+class Animal_Types(db.Entity):
+    type_id = PrimaryKey(int, auto=True)
+    type_name = Required(str)
+    animals = Set('Animals')
+
 class Animals(db.Entity):
     animal_code = PrimaryKey(int, auto=True)
     farm_id = Required(Farms)
-    animal_type = Required(str)
-    #เพิ่มรูปภาพ
+    type_id = Required("Animal_Types")
+    animal_detail = Required(str)
+    animal_image = Required(bytes)
+    product_code = Optional(Products)
 
 class Jobs(db.Entity):
     job_id = PrimaryKey(int, auto=True)
     job_title = Required(str)
-    min_salary = Required(float)
-    max_salary = Required(float)
-    staffs = Set('Staffs', reverse='job_id')
+    job_detail = Required(str)
+    min_salary = Required(int)
+    max_salary = Required(int)
+    staffs = Set('Staffs')
 
 class Staffs(db.Entity):
     staff_id = PrimaryKey(int, auto=True)
-    job_id = Required(Jobs, reverse='staffs')
+    job_id = Required(Jobs)
     firstName = Required(str)
     lastName = Required(str)
     farm_id = Required(Farms)
     status = Required(str)
-    manager_id = Optional('Staffs', reverse='managed_staffs')
     hire_date = Required(datetime)
     salary = Required(float)
-    managed_staffs = Set('Staffs', reverse='manager_id')
+    staff_email = Required(str)
+    staff_phone = Required(str)
+    staff_gender = Required(str)
+    
+class Orders(db.Entity):
+    order_id = PrimaryKey(int, auto=True)
+    product_code = Required(Products)
+    farm_id = Required(Farms)
+    users_id = Required(Users)
+    order_date = Required(datetime)
+    order_status = Required(str)
+    order_quantity = Required(int)
     
 db.bind(provider='mysql', host='161.246.127.24', user='dbproject', password='db', db='db', port=9031)
 db.generate_mapping(check_tables=True, create_tables=True)  

@@ -2,13 +2,41 @@ from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie, Resp
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from .models import db, Database, Users, Farms, Customers, FarmOwners, Staffs, Animals, Products, Locations, Countries, Regions
-from pony.orm import db_session
+from pony.orm import db_session, get, select,  ObjectNotFound
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from typing import Optional
+
+
+def get_or_create_region(region_name):
+    with db_session:
+        existing_region = Regions.get(region_name=region_name)
+        if existing_region is None:
+            existing_region = Regions(region_name=region_name)
+            db.commit()
+    region_id = existing_region.region_id
+    return region_id
+
+def get_or_create_country(country_name, region_id):
+    with db_session:
+        existing_country = Countries.get(country_name=country_name)
+        if existing_country is None:
+            existing_country = Countries(country_name=country_name, region_id=region_id)
+            db.commit()    
+    country_id = existing_country.country_id
+    return country_id
+
+def get_or_create_location(address, city, zip, country_id):
+    with db_session:
+        existing_location = Locations.get(address=address, city=city, zip=zip, country_id=country_id)
+        if existing_location is None:
+            existing_location = Locations(address=address, city=city, zip=zip, country_id=country_id)
+            db.commit()
+    location_id = existing_location.location_id
+    return location_id
 
 # login
 # อัพเดทคำสั่งสร้างฟังก์ชันตรวจสอบรหัสผ่าน
@@ -111,19 +139,25 @@ def create_app():
                    farm_region: str = Form(None),
                    ):
         with db_session:
+            # ตรวจสอบว่ามี Region อยู่แล้วหรือไม่
+            region = get_or_create_region(region)
+
+            country = get_or_create_country(country, region)
+
+            location = get_or_create_location(address, city, zip, country)
+            
             hashed_password = get_password_hash(password)
             
-            regions = Regions(region_name=region)
-            countries = Countries(region_id = regions, country_name=country)
-            location = Locations(country_id = countries, address=address, city=city, zip=zip)
             user = Users(username=username, password=hashed_password, role=role, firstName=firstname, lastName=lastname,
-                        email=email, phone=phone, gender=gender, location_id=location)
+             email=email, phone=phone, gender=gender, location_id=location)
+            
             if(role == "FarmOwner"):
-                regionsF = Regions(region_name=farm_region)
-                countryF = Countries(region_id=regionsF ,country_name=farm_country)
-                locationF = Locations(address=farm_address, city=farm_city, zip=farm_zip, country_id=countryF)
-                farm = Farms(farm_name=farm_name, farm_address=farm_address, farm_city=farm_city, farm_zip=farm_zip, farm_phone=farm_phone, farm_email=farm_email, farm_location_id=locationF, user_id=user)
-                framOwners = FarmOwners(user_id=user, farm_id=farm)
+                farm_region = get_or_create_region(farm_region)
+                farm_country = get_or_create_country(farm_country, farm_region)
+                farm_location = get_or_create_location(farm_address, farm_city, farm_zip, farm_country)
+                
+                farm = Farms(farm_name=farm_name, farm_phone=farm_phone, farm_email=farm_email, location_id=farm_location, user_id=user)
+                farmOwners = FarmOwners(user_id=user, farm_id=farm)
                 
             elif(role == "Customer"):
                 customer = Customers(user_id=user)
