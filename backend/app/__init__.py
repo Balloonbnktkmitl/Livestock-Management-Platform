@@ -60,8 +60,16 @@ def get_user_info(access_token: str):
         # ในกรณีนี้คุณสามารถใช้ข้อมูลจาก payload เพื่อดึงข้อมูลผู้ใช้งานจากฐานข้อมูล
         # สมมติว่าคุณมีโมเดล User ในการเก็บข้อมูลผู้ใช้
         user = Users.get(username=payload.get("sub"))  # สมมติว่า "sub" เก็บ username ใน Token
+        print("get_user_info: ", user)
         if user:
-            return user.to_dict()  # สมมติว่ามีฟังก์ชัน to_dict() เพื่อแปลงข้อมูลผู้ใช้ให้อยู่ในรูปแบบ JSON
+            location_info = user.location_id
+            countries_info = location_info.country_id
+            region_info = countries_info.region_id
+            user_info = user.to_dict()
+            user_info["location"] = location_info
+            user_info["country"] = countries_info
+            user_info["region"] = region_info
+            return user_info
         else:
             return None
     except jwt.ExpiredSignatureError:
@@ -198,6 +206,7 @@ def create_app():
     
     @app.get("/user-profile", response_class=HTMLResponse)
     async def user_profile(request: Request):
+        print("GET /user-profile: ", request)
         # ตรวจสอบค่า request เพื่อให้แน่ใจว่ามีคุกกี้และค่า "access_token" อยู่
         if "access_token" in request.cookies:
             access_token = request.cookies.get("access_token")
