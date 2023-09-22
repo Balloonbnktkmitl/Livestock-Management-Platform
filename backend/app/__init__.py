@@ -198,9 +198,9 @@ def create_app():
             role = "Expired"
         
         if role == "FarmOwner":
-            return frontend.TemplateResponse('farm_owner_dashboard.html', {'request': request})
+            return frontend.TemplateResponse('Home_farm.html', {'request': request})
         elif role == "Customer":
-            return frontend.TemplateResponse('customer_dashboard.html', {'request': request})
+            return frontend.TemplateResponse('Home_customer.html', {'request': request})
         else:
             raise HTTPException(status_code=403, detail="Access Forbidden")
     
