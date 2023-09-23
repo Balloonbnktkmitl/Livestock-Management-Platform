@@ -34,8 +34,6 @@ class Users(db.Entity):
     email = Required(str)
     role = Required(str)
     location_id = Required(Locations)
-    customers = Optional('Customers')
-    farmOwners = Optional('FarmOwners')
     farms = Optional("Farms")
     Orders = Set('Orders')
     
@@ -46,22 +44,11 @@ class Farms(db.Entity):
     farm_phone = Optional(str, nullable=True)
     farm_email = Optional(str, nullable=True)
     location_id = Optional(Locations, nullable=True)
-    farmOwners = Set('FarmOwners')
     animals = Set('Animals')
     products = Set('Products')
     staffs = Set('Staffs')
     Orders = Set('Orders')
     
-
-class Customers(db.Entity):
-    customers_id = PrimaryKey(int, auto=True)
-    user_id = Required(Users)
-    
-class FarmOwners(db.Entity):
-    farmOwners_id = PrimaryKey(int, auto=True)
-    user_id = Required(Users)
-    farm_id = Required(Farms)
-
 class Products(db.Entity):
     product_code = PrimaryKey(int, auto=True)
     product_name = Required(str)
@@ -91,8 +78,8 @@ class Jobs(db.Entity):
     job_id = PrimaryKey(int, auto=True)
     job_title = Required(str)
     job_detail = Required(str)
-    min_salary = Required(int)
-    max_salary = Required(int)
+    min_salary = Required(float)
+    max_salary = Required(float)
     staffs = Set('Staffs')
 
 class Staffs(db.Entity):

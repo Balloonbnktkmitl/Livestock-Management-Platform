@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from .models import db, Database, Users, Farms, Customers, FarmOwners, Staffs, Animals, Products, Locations, Countries, Regions
+from .models import db, Users, Farms, Staffs, Animals, Products, Locations, Countries, Regions, Orders, Animal_Types, Products
 from pony.orm import db_session, get, select,  ObjectNotFound
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -60,7 +60,9 @@ def get_user_info(access_token: str):
         # ในกรณีนี้คุณสามารถใช้ข้อมูลจาก payload เพื่อดึงข้อมูลผู้ใช้งานจากฐานข้อมูล
         # สมมติว่าคุณมีโมเดล User ในการเก็บข้อมูลผู้ใช้
         user = Users.get(username=payload.get("sub"))  # สมมติว่า "sub" เก็บ username ใน Token
-        print("get_user_info: ", user)
+        user_ID = user.user_id
+        if user.role == "FarmOwner":
+            farm = get_farm_info(access_token)
         if user:
             location_info = user.location_id
             countries_info = location_info.country_id
@@ -69,6 +71,8 @@ def get_user_info(access_token: str):
             user_info["location"] = location_info
             user_info["country"] = countries_info
             user_info["region"] = region_info
+            if user.role == "FarmOwner":
+                user_info["farm"] = farm
             return user_info
         else:
             return None
@@ -77,6 +81,34 @@ def get_user_info(access_token: str):
     except jwt.JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
     
+def get_farm_info(access_token: str):
+    try:
+        # ทำการตรวจสอบความถูกต้องของ Access Token
+        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+        # ในกรณีนี้คุณสามารถใช้ข้อมูลจาก payload เพื่อดึงข้อมูลผู้ใช้งานจากฐานข้อมูล
+        # สมมติว่าคุณมีโมเดล User ในการเก็บข้อมูลผู้ใช้
+        user = Users.get(username=payload.get("sub"))  # สมมติว่า "sub" เก็บ username ใน Token
+        user_ID = user.user_id
+        farm = Farms.get(user_id=user_ID)
+        farm_ID = farm.farm_id
+        if farm:
+            location_info = farm.location_id
+            countries_info = location_info.country_id
+            region_info = countries_info.region_id
+            # animal_info = select(animal for animal in Animals if animal.farm_id == farm_ID)[:]
+            # animal_type = animal_info.animal_type_id
+            farm_info = farm.to_dict()
+            farm_info["location"] = location_info
+            farm_info["country"] = countries_info
+            farm_info["region"] = region_info
+            return farm_info
+        else:
+            return None
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+       
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
     if expires_delta:
@@ -167,10 +199,6 @@ def create_app():
                 farm_location, farm_country = get_or_create_location(farm_address, farm_city, farm_zip, farm_country)
                 
                 farm = Farms(farm_name=farm_name, farm_phone=farm_phone, farm_email=farm_email, location_id=farm_location, user_id=user)
-                farmOwners = FarmOwners(user_id=user, farm_id=farm)
-                
-            elif(role == "Customer"):
-                customer = Customers(user_id=user)
                 
             db.commit()
 
