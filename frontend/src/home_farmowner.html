@@ -442,6 +442,48 @@ a:hover{
   text-align: center;
 }
 
+/* ไม่มีสินค้า */
+.profile .product_none {
+  position: absolute;
+  top: 800px;
+  left: 477px;
+  width: 894px;
+  height: 550px;
+  visibility: hidden;
+}
+
+.profile .no {
+  position: absolute;
+  width: 258px;
+  top: 35px;
+  left: 0;
+  font-family: "Manrope-SemiBold", Helvetica;
+  font-weight: 600;
+  color: #2b3b52;
+  font-size: 16px;
+  letter-spacing: 0;
+  line-height: normal;
+  text-align: center;
+}
+
+.ellipse {
+  position: absolute;
+  width: 450px;
+  height: 450px;
+  top: 50px;
+  left: 250px;
+  background-color: #f3f3f3;
+  border-radius: 239.5px;
+}
+
+.searching {
+    position: absolute;
+  width: 225px;
+  height: 224px;
+  top: 110px;
+  left: 110px;
+  object-fit: cover;
+}
     </style>
   </head>
   <body>
@@ -511,9 +553,9 @@ a:hover{
                 </div>
 
                 <!-- head -->
-                <div class="head">PRODUCT</div>
+                <div class="head">PRODUCT</div>    
 
-            <!-- product box-->
+            <!-- product box อันนี้คือมีสินค้า-->
             <!-- แบ่งคอลัมให้แล้ว 3 คอลลัม แถวก็ขึ้นอยู่กับว่ามันจัดได้กี่แถว กรอบจะเก็บได้เป็น 2x3 ที่ล้นก็มีแถบให้เลื่อนลงได้-->
             <div class="product_section">
 
@@ -533,6 +575,13 @@ a:hover{
                     </div>
                 </div>
             </div>
+
+            <!-- อันนี้คือ ยังไม่มีสินค้า ใส่ visibility: hidden; ในcss อยู่จะได้ปิดการมองเห็น-->
+            <div class="product_none">
+                <div class="no">There are no product</div>
+                <div class="ellipse">
+                    <img class="searching" src="img/searching 1.png" />
+                </div>
         </div>
     </div>
   </body>
