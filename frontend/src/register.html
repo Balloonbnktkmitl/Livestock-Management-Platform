@@ -113,8 +113,20 @@
                                 <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" name="country">
                             </div>
                             <div class="mb-[1px]">
-                                <label class="block mb-2 font-medium">Region</label>
-                                <input type="text" class="bg-gray-200 rounded-full w-full py-2 px-4" name="region">
+                                <label for="region" class="font-medium mb-2">Region</label>
+                                <div class="relative">
+                                    <select
+                                        class="border-solid bg-gray-200 rounded-full py-2 px-4 w-full" name="region" id="region">
+                                        <option>--select a Region--</option>
+                                        <option value="Asia">Asia</option>
+                                        <option value="Europe">Europe</option>
+                                        <option value="North America">North America</option>
+                                        <option value="South America">South America</option>
+                                        <option value="Africa">Africa</option>
+                                        <option value="Australia">Australia</option>
+                                         <option value="Antarctica">Antarctica</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="mb-[1px]">
                                 <label class="block mb-2 font-medium">Zip</label>
@@ -170,8 +182,20 @@
                                 <input type="text" name="farm_country" class="bg-gray-200 rounded-full w-full py-2 px-4">
                             </div>
                             <div class="mb-[1px]">
-                                <label class="block mb-2 font-medium">Farm_Region</label>
-                                <input type="text" name="farm_region" class="bg-gray-200 rounded-full w-full py-2 px-4">
+                                <label for="region" class="font-medium mb-2">Farm_Region</label>
+                                <div class="relative">
+                                    <select
+                                        class="border-solid bg-gray-200 rounded-full py-2 px-4 w-full" name="farm_region" id="farm_region">
+                                        <option>--select a Region--</option>
+                                        <option value="Asia">Asia</option>
+                                        <option value="Europe">Europe</option>
+                                        <option value="North America">North America</option>
+                                        <option value="South America">South America</option>
+                                        <option value="Africa">Africa</option>
+                                        <option value="Australia">Australia</option>
+                                         <option value="Antarctica">Antarctica</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="mb-[1px]">
                                 <label class="block mb-2 font-medium">Farm_zip</label>
@@ -217,12 +241,24 @@
 
     <script>
         var currentPage = 1;
+        var firstnameInput = document.querySelector("input[name='firstname']");
+        var lastnameInput = document.querySelector("input[name='lastname']");
+        var addressInput = document.querySelector("input[name='address']");
+        var cityInput = document.querySelector("input[name='city']");
+        var countryInput = document.querySelector("input[name='country']");
+        var regionInput = document.getElementById("region");
         var emailInput = document.querySelector("input[name='email']");
         var phoneInput = document.querySelector("input[name='phone']");
         var zipInput = document.querySelector("input[name='zip']");
+        var farm_name = document.querySelector("input[name='farm_name']");
+        var farm_address = document.querySelector("input[name='farm_address']");
+        var farm_city = document.querySelector("input[name='farm_city']");
+        var farm_country = document.querySelector("input[name='farm_country']");
+        var farm_region = document.getElementById("farm_region");
         var farm_emailInput = document.querySelector("input[name='farm_email']");
         var farm_phoneInput = document.querySelector("input[name='farm_phone']");
         var farm_zipInput = document.querySelector("input[name='farm_zip']");
+        var genderSelect = document.getElementById("gender")
         var roleSelect = document.getElementById("role");
         var page1Div = document.getElementById("page-1");
         var page2Div = document.getElementById("page-2");
@@ -233,6 +269,9 @@
         function checkEmail(email) {
 
             var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+            function capitalizeFirstLetter(value) {
+                return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+            }
 
             if (emailPattern.test(email)) {
                 return true;
@@ -246,7 +285,6 @@
                 formPages[currentPage - 2].classList.add("hidden");
                 currentPage++;
                 if (currentPage <= formPages.length) {
-                    alert(currentPage)
                     formPages[currentPage - 1].classList.remove("hidden");
                 }
             }
@@ -256,7 +294,7 @@
                     formPages[currentPage - 2].classList.add("hidden");
                     formPages[currentPage - 1].classList.remove("hidden");
                 }
-        }
+            }
         }
         
         function goBack() {
@@ -294,6 +332,11 @@
                     });
 
             } else if (currentPage === 2) {
+                if(!firstnameInput.value.trim() || !lastnameInput.value.trim() || !addressInput.value.trim() 
+                || !cityInput.value.trim() || !countryInput.value.trim() || regionInput.value === "null" || roleSelect.value === "null" || genderSelect.value === "null"){
+                    alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+                    return;
+                }
                 // ตรวจสอบค่าของอีเมลและเบอร์โทรศัพท์
                 if (checkEmail(emailInput.value) === false || !emailInput.value.includes("@")) {
                     alert("กรุณากรอกอีเมลที่ถูกต้อง");
@@ -315,6 +358,11 @@
                 navigateNextPage();
 
             } else if(currentPage === 3){
+                if(!farm_name.value.trim() || !farm_emailInput.value.trim() || !farm_phoneInput.value.trim() 
+                || !farm_address.value.trim() || !farm_city.value.trim() || !farm_country.value.trim() || farm_region.value === "null" || !farm_zipInput.value.trim()){
+                    alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+                    return;
+                }
                 if (checkEmail(farm_emailInput.value) === false || !emailInput.value.includes("@")) {
                     alert("กรุณากรอกอีเมลที่ถูกต้อง2");
                     return; // ไม่ไปหน้าถัดไปถ้าข้อมูลไม่ถูกต้อง

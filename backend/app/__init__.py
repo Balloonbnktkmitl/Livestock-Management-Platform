@@ -184,9 +184,9 @@ def create_app():
             # ตรวจสอบว่ามี Region อยู่แล้วหรือไม่
             region = get_or_create_region(region)
 
-            country, region = get_or_create_country(country, region)
+            country, region = get_or_create_country(country.capitalize(), region)
 
-            location, country = get_or_create_location(address, city, zip, country)
+            location, country = get_or_create_location(address, city.capitalize(), zip, country)
             
             hashed_password = get_password_hash(password)
             
@@ -195,8 +195,8 @@ def create_app():
             
             if(role == "FarmOwner"):
                 farm_region = get_or_create_region(farm_region)
-                farm_country, farm_region = get_or_create_country(farm_country, farm_region)
-                farm_location, farm_country = get_or_create_location(farm_address, farm_city, farm_zip, farm_country)
+                farm_country, farm_region = get_or_create_country(farm_country.capitalize(), farm_region)
+                farm_location, farm_country = get_or_create_location(farm_address, farm_city.capitalize(), farm_zip, farm_country)
                 
                 farm = Farms(farm_name=farm_name, farm_phone=farm_phone, farm_email=farm_email, location_id=farm_location, user_id=user)
                 
