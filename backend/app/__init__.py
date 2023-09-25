@@ -210,6 +210,7 @@ def create_app():
     
    
     @app.post("/dashboard", response_class=HTMLResponse)
+    @db_session
     def post_dashboard(request: Request):
         jwt_token = request.cookies.get("jwt_token")
         access_token = request.cookies.get("access_token")
