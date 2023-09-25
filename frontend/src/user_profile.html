@@ -1,14 +1,13 @@
-<!DOCTYPE html>
 <html>
-<head>
-    <title>User Profile</title>
-</head>
-<body>
-    <h1>User Profile</h1>
-    <p>Username: {{ user_info.username }}</p>
-    <p>Email: {{ user_info.email }}</p>
-    <p>Email: {{ user_info.location.address}}</p>
-    <p>Email: {{ user_info.country.country_name}}</p>
-    <!-- เพิ่มข้อมูลอื่น ๆ ตามต้องการ -->
-</body>
-</html>
+    <head>
+        <title>My Web Page</title>
+    </head>
+    <body>
+        <h1>Welcome to my web page!</h1>
+        <p>{{user_info.username}}</p>
+        <p>{{user_info.email}}</p>
+        <p>{{user_info.location.address}}</p>
+        <p>{{user_info.farm.farm_name}}</p>
+        <p>{{user_info.farm.location.farm_address}}</p>
+    </body>
+    </html>

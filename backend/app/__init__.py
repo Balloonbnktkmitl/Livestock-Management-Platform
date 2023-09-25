@@ -53,6 +53,7 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
         return pwd_context.hash(password)
     
+@db_session    
 def get_user_info(access_token: str):
     try:
         # ทำการตรวจสอบความถูกต้องของ Access Token
@@ -60,9 +61,9 @@ def get_user_info(access_token: str):
         # ในกรณีนี้คุณสามารถใช้ข้อมูลจาก payload เพื่อดึงข้อมูลผู้ใช้งานจากฐานข้อมูล
         # สมมติว่าคุณมีโมเดล User ในการเก็บข้อมูลผู้ใช้
         user = Users.get(username=payload.get("sub"))  # สมมติว่า "sub" เก็บ username ใน Token
-        user_ID = user.user_id
+        user_ID = user.user_ID
         if user.role == "FarmOwner":
-            farm = get_farm_info(access_token)
+            farm = get_farm_info(user_ID)
         if user:
             location_info = user.location_id
             countries_info = location_info.country_id
@@ -81,14 +82,8 @@ def get_user_info(access_token: str):
     except jwt.JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
     
-def get_farm_info(access_token: str):
+def get_farm_info(user_ID : int):
     try:
-        # ทำการตรวจสอบความถูกต้องของ Access Token
-        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
-        # ในกรณีนี้คุณสามารถใช้ข้อมูลจาก payload เพื่อดึงข้อมูลผู้ใช้งานจากฐานข้อมูล
-        # สมมติว่าคุณมีโมเดล User ในการเก็บข้อมูลผู้ใช้
-        user = Users.get(username=payload.get("sub"))  # สมมติว่า "sub" เก็บ username ใน Token
-        user_ID = user.user_id
         farm = Farms.get(user_id=user_ID)
         farm_ID = farm.farm_id
         if farm:
@@ -217,24 +212,25 @@ def create_app():
     @app.post("/dashboard", response_class=HTMLResponse)
     def post_dashboard(request: Request):
         jwt_token = request.cookies.get("jwt_token")
-
+        access_token = request.cookies.get("access_token")
         try:
             payload = jwt.decode(jwt_token, SECRET_KEY, algorithms=[ALGORITHM])
             role = payload.get("role", "Unknown")
         except jwt.ExpiredSignatureError:
             # Handle token expiration
             role = "Expired"
-        
+
+        user_info = get_user_info(access_token)
         if role == "FarmOwner":
-            return frontend.TemplateResponse('Home_farm.html', {'request': request})
+            return frontend.TemplateResponse('home_farmowner.html', {'request': request, "user_info": user_info})
         elif role == "Customer":
             return frontend.TemplateResponse('Home_customer.html', {'request': request})
         else:
             raise HTTPException(status_code=403, detail="Access Forbidden")
+        
     
     @app.get("/user-profile", response_class=HTMLResponse)
     async def user_profile(request: Request):
-        print("GET /user-profile: ", request)
         # ตรวจสอบค่า request เพื่อให้แน่ใจว่ามีคุกกี้และค่า "access_token" อยู่
         if "access_token" in request.cookies:
             access_token = request.cookies.get("access_token")

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <link rel="stylesheet" href="globals.css" />
-    <link rel="stylesheet" href="style.css" />
+<head>
+    <link rel="stylesheet" href="../globals.css" />
+    <link rel="stylesheet" href="../style.css" />
     <style>
 
 button{
@@ -492,15 +492,15 @@ a:hover{
             <div class="top">
 
                 <!-- farm header -->
-                    <img class="img_header" src="img/winery home 1.png" />
+                    <img class="img_header" src="/frontend/src/img/winery home 1.png" />
                     <div class="rectangle"></div>
-                    <img class="farm_logo" src="img/cool pig logo 1.png" />
+                    <img class="farm_logo" src="/frontend/src/img/cool pig logo 1.png" />
 
                     <!-- farm name -->
-                    <div class="farm_name">Piggy Farm</div>
+                    <div class="farm_name">{{user_info.farm.farm_name}}</div>
 
                     <!-- farm owner name -->
-                    <p class="farm_owner">farm owner : สมหยิก หยิกพ่อ</p>
+                    <p class="farm_owner">farm owner : {{user_info.firstName}} {{user_info.lastName}}</p>
 
                     <!-- manage farm button -->
                     <div class="manage_button">
@@ -514,7 +514,7 @@ a:hover{
                         <!-- logo -->
                         <div class="website_logo">
                             <div class="logo_text">Farm Site</div>
-                            <img class="logo" src="img/farm.png" />
+                            <img class="logo" src="/frontend/src/img/farm.png" />
                         </div>
 
                         <!-- menu left -->
@@ -523,10 +523,10 @@ a:hover{
                         <a href="#" class="farm_menu">Farms</a>
 
                         <!-- menu right -->
-                        <a href="#" class="logout_menu">log out</a>
-                        <img class="line" src="svg/line-1.svg" />
-                        <a href="#">
-                            <img class="profile-user" src="img/profile-user.png" />
+                        <a href="/logout" class="logout_menu">log out</a>
+                        <img class="line" src="/frontend/src/svg/line-1.svg" />
+                        <a href="/user-profile">
+                            <img class="profile-user" src="/frontend/src/img/profile-user.png" />
                         </a>
                     </div>
                 </div>
@@ -563,7 +563,7 @@ a:hover{
                 <div class="product_box">
                     <div class="product_img">
                         <!-- ใส่รูปตรงนี้ -->
-                        <img class="img" src="img/meat.png" />
+                        <img class="img" src="/frontend/src/img/meat.png" />
                     </div>
                     <div class="product_information">
                         <!-- ใส่ชื่อสินค้า -->
@@ -580,7 +580,7 @@ a:hover{
             <div class="product_none">
                 <div class="no">There are no product</div>
                 <div class="ellipse">
-                    <img class="searching" src="img/searching 1.png" />
+                    <img class="searching" src="/frontend/src/img/searching 1.png" />
                 </div>
         </div>
     </div>
