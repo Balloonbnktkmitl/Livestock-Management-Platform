@@ -11,7 +11,7 @@ from passlib.context import CryptContext
 from typing import Optional
 from io import BytesIO
 
-
+    
 def get_product_image_by_code(product: int):
     with db_session:
         product = Products.get(product_code=product)
@@ -114,7 +114,7 @@ def get_farm_info(user_ID : int):
         raise HTTPException(status_code=401, detail="Token has expired")
     except jwt.JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
-       
+
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
     if expires_delta:
@@ -242,6 +242,7 @@ def create_app():
 
         user_info = get_user_info(access_token)
         products = get_all_products()
+        
         if role == "FarmOwner":
             return frontend.TemplateResponse('home_farmowner.html', {'request': request, "user_info": user_info, 'products': products})
         elif role == "Customer":
@@ -261,8 +262,8 @@ def create_app():
             # Handle token expiration
             role = "Expired"
             
-        products = get_all_products()
         user_info = get_user_info(access_token)
+        products = get_all_products()
         if role == "FarmOwner":
             return frontend.TemplateResponse('home_farmowner.html', {'request': request, "user_info": user_info, 'products': products})
         elif role == "Customer":
@@ -281,7 +282,7 @@ def create_app():
         else:
             raise HTTPException(status_code=401, detail="User not authenticated")
 
-        return frontend.TemplateResponse("user_profile.html", {"request": request, "user_info": user_info})
+        return frontend.TemplateResponse("profile_edit.html", {"request": request, "user_info": user_info})
     
     @app.get("/get-product-image/{product_id}", response_class=StreamingResponse)
     async def get_product_image(product_id: int):
