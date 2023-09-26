@@ -48,7 +48,16 @@ class Farms(db.Entity):
     products = Set('Products')
     staffs = Set('Staffs')
     Orders = Set('Orders')
-    
+
+class Animals(db.Entity):
+    animal_code = PrimaryKey(int, auto=True)
+    farm_id = Required(Farms)
+    type_id = Required("Animal_Types")
+    animal_detail = Required(str)
+    animal_image = Required(bytes)
+    products = Set("Products", reverse="animal_code")
+
+       
 class Products(db.Entity):
     product_code = PrimaryKey(int, auto=True)
     product_name = Required(str)
@@ -56,7 +65,7 @@ class Products(db.Entity):
     product_price = Required(float)
     product_detail = Required(str)
     product_status = Required(str)
-    animal_id = Optional("Animals")
+    animal_code = Optional("Animals", reverse="products")
     quantity = Required(int)
     product_image = Required(bytes)
     Orders = Set('Orders')
@@ -65,14 +74,6 @@ class Animal_Types(db.Entity):
     type_id = PrimaryKey(int, auto=True)
     type_name = Required(str)
     animals = Set('Animals')
-
-class Animals(db.Entity):
-    animal_code = PrimaryKey(int, auto=True)
-    farm_id = Required(Farms)
-    type_id = Required("Animal_Types")
-    animal_detail = Required(str)
-    animal_image = Required(bytes)
-    product_code = Optional(Products)
 
 class Jobs(db.Entity):
     job_id = PrimaryKey(int, auto=True)

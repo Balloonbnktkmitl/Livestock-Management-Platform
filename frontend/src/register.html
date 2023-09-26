@@ -315,6 +315,16 @@
 
             if(currentPage === 1){
                 var usernameInput = document.querySelector("input[name='username']");
+                var passwordInput = document.querySelector("input[name='password']");
+
+                if(!usernameInput.value.trim() || !passwordInput.value.trim()){
+                    alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+                    return;
+                }
+                if(passwordInput.value.length < 8){
+                    alert("กรุณากรอกรหัสผ่าน 8 ตัวขึ้นไป");
+                    return;
+                }
 
                 fetch(`/check-username/${usernameInput.value}`)
                     .then(response => response.json())

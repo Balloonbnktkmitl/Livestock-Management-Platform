@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie, Response
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 from .models import db, Users, Farms, Staffs, Animals, Products, Locations, Countries, Regions, Orders, Animal_Types, Products
 from pony.orm import db_session, get, select,  ObjectNotFound
@@ -9,8 +9,19 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from typing import Optional
+from io import BytesIO
 
 
+def get_product_image_by_code(product: int):
+    with db_session:
+        product = Products.get(product_code=product)
+        return product.product_image
+
+@db_session
+def get_all_products():
+    products = Products.select()[:]
+    return products
+    
 def get_or_create_region(region_name):
     with db_session:
         existing_region = Regions.get(region_name=region_name)
@@ -141,12 +152,30 @@ def create_app():
             
             encoded_jwt = jwt.encode({"sub": user.username, "role": user.role}, SECRET_KEY, algorithm=ALGORITHM)
             
-            response = RedirectResponse(url="/dashboard")
+            response = RedirectResponse(url="/home")
             response.set_cookie(key="access_token", value=access_token, httponly=True)
             response.set_cookie(key="user_role", value=user.role, httponly=True)
             response.set_cookie(key="jwt_token", value=encoded_jwt, httponly=True)
             return response
-
+        
+    @app.get('/check-uesrnameorpassword/{username,password}', response_class=HTMLResponse)
+    async def check_uesrnameorpassword(request: Request, username: str = Form(...), password: str = Form(...)):
+        with db_session:
+            user = Users.get(username=username)
+            if not user or not verify_password(password, user.password):
+                return {"exists": True}
+            else:
+                return {"exists": False}
+    
+    @app.get("/check-username/{username}", response_model=dict)
+    async def check_username(username: str):
+        with db_session:
+            user = Users.get(username=username)
+            if user:
+                return {"exists": True}
+            else:
+                return {"exists": False}
+            
     @app.get('/register', response_class=HTMLResponse)
     def register_users(request: Request):
         return frontend.TemplateResponse('register.html', {'request': request})
@@ -198,20 +227,31 @@ def create_app():
             db.commit()
 
             raise HTTPException(status_code=303, detail="See Other", headers={"Location": "/"})
-
-    @app.get("/check-username/{username}", response_model=dict)
-    async def check_username(username: str):
-        with db_session:
-            user = Users.get(username=username)
-            if user:
-                return {"exists": True}
-            else:
-                return {"exists": False}
     
-   
-    @app.post("/dashboard", response_class=HTMLResponse)
+    @app.post("/home", response_class=HTMLResponse)
     @db_session
     def post_dashboard(request: Request):
+        jwt_token = request.cookies.get("jwt_token")
+        access_token = request.cookies.get("access_token")
+        try:
+            payload = jwt.decode(jwt_token, SECRET_KEY, algorithms=[ALGORITHM])
+            role = payload.get("role", "Unknown")
+        except jwt.ExpiredSignatureError:
+            # Handle token expiration
+            role = "Expired"
+
+        user_info = get_user_info(access_token)
+        products = get_all_products()
+        if role == "FarmOwner":
+            return frontend.TemplateResponse('home_farmowner.html', {'request': request, "user_info": user_info, 'products': products})
+        elif role == "Customer":
+            return frontend.TemplateResponse('Home_customer.html', {'request': request})
+        else:
+            raise HTTPException(status_code=403, detail="Access Forbidden")
+        
+    @app.get("/home", response_class=HTMLResponse)
+    @db_session
+    def get_dashboard(request: Request):
         jwt_token = request.cookies.get("jwt_token")
         access_token = request.cookies.get("access_token")
         try:
@@ -227,8 +267,7 @@ def create_app():
         elif role == "Customer":
             return frontend.TemplateResponse('Home_customer.html', {'request': request})
         else:
-            raise HTTPException(status_code=403, detail="Access Forbidden")
-        
+            raise HTTPException(status_code=403, detail="Access Forbidden")    
     
     @app.get("/user-profile", response_class=HTMLResponse)
     async def user_profile(request: Request):
@@ -242,6 +281,16 @@ def create_app():
             raise HTTPException(status_code=401, detail="User not authenticated")
 
         return frontend.TemplateResponse("user_profile.html", {"request": request, "user_info": user_info})
+    
+    @app.get("/get-product-image/{product_id}", response_class=StreamingResponse)
+    async def get_product_image(product_id: int):
+        # ดึงข้อมูลรูปภาพจากฐานข้อมูล (ในกรณีของคุณ)
+        product_image = get_product_image_by_code(product_id)
+        if product_image is None:
+            raise HTTPException(status_code=404, detail="Product image not found")
+        
+        # สร้าง FileResponse จากข้อมูลรูปภาพและระบุ media_type ถูกต้อง
+        return StreamingResponse(BytesIO(product_image), media_type="image/jpeg")
     
     @app.get("/logout")
     async def logout(response: Response):
