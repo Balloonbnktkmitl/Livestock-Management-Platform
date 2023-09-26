@@ -208,10 +208,6 @@ a:hover{
   border-radius: 33.5px;
 }
 
-.delete_button:hover {
-    background-color: #ffa43b;
-}
-
 .delete_button_font {
   position: absolute;
   width: 195px;
@@ -226,8 +222,10 @@ a:hover{
   letter-spacing: 0;
   line-height: normal;
 }
+/* -------------------------- */
 
 /* profile page */
+
 .profile_head{
     top: 150px;
     left: 500px;
@@ -313,10 +311,6 @@ a:hover{
   border-radius: 33.5px;
 }
 
-.edit_profile_button:hover {
-    background-color: #ffa43b;
-}
-
 .edit_profile_button_font {
   position: absolute;
   width: 150px;
@@ -331,6 +325,64 @@ a:hover{
   letter-spacing: 0;
   line-height: normal;
 }
+
+/* edit password */
+#password{
+  visibility: hidden;
+}
+.password_head{
+    top: 200px;
+    left: 500px;
+    position: absolute;
+    font-family: "Manrope-Bold", Helvetica;
+  font-weight: 700;
+  color: #33576f;
+  font-size: 28px;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.password{
+    top: 270px;
+    left: 520px;
+    height: 170px;
+    position: absolute;
+    overflow: auto;
+    display: inline-grid;
+    grid-template-columns: auto;
+    gap: 20px;
+}
+
+/* change password button */
+.change_password_button {    
+  position: absolute;
+  top: 500px;
+  right: 300px;
+  width: 200px;
+  height: 55px;
+  background-color: #fb612f;
+  border-radius: 33.5px;
+}
+
+.change_password_button_font {
+  position: absolute;
+  width: 200px;
+  height: 27px;
+  top: 17px;
+  left: 0;
+  font-family: "Manrope-Bold", Helvetica;
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 20px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+#myorders{
+  visibility: hidden;
+}
+/* -------------------------- */
 
 /* delete account */
 
@@ -410,12 +462,22 @@ a:hover{
   color: #2b3b52;
 }
 
-.cancel:hover {
+button:hover {
     background-color: #ffa43b;
 }
 
-.del:hover {
-    background-color: #ffa43b;
+button{
+  border: none;
+}
+
+.bordered-table {
+  border-collapse: collapse;
+  width: 100%; /* ปรับขนาดตารางตามต้องการ */
+}
+
+.bordered-table th, .bordered-table td {
+  border: 1px solid black; /* เส้นขอบดำ 1 พิกเซล */
+  padding: 8px; /* ระยะห่างของข้อมูลภายในเซลล์ */
 }
 
 </style>
@@ -445,113 +507,169 @@ a:hover{
         </div> 
 
         <!-- ลบ account -->
-        <div class="delete_button">
+        <button class="delete_button">
             <div class="delete_button_font">delete account</div>
-        </div>
+        </button>
     </div>
 
     <!-- menubar -->
     <div class="menubar">
         
-        <!-- menu left -->
-        <a href="#" class="home_menu menu_font">Home</a>
-        <a href="#" class="product_menu menu_font">Products</a>
-        <a href="#" class="farm_menu menu_font">Farms</a>
+      <!-- menu left -->
+      <a href="#" class="home_menu menu_font">Home</a>
+      <a href="#" class="product_menu menu_font">Products</a>
+      <a href="#" class="farm_menu menu_font">Farms</a>
 
-        <!-- logo -->
-        <div class="website_logo">
-            <div class="logo_text menu_font">Farm Site</div>
-            <img class="logo" src="/frontend/src/img/farm.png" />
-        </div>
+      <!-- logo -->
+      <div class="website_logo">
+        <div class="logo_text menu_font">Farm Site</div>
+        <img class="logo" src="/frontend/src/img/farm.png" />
+      </div>
 
-        <!-- menu right -->
-        <a href="/logout" class="logout_menu menu_font">log out</a>
-        <img class="line" src="/frontend/src/svg/line-1.svg" />
-        <a href="/user-profile">
-            <img class="profile-user-menu" src="/frontend/src/img/profile-user.png" />
-        </a>
+      <!-- menu right -->
+      <a href="/logout" class="logout_menu menu_font">log out</a>
+      <img class="line" src="/frontend/src/svg/line-1.svg" />
+      <a href="/user-profile">
+          <img class="profile-user-menu" src="/frontend/src/img/profile-user.png" />
+      </a>
     </div>
 
     <!-- หน้าขวา -->
-    <div class="profile_head">Profile</div>
+    <div id="profile">
+      <div class="profile_head">Profile</div>
     
-    <!-- ตอนนี้ก็คือ เหมือนแค่โชว์ข้อมูลเช่ยๆ ยังแก้ไม่ได้ <input> <select> เป็น diasble-->
-    <!-- แต่ถ้ากดปุ่ม edit profile <input> <select> ก็จะเอา diasble ออก จะได้แก้ไขได้  -->
-    <div class="profile">
+      <!-- ตอนนี้ก็คือ เหมือนแค่โชว์ข้อมูลเช่ยๆ ยังแก้ไม่ได้ <input> <select> เป็น diasble-->
+      <!-- แต่ถ้ากดปุ่ม edit profile <input> <select> ก็จะเอา diasble ออก จะได้แก้ไขได้  -->
+      <div class="profile">
 
         <div class="box">
-            <div>
-                <div class="head_group_font">First Name</div>
-                <input type="text" value="สมหยอก" class="group group_font" disabled>
-            </div>
-            <div>
-                <div class="head_group_font">Last Name</div>
-                <input type="text" value="ใฟยหอกพ่อ" class="group group_font" disabled>
-            </div>
+          <div>
+            <div class="head_group_font">First Name</div>
+              <input type="text" value="สมหยอก" class="group group_font" disabled>
+          </div>
+          <div>
+            <div class="head_group_font">Last Name</div>
+              <input type="text" value="ใฟยหอกพ่อ" class="group group_font" disabled>
+          </div>
         </div>
 
         <div class="box">
-            <div>
-                <div class="head_group_font">Phone Number</div>
-                <input type="text" value="089-123-4567" class="group group_font" disabled>
-            </div>
-            <div>
-                <div class="head_group_font">Email</div>
-                <input type="text" value="haahah@gmail.com" class="group group_font" disabled>
-            </div>
+          <div>
+            <div class="head_group_font">Phone Number</div>
+              <input type="text" value="089-123-4567" class="group group_font" disabled>
+          </div>
+          <div>
+            <div class="head_group_font">Email</div>
+            <input type="text" value="haahah@gmail.com" class="group group_font" disabled>
+          </div>
         </div>
 
         <div class="box">
-            <div>
-                <div class="head_group_font">role</div>
-                <select class="group group_font" disabled>
-                    <option value="Customer" selected>Customer</option>
-                    <option value="Farm Owner">Farm Owner</option>
-                </select>
-            </div>
-            <div>
-                <div class="head_group_font">gender</div>
-                <select class="group group_font" disabled>
-                    <option value="Female" selected>Female</option>
-                    <option value="Male">Male</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
+          <div>
+            <div class="head_group_font">role</div>
+            <select class="group group_font" disabled>
+              <option value="Customer" selected>Customer</option>
+              <option value="Farm Owner">Farm Owner</option>
+            </select>
+          </div>
+          <div>
+            <div class="head_group_font">gender</div>
+            <select class="group group_font" disabled>
+              <option value="Female" selected>Female</option>
+              <option value="Male">Male</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
         </div>
 
         <div>
-            <div class="head_group_font">Address</div>
-            <input type="text" value="22/11 ฉลองกรุง1 ลาดกระลัง ลาดกระบัง" class="group2 group_font" disabled>
+          <div class="head_group_font">Address</div>
+          <input type="text" value="22/11 ฉลองกรุง1 ลาดกระลัง ลาดกระบัง" class="group2 group_font" disabled>
         </div>
 
         <div class="box">
-            <div>
-                <div class="head_group_font">City</div>
-                <input type="text" value="กรุงเทพ" class="group group_font" disabled>
-            </div>
-            <div>
-                <div class="head_group_font">Country</div>
-                <input type="text" value="ไทย" class="group group_font" disabled>
-            </div>
+          <div>
+            <div class="head_group_font">City</div>
+            <input type="text" value="กรุงเทพ" class="group group_font" disabled>
+          </div>
+          <div>
+            <div class="head_group_font">Country</div>
+            <input type="text" value="ไทย" class="group group_font" disabled>
+          </div>
         </div>
 
         <div class="box">
-            <div>
-                <div class="head_group_font">Region</div>
-                <input type="text" value="เอเชีย" class="group group_font" disabled>
-            </div>
-            <div>
-                <div class="head_group_font">Zip</div>
-                <input type="text" value="12345" class="group group_font" disabled>
-            </div>
+          <div>
+            <div class="head_group_font">Region</div>
+            <select class="group group_font" disabled>
+              <option value="เอเชีย" selected>เอเชีย</option>
+            </select>
+          </div>
+          <div>
+            <div class="head_group_font">Zip</div>
+            <input type="text" value="12345" class="group group_font" disabled>
+          </div>
         </div>
+      </div>
 
-    </div>
-
-    <div class="edit_profile_button">
+      <!-- ปุ่มแก้ไขข้อมูล -->
+      <button class="edit_profile_button">
         <div class="edit_profile_button_font">edit profile</div>
+      </button>
+
     </div>
-    
+
+    <!-- หน้า password -->
+    <div id="password">
+      <div class="password_head">Change Password</div>
+      <div class="password">
+        <div>
+          <div class="head_group_font">Old Password</div>
+          <input type="text" class="group2 group_font">
+        </div>
+        <div>
+          <div class="head_group_font">New Password</div>
+          <input type="text" class="group2 group_font">
+        </div>
+      </div>
+      <!-- ปุ่มแก้ไขข้อมูล -->
+      <button class="change_password_button">
+        <div class="change_password_button_font">change password</div>
+      </button>
+    </div>
+
+    <!-- หน้า my orders -->
+    <div id="myorders">
+      <div class="profile_head">My Orders</div>
+      <div class="profile">
+        <table class="bordered-table">
+          <thead>
+            <tr>
+              <th>order_id</th>
+              <th>product_name</th>
+              <th>farm_name</th>
+              <th>quantity</th> <!-- order_quantity-->
+              <th>cost</th> <!-- price * order_quantity-->
+              <th>order_date</th>
+              <th>order_status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
     <!-- ถ้ากด delete account จะขึ้น (ตอนนี้ visibility : hidden อยู่) -->
     <div class="delete_box">
         <p class="delete_box_text">You are sure to delete account</p>
