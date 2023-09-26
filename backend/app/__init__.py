@@ -260,10 +260,11 @@ def create_app():
         except jwt.ExpiredSignatureError:
             # Handle token expiration
             role = "Expired"
-
+            
+        products = get_all_products()
         user_info = get_user_info(access_token)
         if role == "FarmOwner":
-            return frontend.TemplateResponse('home_farmowner.html', {'request': request, "user_info": user_info})
+            return frontend.TemplateResponse('home_farmowner.html', {'request': request, "user_info": user_info, 'products': products})
         elif role == "Customer":
             return frontend.TemplateResponse('Home_customer.html', {'request': request})
         else:
