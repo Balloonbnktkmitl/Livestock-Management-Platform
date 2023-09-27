@@ -64,13 +64,13 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
         return pwd_context.hash(password)
     
-@db_session    
+@db_session   
 def get_user_info(access_token: str):
     try:
-        # ทำการตรวจสอบความถูกต้องของ Access Token
+            # ทำการตรวจสอบความถูกต้องของ Access Token
         payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
-        # ในกรณีนี้คุณสามารถใช้ข้อมูลจาก payload เพื่อดึงข้อมูลผู้ใช้งานจากฐานข้อมูล
-        # สมมติว่าคุณมีโมเดล User ในการเก็บข้อมูลผู้ใช้
+            # ในกรณีนี้คุณสามารถใช้ข้อมูลจาก payload เพื่อดึงข้อมูลผู้ใช้งานจากฐานข้อมูล
+            # สมมติว่าคุณมีโมเดล User ในการเก็บข้อมูลผู้ใช้
         user = Users.get(username=payload.get("sub"))  # สมมติว่า "sub" เก็บ username ใน Token
         user_ID = user.user_ID
         if user.role == "FarmOwner":
@@ -78,11 +78,11 @@ def get_user_info(access_token: str):
         if user:
             location_info = user.location_id
             countries_info = location_info.country_id
-            region_info = countries_info.region_id
+            regions_info = countries_info.region_id
             user_info = user.to_dict()
+            user_info["region"] = regions_info
             user_info["location"] = location_info
             user_info["country"] = countries_info
-            user_info["region"] = region_info
             if user.role == "FarmOwner":
                 user_info["farm"] = farm
             return user_info
@@ -92,11 +92,11 @@ def get_user_info(access_token: str):
         raise HTTPException(status_code=401, detail="Token has expired")
     except jwt.JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
-    
+        
+@db_session  
 def get_farm_info(user_ID : int):
     try:
         farm = Farms.get(user_id=user_ID)
-        farm_ID = farm.farm_id
         if farm:
             location_info = farm.location_id
             countries_info = location_info.country_id
@@ -120,7 +120,7 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.utcnow() + timedelta(days=1)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -184,10 +184,10 @@ def create_app():
     async def register(request: Request,
                        username: str = Form(...), 
                        password: str = Form(...), 
-                       role: str = Form(...), 
-                   firstname: str = Form(...), 
+                       role: str = Form(...),
+                   firstname: str = Form(...),
                    lastname: str = Form(...), 
-                   email: str = Form(...), 
+                   email: str = Form(...),
                    phone: str = Form(...), 
                    address: str = Form(...), 
                    city: str = Form(...), 
@@ -271,8 +271,11 @@ def create_app():
         else:
             raise HTTPException(status_code=403, detail="Access Forbidden")    
     
+    #แก้ๆๆๆๆๆๆๆ
+
     @app.get("/user-profile", response_class=HTMLResponse)
-    async def user_profile(request: Request):
+    @db_session
+    def user_profile(request: Request):
         # ตรวจสอบค่า request เพื่อให้แน่ใจว่ามีคุกกี้และค่า "access_token" อยู่
         if "access_token" in request.cookies:
             access_token = request.cookies.get("access_token")
@@ -294,6 +297,25 @@ def create_app():
         # สร้าง FileResponse จากข้อมูลรูปภาพและระบุ media_type ถูกต้อง
         return StreamingResponse(BytesIO(product_image), media_type="image/jpeg")
     
+    @app.post("/update_data", response_model=dict)
+    async def update_data(request: Request, fromData: dict):
+        with db_session:
+            user = Users.get(user_ID=fromData["user_id"])
+            region = get_or_create_region(fromData["region"])
+            country,temp = get_or_create_country(fromData["country"], region)
+            location,temp = get_or_create_location(fromData["address"], fromData["city"], fromData["zip"], country)
+            if not user:
+                raise HTTPException(status_code=404, detail="ไม่พบผู้ใช้")
+            user.firstName = fromData["firstname"]
+            user.lastName = fromData["lastname"]
+            user.email = fromData["email"]
+            user.phone = fromData["phone"]
+            user.gender = fromData["gender"]
+            user.location_id = location
+            user.location_id.country_id = country
+            db.commit()
+            return {"message": "อัปเดตข้อมูลผู้ใช้สำเร็จ"}
+            
     @app.get("/logout")
     async def logout(response: Response):
         # ลบคุกกี้ Access Token

@@ -294,6 +294,10 @@
     margin-bottom: 10px;
   }
   
+  #editButton {
+    display: block; /* กำหนดให้ปุ่มแสดงเริ่มต้น */
+  }
+  
   /* edit profile button */
   .edit_profile_button {
     position: absolute;
@@ -319,6 +323,7 @@
     letter-spacing: 0;
     line-height: normal;
   }
+
   
   /* edit password */
   #password{

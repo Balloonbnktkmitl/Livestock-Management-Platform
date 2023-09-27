@@ -2,15 +2,45 @@
 <html>
   <head>
   <link rel="stylesheet" href="/frontend/style/profile_edit.css" />
+  <style>
+  #saveButton {
+    display: none; /* กำหนดให้ปุ่มซ่อนเริ่มต้น */
+  }
+  .save_profile_button {
+    position: absolute;
+    top: 750px;
+    right: 88px;
+    width: 150px;
+    height: 55px;
+    background-color: #fb612f;
+    border-radius: 33.5px;
+  }
+  
+  .save_profile_button_font {
+    position: absolute;
+    width: 150px;
+    height: 27px;
+    top: 17px;
+    left: 0;
+    font-family: "Manrope-Bold", Helvetica;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 20px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+  }
+
+  </style>
   </head>
   <body>
     <!-- แถบข้างหลือง -->
     <div class="yellow_bar">
         <!-- แสดงprofile -->
         <img class="profile-user" src="/frontend/src/img/profile-user.png" />
-        <div class="profile_firstname profile_font">สมหยอก</div>
-        <div class="profile_lastname profile_font">ใหยอกพ่อ</div>
-        <div class="profile_role">role : customer</div>
+        <div class="profile_firstname profile_font">{{user_info.firstName}}</div>
+        <div class="profile_lastname profile_font">{{user_info.lastName}}</div>
+        <div class="profile_role">role : {{user_info.role}}</div>
 
         <!-- กดเพื่อไปหน้าแก้ไขข้อมูลProfile -->
         <div class="edit profile_edit">
@@ -37,7 +67,7 @@
     <div class="menubar">
         
       <!-- menu left -->
-      <a href="#" class="home_menu menu_font">Home</a>
+      <a href="/home" class="home_menu menu_font">Home</a>
       <a href="#" class="product_menu menu_font">Products</a>
       <a href="#" class="farm_menu menu_font">Farms</a>
 
@@ -50,95 +80,112 @@
       <!-- menu right -->
       <a href="/logout" class="logout_menu menu_font">log out</a>
       <img class="line" src="/frontend/src/svg/line-1.svg" />
+      
       <a href="/user-profile">
           <img class="profile-user-menu" src="/frontend/src/img/profile-user.png" />
       </a>
     </div>
 
-    <!-- หน้าขวา -->
-    <div id="profile">
-      <div class="profile_head">Profile</div>
-    
-      <!-- ตอนนี้ก็คือ เหมือนแค่โชว์ข้อมูลเช่ยๆ ยังแก้ไม่ได้ <input> <select> เป็น diasble-->
-      <!-- แต่ถ้ากดปุ่ม edit profile <input> <select> ก็จะเอา diasble ออก จะได้แก้ไขได้  -->
-      <div class="profile">
+    <a href="/user-profile">
+      <!-- หน้าขวา -->
+      <div id="profile">
+        <div class="profile_head">Profile</div>
+    </a>
+      
+      <form id="updateForm">
+        <!-- ตอนนี้ก็คือ เหมือนแค่โชว์ข้อมูลเช่ยๆ ยังแก้ไม่ได้ <input> <select> เป็น diasble-->
+        <!-- แต่ถ้ากดปุ่ม edit profile <input> <select> ก็จะเอา diasble ออก จะได้แก้ไขได้  -->
+        <div class="profile">
 
-        <div class="box">
-          <div>
-            <div class="head_group_font">First Name</div>
-              <input type="text" value="สมหยอก" class="group group_font" disabled>
+          <div class="box">
+            <div>
+              <div class="head_group_font">First Name</div>
+                <input id="firstname" type="text" value="{{user_info.firstName}}" class="group group_font" disabled>
+            </div>
+            <div>
+              <div class="head_group_font">Last Name</div>
+                <input id="lastname" type="text" value="{{user_info.lastName}}" class="group group_font" disabled>
+            </div>
           </div>
+
+          <div class="box">
+            <div>
+              <div class="head_group_font">Phone Number</div>
+                <input id="phone" type="text" value="{{user_info.phone}}" class="group group_font" disabled>
+            </div>
+            <div>
+              <div class="head_group_font">Email</div>
+              <input id="email" type="text" value="{{user_info.email}}" class="group group_font" disabled>
+            </div>
+          </div>
+
+          <div class="box">
+            <div>
+              <div class="head_group_font">role</div>
+              <select class="group group_font" disabled>
+                <option value="{{user_info.role}}" selected>{{user_info.role}}</option>
+              </select>
+            </div>
+            <div>
+              <div class="head_group_font">gender</div>
+              <select id="gender" class="group group_font" disabled>
+                <option value="{{user_info.gender}}" selected>{{user_info.gender}}</option>
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
           <div>
-            <div class="head_group_font">Last Name</div>
-              <input type="text" value="ใฟยหอกพ่อ" class="group group_font" disabled>
+            <div class="head_group_font">Address</div>
+            <input id="address" type="text" value="{{user_info.location.address}}" class="group2 group_font" disabled>
+          </div>
+
+          <div class="box">
+            <div>
+              <div class="head_group_font">City</div>
+              <input id="city" type="text" value="{{user_info.location.city}}" class="group group_font" disabled>
+            </div>
+            <div>
+              <div class="head_group_font">Country</div>
+              <input id="country" type="text" value="{{user_info.country.country_name}}" class="group group_font" disabled>
+            </div>
+          </div>
+
+          <div class="box">
+            <div>
+              <div class="head_group_font">Region</div>
+              <select id="region" class="group group_font" disabled>
+                <option value="{{user_info.region.region_name}}" selected>{{user_info.region.region_name}}</option>
+                <option value="Asia" >Asia</option>
+                <option value="Europe" >Europe</option>
+                <option value="Australia" >Australia</option>
+                <option value="North America" >North America</option>
+                <option value="South America" >South America</option>
+                <option value="Africa" >Africa</option>
+                <option value="Antarctica" >Antarctica</option>
+              </select>
+            </div>
+            <div>
+              <div class="head_group_font">Zip</div>
+              <input id="zip" type="text" value="{{user_info.location.zip}}" class="group group_font" disabled>
+            </div>
           </div>
         </div>
 
-        <div class="box">
-          <div>
-            <div class="head_group_font">Phone Number</div>
-              <input type="text" value="089-123-4567" class="group group_font" disabled>
-          </div>
-          <div>
-            <div class="head_group_font">Email</div>
-            <input type="text" value="haahah@gmail.com" class="group group_font" disabled>
-          </div>
-        </div>
+        <!-- ปุ่มแก้ไขข้อมูล -->
+        <button type="button" id="editButton" class="edit_profile_button">
+          <div class="edit_profile_button_font">edit profile</div>
+        </button>
+        
+        <button type="submit" id="saveButton" class="save_profile_button">
+        <div class="save_profile_button_font">Save</div>
+        </button>
 
-        <div class="box">
-          <div>
-            <div class="head_group_font">role</div>
-            <select class="group group_font" disabled>
-              <option value="Customer" selected>Customer</option>
-              <option value="Farm Owner">Farm Owner</option>
-            </select>
-          </div>
-          <div>
-            <div class="head_group_font">gender</div>
-            <select class="group group_font" disabled>
-              <option value="Female" selected>Female</option>
-              <option value="Male">Male</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <div class="head_group_font">Address</div>
-          <input type="text" value="22/11 ฉลองกรุง1 ลาดกระลัง ลาดกระบัง" class="group2 group_font" disabled>
-        </div>
-
-        <div class="box">
-          <div>
-            <div class="head_group_font">City</div>
-            <input type="text" value="กรุงเทพ" class="group group_font" disabled>
-          </div>
-          <div>
-            <div class="head_group_font">Country</div>
-            <input type="text" value="ไทย" class="group group_font" disabled>
-          </div>
-        </div>
-
-        <div class="box">
-          <div>
-            <div class="head_group_font">Region</div>
-            <select class="group group_font" disabled>
-              <option value="เอเชีย" selected>เอเชีย</option>
-            </select>
-          </div>
-          <div>
-            <div class="head_group_font">Zip</div>
-            <input type="text" value="12345" class="group group_font" disabled>
-          </div>
-        </div>
       </div>
-
-      <!-- ปุ่มแก้ไขข้อมูล -->
-      <button class="edit_profile_button">
-        <div class="edit_profile_button_font">edit profile</div>
-      </button>
-
-    </div>
+      <input type="hidden" id="user_id" name="user_id" value="{{user_info.user_ID}}">
+    </form>
 
     <!-- หน้า password -->
     <div id="password">
@@ -194,7 +241,7 @@
     <!-- ถ้ากด delete account จะขึ้น (ตอนนี้ visibility : hidden อยู่) -->
     <div class="delete_box">
         <p class="delete_box_text">You are sure to delete account</p>
-        <img class="trash" src="img/trash.png" />
+        <img class="trash" src="/frontend/src/img/Trash.png" />
 
         <!-- ถ้ากด ก็จะลบข้อมูลออกจากดาต้าเบส แล้วกลับไปที่หน้า login -->
         <button class="del btn">
@@ -207,5 +254,94 @@
         </button>
     </div>
 
+
   </body>
+<script>
+  // เรียกใช้งาน element ปุ่มแก้ไขข้อมูล
+  const editButton = document.getElementById("editButton");
+  const saveButton = document.getElementById('saveButton');
+  const updateForm = document.getElementById('updateForm');
+
+  function toggleButtons() {
+    if (editButton.style.display !== 'none') {
+      editButton.style.display = 'none';
+      saveButton.style.display = 'block';
+    } else {
+      editButton.style.display = 'block';
+      saveButton.style.display = 'none';
+    }
+  }
+  // เมื่อคลิกปุ่ม "edit profile"
+  editButton.addEventListener("click", function() {
+    // ให้หา element ทุกตัวที่มี class "group" และ "group_font" แล้วยกเลิกสถานะ disabled
+    const inputElements = document.querySelectorAll(".group");
+    const selectElements = document.querySelectorAll(".group_font");
+
+    inputElements.forEach(function(input) {
+      input.removeAttribute("disabled");
+    });
+
+    selectElements.forEach(function(select) {
+      select.removeAttribute("disabled");
+    });
+    toggleButtons()
+    // เมื่อแก้ไขเสร็จแล้วสามารถเพิ่มโค้ดเพิ่มเติมเพื่อปิดการแก้ไขอีกครั้ง
+  });
+
+  updateForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = {
+      firstname: document.getElementById('firstname').value,
+      lastname: document.getElementById('lastname').value,
+      phone: document.getElementById('phone').value,
+      email: document.getElementById('email').value,
+      country: document.getElementById('country').value,
+      region: document.getElementById('region').value,
+      city: document.getElementById('city').value,
+      gender: document.getElementById('gender').value,
+      address: document.getElementById('address').value,
+      zip: document.getElementById('zip').value,
+      user_id: document.getElementById('user_id').value,
+    }
+    fetch('/update_data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    }).then(response => response.json())
+    .then(data => {
+      alert(data.message);
+      if (data.message === 'อัปเดตข้อมูลผู้ใช้สำเร็จ') {
+        window.location.reload();
+      }
+       else {
+        alert('Update failed')
+      }
+    })
+    .catch(err => {
+      console.error(err)
+    });
+  });
+  
+
+  saveButton.addEventListener("click", function() {
+    // ให้หา element ทุกตัวที่มี class "group" และ "group_font" แล้วยกเลิกสถานะ disabled
+    const inputElements = document.querySelectorAll(".group");
+    const selectElements = document.querySelectorAll(".group_font");
+
+    
+
+    inputElements.forEach(function(input) {
+      input.setAttribute("disabled", "true");
+    });
+
+    selectElements.forEach(function(select) {
+      input.setAttribute("disabled", "true");
+    });
+    toggleButtons()
+    // เมื่อแก้ไขเสร็จแล้วสามารถเพิ่มโค้ดเพิ่มเติมเพื่อปิดการแก้ไขอีกครั้ง
+  });
+  
+</script>
 </html>
