@@ -228,35 +228,42 @@
           </thead>
           <tbody>
             <tr>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
+              {% for order in orders %}
+              {% if order.farm_id.farm_id == user_info.farm.farm_id %}
+                        <tr>
+                            <td>{{ order.order_id }}</td>
+                            <td>{{ order.product_code.product_name }}</td>
+                            <td>{{ order.farm_id.farm_name }}</td>
+                            <td>{{ order.order_quantity }}</td>
+                            <td>{{ order.order_quantity * order.product_code. product_price }}</td>
+                            <td>{{ order.order_date }}</td>
+                            <td>{{ order.order_status }}</td>
+                        </tr>
+                    {% endif %}
+                    {% endfor %}
             </tr>
           </tbody>
         </table>
       </div>
     </div>
 
+    <form id="delete" method="GET" action="/delete-user/{{user_info.user_ID}}" >
+      <!-- ถ้ากด delete account จะขึ้น (ตอนนี้ visibility : hidden อยู่) -->
+      <div class="delete_box">
+          <p class="delete_box_text">You are sure to delete account</p>
+          <img class="trash" src="/frontend/src/img/Trash.png" />
 
-    <!-- ถ้ากด delete account จะขึ้น (ตอนนี้ visibility : hidden อยู่) -->
-    <div class="delete_box">
-        <p class="delete_box_text">You are sure to delete account</p>
-        <img class="trash" src="/frontend/src/img/Trash.png" />
+          <-- ถ้ากด ก็จะลบข้อมูลออกจากดาต้าเบส แล้วกลับไปที่หน้า login -->
+          <button id="del" class="del btn">
+              <div type="submit" class="del_font btn_font">Yes</div>
+          </button>
 
-        <!-- ถ้ากด ก็จะลบข้อมูลออกจากดาต้าเบส แล้วกลับไปที่หน้า login -->
-        <button class="del btn">
-            <div class="del_font btn_font">Yes</div>
-        </button>
-
-        <!-- ถ้ากด กล่อง delete box ก็จะหายไป -->
-        <button class="cancel btn">
-            <div class="cancel_font btn_font">Cancel</div>
-        </button>
-    </div>
+          <!-- ถ้ากด กล่อง delete box ก็จะหายไป -->
+          <button id="cancel" class="cancel btn">
+              <div class="cancel_font btn_font">Cancel</div>
+          </button>
+      </div>
+    </form>
 
 
   </body>
@@ -271,6 +278,18 @@
   const deleteAccount = document.getElementById("deleteAccount");
   const changeButton = document.getElementById("changeButton");
   const updatePass = document.getElementById("updatePass");
+  const cancel = document.getElementById("cancel");
+
+  deleteAccount.addEventListener("click", function() {
+    // ให้แสดงหน้าแก้ไขข้อมูล
+    document.querySelector(".delete_box").style.visibility = "visible";
+  });
+
+  cancel.addEventListener("click", function() {
+    // ให้แสดงหน้าแก้ไขข้อมูล
+    document.querySelector(".delete_box").style.visibility = "hidden";
+  });
+
   
   // เมื่อคลิกปุ่ม "edit profile"
   editProfile.addEventListener("click", function() {
@@ -278,7 +297,6 @@
     document.getElementById("profile").style.visibility = "visible";
     document.getElementById("password").style.visibility = "hidden";
     document.getElementById("myorders").style.visibility = "hidden";
-    document.getElementById("deleteAccount").style.visibility = "hidden";
     editProfile.style.backgroundColor = "#faa19d";
     editPassword.style.backgroundColor = null;
     editOrder.style.backgroundColor = null;
@@ -289,7 +307,6 @@
     document.getElementById("profile").style.visibility = "hidden";
     document.getElementById("password").style.visibility = "visible";
     document.getElementById("myorders").style.visibility = "hidden";
-    document.getElementById("deleteAccount").style.visibility = "hidden";
     editProfile.style.backgroundColor = null;
     editPassword.style.backgroundColor = "#faa19d";
     editOrder.style.backgroundColor = null;
@@ -299,17 +316,9 @@
     document.getElementById("profile").style.visibility = "hidden";
     document.getElementById("password").style.visibility = "hidden";
     document.getElementById("myorders").style.visibility = "visible";
-    document.getElementById("deleteAccount").style.visibility = "hidden";
     editProfile.style.backgroundColor = null;
     editPassword.style.backgroundColor = null;
     editOrder.style.backgroundColor = "#faa19d";
-  });
-  deleteAccount.addEventListener("click", function() {
-    // ให้แสดงหน้าลบ account
-    document.getElementById("profile").style.visibility = "hidden";
-    document.getElementById("password").style.visibility = "hidden";
-    document.getElementById("myorders").style.visibility = "hidden";
-    document.getElementById("deleteAccount").style.visibility = "visible";
   });
 
   function toggleButtons() {

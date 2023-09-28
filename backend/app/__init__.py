@@ -21,6 +21,11 @@ def get_product_image_by_code(product: int):
 def get_all_products():
     products = Products.select()[:]
     return products
+
+@db_session
+def get_all_orders():
+    orders = Orders.select()[:]
+    return orders
     
 def get_or_create_region(region_name):
     with db_session:
@@ -43,10 +48,8 @@ def get_or_create_country(country_name, region_id):
 
 def get_or_create_location(address, city, zip, country_id):
     with db_session:
-        existing_location = Locations.get(address=address, city=city, zip=zip, country_id=country_id)
-        if existing_location is None:
-            existing_location = Locations(address=address, city=city, zip=zip, country_id=country_id)
-            db.commit()
+        existing_location = Locations(address=address, city=city, zip=zip, country_id=country_id)
+        db.commit()
     location_id = existing_location.location_id
     country_id = existing_location.country_id
     return location_id, country_id
@@ -280,12 +283,14 @@ def create_app():
         if "access_token" in request.cookies:
             access_token = request.cookies.get("access_token")
             user_info = get_user_info(access_token)
+            products = get_all_products()
+            orders = get_all_orders()
             if not user_info:
                 raise HTTPException(status_code=401, detail="User not authenticated")
         else:
             raise HTTPException(status_code=401, detail="User not authenticated")
 
-        return frontend.TemplateResponse("profile_edit.html", {"request": request, "user_info": user_info})
+        return frontend.TemplateResponse("profile_edit.html", {"request": request, "user_info": user_info, 'products': products, 'orders': orders})
     
     @app.get("/get-product-image/{product_id}", response_class=StreamingResponse)
     async def get_product_image(product_id: int):
@@ -332,6 +337,17 @@ def create_app():
             
             return {"message": "อัปเดตรหัสผ่านสำเร็จ"}
         
+    @app.get('/delete-user/{user_id}', response_model=dict)
+    async def delete(user_id: int, response: Response):
+        with db_session:
+            print(user_id)
+            user = Users.get(user_ID=user_id)
+            if not user:
+                raise HTTPException(status_code=404, detail="ไม่พบผู้ใช้")
+            user.delete()
+            db.commit()
+            response.delete_cookie("access_token")
+            return RedirectResponse(url="/")
             
     @app.get("/logout")
     async def logout(response: Response):

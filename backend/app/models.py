@@ -34,7 +34,7 @@ class Users(db.Entity):
     email = Required(str)
     role = Required(str)
     location_id = Required(Locations)
-    farms = Optional("Farms")
+    farms = Optional("Farms", cascade_delete=True)
     Orders = Set('Orders')
     
 class Farms(db.Entity):
