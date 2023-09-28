@@ -43,22 +43,22 @@
         <div class="profile_role">role : {{user_info.role}}</div>
 
         <!-- กดเพื่อไปหน้าแก้ไขข้อมูลProfile -->
-        <div class="edit profile_edit">
+        <div id="pageEditProfile" class="edit profile_edit">
             <div class="yellow_text yellow_menu_font">Profile</div>
         </div>
 
         <!-- กดเพื่อไปหน้าแก้ไขรหัสผ่าน -->
-        <div class="edit password_edit">
+        <div id="pageEditPassword" class="edit password_edit">
             <div class="yellow_text yellow_menu_font">Password</div>
         </div>
 
-        <!-- กดเพื่อไปหน้าแก้ไขรหัสผ่าน -->
-        <div class="edit my_orders">
+        <!-- กดเพื่อไปหน้าแก้ไขOrder -->
+        <div id="pageEditOrder" class="edit my_orders">
             <div class="yellow_text yellow_menu_font">My Orders</div>
         </div> 
 
         <!-- ลบ account -->
-        <button class="delete_button">
+        <button id="deleteAccount" class="delete_button">
             <div class="delete_button_font">delete account</div>
         </button>
     </div>
@@ -188,23 +188,27 @@
     </form>
 
     <!-- หน้า password -->
+    <form id="updatePass">
     <div id="password">
       <div class="password_head">Change Password</div>
       <div class="password">
         <div>
           <div class="head_group_font">Old Password</div>
-          <input type="text" class="group2 group_font">
+          <input type="password" id="oldPassword" type="text" class="group2 group_font" required>
         </div>
         <div>
           <div class="head_group_font">New Password</div>
-          <input type="text" class="group2 group_font">
+          <input type="password" id="newPassword" type="text" class="group2 group_font" required>
         </div>
       </div>
+
       <!-- ปุ่มแก้ไขข้อมูล -->
-      <button class="change_password_button">
+      <button id="changeButton" type="submit" class="change_password_button">
         <div class="change_password_button_font">change password</div>
       </button>
     </div>
+    <input type="hidden" id="user_id" name="user_id" value="{{user_info.user_ID}}">
+    </form>
 
     <!-- หน้า my orders -->
     <div id="myorders">
@@ -261,6 +265,52 @@
   const editButton = document.getElementById("editButton");
   const saveButton = document.getElementById('saveButton');
   const updateForm = document.getElementById('updateForm');
+  const editProfile = document.getElementById("pageEditProfile");
+  const editPassword = document.getElementById("pageEditPassword");
+  const editOrder = document.getElementById("pageEditOrder");
+  const deleteAccount = document.getElementById("deleteAccount");
+  const changeButton = document.getElementById("changeButton");
+  const updatePass = document.getElementById("updatePass");
+  
+  // เมื่อคลิกปุ่ม "edit profile"
+  editProfile.addEventListener("click", function() {
+    // ให้แสดงหน้าแก้ไขข้อมูล
+    document.getElementById("profile").style.visibility = "visible";
+    document.getElementById("password").style.visibility = "hidden";
+    document.getElementById("myorders").style.visibility = "hidden";
+    document.getElementById("deleteAccount").style.visibility = "hidden";
+    editProfile.style.backgroundColor = "#faa19d";
+    editPassword.style.backgroundColor = null;
+    editOrder.style.backgroundColor = null;
+
+  });
+  editPassword.addEventListener("click", function() {
+    // ให้แสดงหน้าแก้ไขรหัสผ่าน
+    document.getElementById("profile").style.visibility = "hidden";
+    document.getElementById("password").style.visibility = "visible";
+    document.getElementById("myorders").style.visibility = "hidden";
+    document.getElementById("deleteAccount").style.visibility = "hidden";
+    editProfile.style.backgroundColor = null;
+    editPassword.style.backgroundColor = "#faa19d";
+    editOrder.style.backgroundColor = null;
+  });
+  editOrder.addEventListener("click", function() {
+    // ให้แสดงหน้าแก้ไขOrder
+    document.getElementById("profile").style.visibility = "hidden";
+    document.getElementById("password").style.visibility = "hidden";
+    document.getElementById("myorders").style.visibility = "visible";
+    document.getElementById("deleteAccount").style.visibility = "hidden";
+    editProfile.style.backgroundColor = null;
+    editPassword.style.backgroundColor = null;
+    editOrder.style.backgroundColor = "#faa19d";
+  });
+  deleteAccount.addEventListener("click", function() {
+    // ให้แสดงหน้าลบ account
+    document.getElementById("profile").style.visibility = "hidden";
+    document.getElementById("password").style.visibility = "hidden";
+    document.getElementById("myorders").style.visibility = "hidden";
+    document.getElementById("deleteAccount").style.visibility = "visible";
+  });
 
   function toggleButtons() {
     if (editButton.style.display !== 'none') {
@@ -301,7 +351,7 @@
       gender: document.getElementById('gender').value,
       address: document.getElementById('address').value,
       zip: document.getElementById('zip').value,
-      user_id: document.getElementById('user_id').value,
+      user_id: document.getElementById('user_id').value
     }
     fetch('/update_data', {
       method: 'POST',
@@ -324,12 +374,41 @@
     });
   });
   
+  updatePass.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = {
+      user_id: document.getElementById('user_id').value,
+      oldPassword: document.getElementById('oldPassword').value,
+      newPassword: document.getElementById('newPassword').value
+    }
+    fetch('/update_password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    }).then(response => response.json())
+    .then(data => {
+      alert(data.message);
+      if (data.message === 'อัปเดตรหัสผ่านสำเร็จ') {
+        window.location.reload();
+      }
+      else if (data.message === 'รหัสผ่านเดิมไม่ถูกต้อง') {
+        alert('รหัสผ่านเดิมไม่ถูกต้อง')
+      }
+      else {
+        alert('Update failed')
+      }
+    })
+    .catch(err => {
+      console.error(err)
+    });
+  });
 
   saveButton.addEventListener("click", function() {
     // ให้หา element ทุกตัวที่มี class "group" และ "group_font" แล้วยกเลิกสถานะ disabled
     const inputElements = document.querySelectorAll(".group");
     const selectElements = document.querySelectorAll(".group_font");
-
     
 
     inputElements.forEach(function(input) {

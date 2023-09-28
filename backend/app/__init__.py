@@ -315,6 +315,23 @@ def create_app():
             user.location_id.country_id = country
             db.commit()
             return {"message": "อัปเดตข้อมูลผู้ใช้สำเร็จ"}
+        
+    @app.post("/update_password", response_model=dict)
+    async def update_password(request: Request, fromData: dict):
+        with db_session:
+            user = Users.get(user_ID=fromData["user_id"])
+            if not user:
+                raise HTTPException(status_code=404, detail="ไม่พบผู้ใช้")
+            
+            if not verify_password(fromData["oldPassword"], user.password):
+                raise HTTPException(status_code=400, detail="รหัสผ่านเดิมไม่ถูกต้อง")
+            
+            user.password = get_password_hash(fromData["newPassword"])
+            
+            db.commit()
+            
+            return {"message": "อัปเดตรหัสผ่านสำเร็จ"}
+        
             
     @app.get("/logout")
     async def logout(response: Response):
