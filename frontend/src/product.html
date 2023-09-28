@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>products</title>
     <style>
-        /* menubar */
 body{
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* menubar */
 .menubar {
 position: absolute;
   width: 100vw;
@@ -350,6 +350,7 @@ button:hover {
   object-fit: cover;
 }
 
+/* หน้าต่างตอนกดที่สินค้า */
 .product_detail {
   position: fixed;
   top:90px;
@@ -468,6 +469,7 @@ button:hover {
   white-space: nowrap;
 }
 
+/* สั่งซื้อได้ */
 .can_order_button{
   position: absolute;
   top: 460px;
@@ -484,6 +486,7 @@ button:hover {
   white-space: nowrap;
 }
 
+/* สั่งซื้อไม่ได้ */
 .cant_order_button{
   position: absolute;
   top: 460px;
@@ -505,20 +508,6 @@ button:hover {
   background-color:  #d9d9d9;
 }
 
-.close{
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width:40px;
-  height: 40px;
-  background-color: #c7362e;
-  border-radius: 30px;
-  font-family: "Manrope-Regular", Helvetica;
-  font-weight: 600;
-  color: #ffffff;
-  font-size:15px;
-}
-
 .soldout{
   position: absolute;
   width: 372px;
@@ -533,6 +522,21 @@ button:hover {
   white-space: nowrap;
   text-align: center;
   visibility: hidden;
+}
+
+/* กดบปิดหน้าต่าง */
+.close{
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width:40px;
+  height: 40px;
+  background-color: #c7362e;
+  border-radius: 30px;
+  font-family: "Manrope-Regular", Helvetica;
+  font-weight: 600;
+  color: #ffffff;
+  font-size:15px;
 }
 
 </style>
