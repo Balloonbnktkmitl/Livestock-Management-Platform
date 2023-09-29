@@ -131,8 +131,8 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 def create_app():
     app = FastAPI()
     
-    app.mount("/frontend", StaticFiles(directory="..\\frontend"), name="frontend")
-    frontend = Jinja2Templates(directory="..\\frontend\\src")
+    app.mount("/frontend", StaticFiles(directory="../frontend"), name="frontend")
+    frontend = Jinja2Templates(directory="../frontend/src")
 
     @app.get('/', response_class=HTMLResponse)
     def home(request: Request):

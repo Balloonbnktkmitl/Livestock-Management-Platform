@@ -260,7 +260,7 @@
 
           <!-- ถ้ากด กล่อง delete box ก็จะหายไป -->
           <button id="cancel" class="cancel btn">
-              <div class="cancel_font btn_font">Cancel</div>
+              <div type="button" class="cancel_font btn_font">Cancel</div>
           </button>
       </div>
     </form>
@@ -288,6 +288,7 @@
   cancel.addEventListener("click", function() {
     // ให้แสดงหน้าแก้ไขข้อมูล
     document.querySelector(".delete_box").style.visibility = "hidden";
+    return;
   });
 
   
