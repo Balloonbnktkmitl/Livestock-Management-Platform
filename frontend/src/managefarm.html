@@ -13,205 +13,206 @@
   <div class="right_page">
 
     <form id="updatefarm">
-    <!-- หน้าprofile  -->
-    <div id="profile">
-      <div class="text">Farm Profile</div>
-      <div class="space">
-        <div>
-          <div class="head_group_font">Farm Name</div>
-          <input id="farm_name" type="text" class="group2 group_font" value="{{user_info.farm.farm_name}}" disabled>
+      <!-- หน้าprofile  -->
+      <div id="profile">
+        <div class="text">Farm Profile</div>
+        <div class="space">
+          <div>
+            <div class="head_group_font">Farm Name</div>
+            <input id="farm_name" type="text" class="group2 group_font" value="{{user_info.farm.farm_name}}" disabled>
+          </div>
+    
+          <div class="box">
+            <div>
+              <div class="head_group_font">Phone Number</div>
+              <input id="farm_phone" type="text" class="group group_font" value="{{user_info.farm.farm_phone}}" disabled>
+            </div>
+            <div>
+              <div class="head_group_font">Email</div>
+              <input id="farm_email" type="email" class="group group_font" value="{{user_info.farm.farm_email}}" disabled>
+            </div>
+          </div>
+    
+          <div>
+            <div class="head_group_font">Address</div>
+            <input id="farm_address" type="text" class="group2 group_font" value="{{user_info.farm.location.address}}" disabled>
+          </div>
+    
+          <div class="box">
+            <div>
+              <div class="head_group_font">City</div>
+              <input id="farm_city" type="text" class="group group_font" value="{{user_info.farm.location.city}}" disabled>
+            </div>
+            <div>
+              <div class="head_group_font">Country</div>
+              <input id="farm_country" type="text" class="group group_font" value="{{user_info.farm.country.country_name}}" disabled>
+            </div>
+          </div>
+    
+          <div class="box">
+            <div>
+              <div class="head_group_font">Region</div>
+              <select id="region" class="group group_font" disabled>
+                <option value="{{user_info.region.region_name}}" selected>{{user_info.region.region_name}}</option>
+                <option value="Asia" >Asia</option>
+                <option value="Europe" >Europe</option>
+                <option value="Australia" >Australia</option>
+                <option value="North America" >North America</option>
+                <option value="South America" >South America</option>
+                <option value="Africa" >Africa</option>
+                <option value="Antarctica" >Antarctica</option>
+              </select>
+            </div>
+            <div>
+              <div class="head_group_font">Zip</div>
+              <input id="farm_zip" type="text" class="group group_font" value="{{user_info.farm.location.zip}}" disabled>
+            </div>
+          </div>
         </div>
-  
-        <div class="box">
-          <div>
-            <div class="head_group_font">Phone Number</div>
-            <input id="farm_phone" type="text" class="group group_font" value="{{user_info.farm.farm_phone}}" disabled>
-          </div>
-          <div>
-            <div class="head_group_font">Email</div>
-            <input id="farm_email" type="email" class="group group_font" value="{{user_info.farm.farm_email}}" disabled>
-          </div>
-        </div>
-  
-        <div>
-          <div class="head_group_font">Address</div>
-          <input id="farm_address" type="text" class="group2 group_font" value="{{user_info.farm.location.address}}" disabled>
-        </div>
-  
-        <div class="box">
-          <div>
-            <div class="head_group_font">City</div>
-            <input id="farm_city" type="text" class="group group_font" value="{{user_info.farm.location.city}}" disabled>
-          </div>
-          <div>
-            <div class="head_group_font">Country</div>
-            <input id="farm_country" type="text" class="group group_font" value="{{user_info.farm.country.country_name}}" disabled>
-          </div>
-        </div>
-  
-        <div class="box">
-          <div>
-            <div class="head_group_font">Region</div>
-            <select id="region" class="group group_font" disabled>
-              <option value="{{user_info.region.region_name}}" selected>{{user_info.region.region_name}}</option>
-              <option value="Asia" >Asia</option>
-              <option value="Europe" >Europe</option>
-              <option value="Australia" >Australia</option>
-              <option value="North America" >North America</option>
-              <option value="South America" >South America</option>
-              <option value="Africa" >Africa</option>
-              <option value="Antarctica" >Antarctica</option>
-            </select>
-          </div>
-          <div>
-            <div class="head_group_font">Zip</div>
-            <input id="farm_zip" type="text" class="group group_font" value="{{user_info.farm.location.zip}}" disabled>
-          </div>
-        </div>
-      </div>
-      <!-- ปุ่มแก้ไขข้อมูล -->
+        <!-- ปุ่มแก้ไขข้อมูล -->
 
-      <div class="left">
-        <button id="editprofilebutton" type="button" class="edit_profile_button">edit profile</button>
-      </div>
+        <div class="left">
+          <button id="editprofilebutton" type="button" class="edit_profile_button">edit profile</button>
+        </div>
 
-      <div class="left">
-        <button id="savebutton" type="submit" class="edit_profile_button">Save</button>
-      </div>
+        <div class="left">
+          <button id="savebutton" type="submit" class="edit_profile_button">Save</button>
+        </div>
 
-    </div>
-    <input type="hidden" id="farm_id" name="farm_id" value="{{user_info.farm.farm_id}}">
+      </div>
+      <input type="hidden" id="farm_id" name="farm_id" value="{{user_info.farm.farm_id}}">
     </form>
 
 
-    <form id="product">
-    <div id="product">
-      <!-- search product -->
-      <div class="search">
-        <div class="search_text">Product</div>
-        <input type="text" placeholder="search product here" class="search_box">
-        <button class="search_button">search</button>
-      </div>
-
-      <div class="detail_font">click to edit product</div>
-
-      <!-- ใส่ product -->
-      {% for product in products %}
-      {% if product.farm_id.farm_id == user_info.farm.farm_id %}
-      <div class="product_section">
-        <div class="product_box">
-          <img src="img/chick.png" class="product_img">
-          <div class="product_detail">
-            <div class="detail_font">Product Name: {{product.product_name}}</div>
-            <div class="detail_font">Product Code: {{product_code}}</div>
-            <div class="detail_font">Detail: {{product_detail}}</div>
-            <div class="detail_font">Price: {{product_price}}</div>
-            <div class="detail_font">Quantity: {{product.quantity}}</div>
-            <div class="detail_font">Status: {{product.product_status}}</div>
-          </div>
+    <!-- <form id="product"> -->
+      <div id="product">
+        <!-- search product -->
+        <div class="search">
+          <div class="search_text">Product</div>
+          <input type="text" placeholder="search product here" class="search_box">
+          <button class="search_button">search</button>
         </div>
-        {% endif %}
-        {% endfor %}
-      </div>
-      <!-- ปุ่มเพิ่มข้อมูล -->
-      <div class="left">
-        <button type="button" id="addbutton" class="add_product_button">add new product</button>
-      </div>
 
+        <div class="detail_font">click to edit product</div>
 
-      <!-- เปิดหน้าแก้ไข -->
-      <div class="edit_page">
-        <div class="edit_text">Edit Product</div>
-        <div class="edit_box">
-          <div class="content">
+        <!-- ใส่ product -->
+        <div class="product_section">
+          {% for product in products %}
+          {% if product.farm_id.farm_id == user_info.farm.farm_id %}
+          <div class="product_box">
             <img src="img/chick.png" class="product_img">
-            <div>
-              <div class="head_group_font">Product Image</div>
-              <input type="file" class="group2 group_font">
+            <div class="product_detail">
+              <div class="detail_font">Product Name: {{product.product_name}}</div>
+              <div class="detail_font">Product Code: {{product_code}}</div>
+              <div class="detail_font">Detail: {{product_detail}}</div>
+              <div class="detail_font">Price: {{product_price}}</div>
+              <div class="detail_font">Quantity: {{product.quantity}}</div>
+              <div class="detail_font">Status:{{product.product_status}}</div>
             </div>
-            <div>
-              <div class="head_group_font">Product Name</div>
-              <input type="text" class="group2 group_font">
-            </div>
-            <div>
-              <div class="head_group_font">Detail</div>
-              <input type="text" class="group2 group_font">
-            </div>
-            <div class="box2">
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+        
+        <!-- ปุ่มเพิ่มข้อมูล -->
+        <div class="left">
+          <button type="button" id="addbutton" class="add_product_button">add new product</button>
+        </div>
+
+
+        <!-- เปิดหน้าแก้ไข -->
+        <div class="edit_page">
+          <div class="edit_text">Edit Product</div>
+          <div class="edit_box">
+            <div class="content">
+              <img src="img/chick.png" class="product_img">
               <div>
-                <div class="head_group_font">Price</div>
-                <input type="text" class="group3 group_font">
+                <div class="head_group_font">Product Image</div>
+                <input type="file" class="group2 group_font">
               </div>
               <div>
-                <div class="head_group_font">Quantity</div>
-                <input type="text" class="group3 group_font">
+                <div class="head_group_font">Product Name</div>
+                <input type="text" class="group2 group_font">
               </div>
-            </div>
-            <div class="box3">
               <div>
-                <div class="head_group_font">Status</div>
-                <input type="text" class="group3 group_font">
+                <div class="head_group_font">Detail</div>
+                <input type="text" class="group2 group_font">
               </div>
-              <div class="box4">
-                <!-- กดลบสินค้า -->
-                <button class="delete_button">delete</button>
-                <!-- แก้ไขสินค้า -->
-                <button class="edit_button">save</button>
+              <div class="box2">
+                <div>
+                  <div class="head_group_font">Price</div>
+                  <input type="text" class="group3 group_font">
+                </div>
+                <div>
+                  <div class="head_group_font">Quantity</div>
+                  <input type="text" class="group3 group_font">
+                </div>
+              </div>
+              <div class="box3">
+                <div>
+                  <div class="head_group_font">Status</div>
+                  <input type="text" class="group3 group_font">
+                </div>
+                <div class="box4">
+                  <!-- กดลบสินค้า -->
+                  <button class="delete_button">delete</button>
+                  <!-- แก้ไขสินค้า -->
+                  <button class="edit_button">save</button>
+                </div>
               </div>
             </div>
           </div>
+          <!-- กดปิดหน้า -->
+          <button class="edit_product_close">X</button>
         </div>
-        <!-- กดปิดหน้า -->
-        <button class="edit_product_close">X</button>
-      </div>
 
 
-      <!-- เพิ่มของใหม่ -->
-      <div id="addproductpage" class="add_page">
-        <div class="edit_text">Add New Product</div>
-        <div class="edit_box">
-          <div class="content">
-            <img src="img/chick.png" class="product_img">
-            <div>
-              <div class="head_group_font">Product Image</div>
-              <input type="file" class="group2 group_font">
-            </div>
-            <div>
-              <div class="head_group_font">Product Name</div>
-              <input type="text" class="group2 group_font">
-            </div>
-            <div>
-              <div class="head_group_font">Detail</div>
-              <input type="text" class="group2 group_font">
-            </div>
-            <div class="box2">
+        <!-- เพิ่มของใหม่ -->
+        <div id="addproductpage" class="add_page">
+          <div class="edit_text">Add New Product</div>
+          <div class="edit_box">
+            <div class="content">
+              <img src="img/chick.png" class="product_img">
               <div>
-                <div class="head_group_font">Price</div>
-                <input type="text" class="group3 group_font">
+                <div class="head_group_font">Product Image</div>
+                <input type="file" class="group2 group_font">
               </div>
               <div>
-                <div class="head_group_font">Quantity</div>
-                <input type="text" class="group3 group_font">
+                <div class="head_group_font">Product Name</div>
+                <input type="text" class="group2 group_font">
               </div>
-            </div>
-            <div class="box3">
               <div>
-                <div class="head_group_font">Status</div>
-                <input type="text" class="group3 group_font">
+                <div class="head_group_font">Detail</div>
+                <input type="text" class="group2 group_font">
               </div>
-              <div class="box5">
-                <!-- เพิ่มสินค้า -->
-                <button class="add_button">add product</button>
+              <div class="box2">
+                <div>
+                  <div class="head_group_font">Price</div>
+                  <input type="text" class="group3 group_font">
+                </div>
+                <div>
+                  <div class="head_group_font">Quantity</div>
+                  <input type="text" class="group3 group_font">
+                </div>
+              </div>
+              <div class="box3">
+                <div>
+                  <div class="head_group_font">Status</div>
+                  <input type="text" class="group3 group_font">
+                </div>
+                <div class="box5">
+                  <!-- เพิ่มสินค้า -->
+                  <button class="add_button">add product</button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <!-- กดปิดหน้า -->
-        <button class="add_product_close">X</button>
+          <!-- กดปิดหน้า -->
+          <button class="add_product_close">X</button>
 
+        </div>
       </div>
-    </div>
-    </form>
+    <!-- </form> -->
 
     <!-- Staff -->
     <div id="staff">
@@ -857,7 +858,7 @@
   });
 
   edit_profile_page.addEventListener("click", () => {
-    document.getElementById("profile").style.display = "block";
+    document.getElementById("profile").style.display = "inline-grid";
     document.getElementById("product").style.display = "none";
     document.getElementById("staff").style.display = "none";
     document.getElementById("job").style.display = "none";
@@ -873,7 +874,7 @@
 
   edit_product_page.addEventListener("click",()=>{
     document.getElementById("profile").style.display = "none";
-    document.getElementById("product").style.display = "block";
+    document.getElementById("product").style.display = "flex";
     document.getElementById("staff").style.display = "none";
     document.getElementById("job").style.display = "none";
     document.getElementById("animal").style.display = "none";
@@ -889,7 +890,7 @@
   edit_staff_page.addEventListener("click",()=>{
     document.getElementById("profile").style.display = "none";
     document.getElementById("product").style.display = "none";
-    document.getElementById("staff").style.display = "block";
+    document.getElementById("staff").style.display = "flex";
     document.getElementById("job").style.display = "none";
     document.getElementById("animal").style.display = "none";
     document.getElementById("order").style.display = "none";
@@ -906,7 +907,7 @@
     document.getElementById("product").style.display = "none";
     document.getElementById("staff").style.display = "none";
     document.getElementById("job").style.display = "none";
-    document.getElementById("animal").style.display = "block";
+    document.getElementById("animal").style.display = "flex";
     document.getElementById("order").style.display = "none";
     edit_profile_page.style.backgroundColor = null;
     edit_product_page.style.backgroundColor = null;
@@ -920,7 +921,7 @@
     document.getElementById("profile").style.display = "none";
     document.getElementById("product").style.display = "none";
     document.getElementById("staff").style.display = "none";
-    document.getElementById("job").style.display = "block";
+    document.getElementById("job").style.display = "flex";
     document.getElementById("animal").style.display = "none";
     document.getElementById("order").style.display = "none";
     edit_profile_page.style.backgroundColor = null;
@@ -937,7 +938,7 @@
     document.getElementById("staff").style.display = "none";
     document.getElementById("job").style.display = "none";
     document.getElementById("animal").style.display = "none";
-    document.getElementById("order").style.display = "block";
+    document.getElementById("order").style.display = "flex";
     edit_profile_page.style.backgroundColor = null;
     edit_product_page.style.backgroundColor = null;
     edit_staff_page.style.backgroundColor = null;

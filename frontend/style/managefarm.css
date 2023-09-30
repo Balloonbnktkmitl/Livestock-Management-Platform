@@ -337,6 +337,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    /* background-color: blueviolet; */
   }
 
 .left{
@@ -349,13 +350,14 @@
 
 #product{
     padding: 20px;
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
     gap: 10px;
     justify-content: center;
     align-items: center;
     display: none;
 }
+
 
 /* search */
 .search{
@@ -470,6 +472,7 @@ button{
 
 /* หน้าต่างตอนกดที่สินค้า */
  .edit_page {
+    /* top:120px; */
     position: fixed;
     width: 600px;
     height: 600px;
@@ -582,6 +585,7 @@ button{
 /* หน้าเพิ่มสินค้า */
  .add_page {
     position: fixed;
+    top:120px;
     width: 600px;
     height: 600px;
     background-color: #ffffff;
@@ -634,7 +638,7 @@ button{
   /* staff page */
   #staff{
     padding: 20px;
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
     gap: 10px;
     justify-content: center;
@@ -808,7 +812,7 @@ tbody th{
   /* job page */
   #job{
     padding: 20px;
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
     gap: 10px;
     justify-content: center;
@@ -931,7 +935,7 @@ tbody th{
 /* animal page */
 #animal{
     padding: 20px;
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
     gap: 10px;
     justify-content: center;
@@ -1081,7 +1085,7 @@ tbody th{
 /* order page */
 #order{
     padding: 20px;
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
     gap: 10px;
     justify-content: center;
