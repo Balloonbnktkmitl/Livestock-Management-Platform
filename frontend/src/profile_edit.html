@@ -68,7 +68,7 @@
         
       <!-- menu left -->
       <a href="/home" class="home_menu menu_font">Home</a>
-      <a href="#" class="product_menu menu_font">Products</a>
+      <a href="/product" class="product_menu menu_font">Products</a>
       <a href="#" class="farm_menu menu_font">Farms</a>
 
       <!-- logo -->
@@ -259,8 +259,8 @@
           </button>
 
           <!-- ถ้ากด กล่อง delete box ก็จะหายไป -->
-          <button id="cancel" class="cancel btn">
-              <div type="button" class="cancel_font btn_font">Cancel</div>
+          <button type="button" id="cancel" class="cancel btn">
+              <div class="cancel_font btn_font">Cancel</div>
           </button>
       </div>
     </form>
@@ -331,6 +331,19 @@
       saveButton.style.display = 'none';
     }
   }
+  function checkEmail(email) {
+
+    var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    function capitalizeFirstLetter(value) {
+        return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+    }
+
+    if (emailPattern.test(email)) {
+        return true;
+    } else {
+        return false;
+    }
+    }
   // เมื่อคลิกปุ่ม "edit profile"
   editButton.addEventListener("click", function() {
     // ให้หา element ทุกตัวที่มี class "group" และ "group_font" แล้วยกเลิกสถานะ disabled
@@ -363,6 +376,19 @@
       zip: document.getElementById('zip').value,
       user_id: document.getElementById('user_id').value
     }
+    if(formData["phone"].length != 10 || isNaN(formData["phone"])){
+      alert("กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก");
+      return;
+    }
+    if(formData["zip"].length != 5 || isNaN(formData["zip"])){
+      alert("กรุณากรอกรหัสไปรษณีย์ให้ครบ 5 หลัก");
+      return;
+    }
+    if(!formData["email"].includes("@") || checkEmail(formData["email"]) === false){
+      alert("กรุณากรอกอีเมล");
+      return;
+    }
+
     fetch('/update_data', {
       method: 'POST',
       headers: {
@@ -391,6 +417,11 @@
       oldPassword: document.getElementById('oldPassword').value,
       newPassword: document.getElementById('newPassword').value
     }
+    if(formData["oldPassword"].length < 8 || formData["newPassword"].length < 8){
+      alert("กรุณากรอกรหัสผ่านให้มีความยาวมากกว่า 8 ตัวอักษร");
+      return;
+    }
+    
     fetch('/update_password', {
       method: 'POST',
       headers: {

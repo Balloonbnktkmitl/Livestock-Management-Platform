@@ -16,6 +16,11 @@ def get_product_image_by_code(product: int):
     with db_session:
         product = Products.get(product_code=product)
         return product.product_image
+    
+def get_all_animals():
+    with db_session:
+        animals = select(animal for animal in Animals)[:]
+        return animals
 
 @db_session
 def get_all_products():
@@ -249,7 +254,7 @@ def create_app():
         if role == "FarmOwner":
             return frontend.TemplateResponse('home_farmowner.html', {'request': request, "user_info": user_info, 'products': products})
         elif role == "Customer":
-            return frontend.TemplateResponse('Home_customer.html', {'request': request})
+            return frontend.TemplateResponse('home_customer.html', {'request': request, "user_info": user_info, 'products': products})
         else:
             raise HTTPException(status_code=403, detail="Access Forbidden")
         
@@ -274,8 +279,6 @@ def create_app():
         else:
             raise HTTPException(status_code=403, detail="Access Forbidden")    
     
-    #แก้ๆๆๆๆๆๆๆ
-
     @app.get("/user-profile", response_class=HTMLResponse)
     @db_session
     def user_profile(request: Request):
@@ -356,6 +359,19 @@ def create_app():
 
         # รีเดอิเร็กต์ผู้ใช้ไปยังหน้าล็อกอินหลังจากล็อกเอ้า
         return RedirectResponse(url="/")
+    
+    @app.get("/product", response_class=HTMLResponse)
+    def product(request: Request):
+        if "access_token" in request.cookies:
+            access_token = request.cookies.get("access_token")
+            user_info = get_user_info(access_token)
+            products = get_all_products()
+            animal = get_all_animals()
+            if not user_info:
+                raise HTTPException(status_code=401, detail="User not authenticated")
+        else:
+            raise HTTPException(status_code=401, detail="User not authenticated")
+        return frontend.TemplateResponse('product.html', {'request': request, 'products': products, "user_info": user_info})
     
     return app
     
