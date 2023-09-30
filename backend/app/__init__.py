@@ -468,6 +468,15 @@ def create_app():
             db.commit()
             return RedirectResponse(url="/managefarm")
     
+    @app.post("/deleteproduct/{product_id}", response_model=dict)
+    async def deleteproduct(product_id: int, response: Response):
+        with db_session:
+            product = Products.get(product_code=product_id)
+            if not product:
+                raise HTTPException(status_code=404, detail="ไม่พบสินค้า")
+            product.delete()
+            db.commit()
+            return RedirectResponse(url="/managefarm")
     return app
     
 create_app()

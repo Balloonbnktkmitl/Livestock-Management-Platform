@@ -757,6 +757,7 @@
   const fileInput = document.getElementById('product_image');
   const close_product_edit = document.getElementById("close_product_edit");
   const edit_product = document.getElementById("edit_product");
+  const delete_product = document.getElementById("delete_product");
 
 
   addbutton.addEventListener("click", function() {
@@ -988,7 +989,28 @@
     edit_product.style.display = 'none';
   });
 
+  delete_product.addEventListener('click', function() {
+    // แสดงกล่องยืนยันการลบ
+    if (confirm("คุณต้องการลบสินค้านี้ใช่หรือไม่?")) {
+      var productCode = document.getElementById('editProductCodeInput').value;
 
+    // ส่งคำขอลบไปยังเซิร์ฟเวอร์
+    fetch('/deleteproduct/' + productCode, {
+        method: 'post'
+    })
+    .then(response => {
+        if (response.ok) {
+            // ถ้าลบสำเร็จ โหลดหน้าใหม่หรือทำสิ่งที่คุณต้องการ
+            window.location.reload();
+        } else {
+            alert('เกิดข้อผิดพลาดในการลบสินค้า');
+        }
+    })
+    .catch(error => {
+        console.error('เกิดข้อผิดพลาดในการส่งคำขอ: ', error);
+    });
+        }
+    });
 </script>
 </body>
 </html>
