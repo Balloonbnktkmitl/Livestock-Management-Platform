@@ -366,16 +366,17 @@ def create_app():
     
     @app.get("/product", response_class=HTMLResponse)
     def product(request: Request):
-        if "access_token" in request.cookies:
-            access_token = request.cookies.get("access_token")
-            user_info = get_user_info(access_token)
-            products = get_all_products()
-            animal = get_all_animals()
-            if not user_info:
+        with db_session:
+            if "access_token" in request.cookies:
+                access_token = request.cookies.get("access_token")
+                user_info = get_user_info(access_token)
+                products = get_all_products()
+                animal = get_all_animals()
+                if not user_info:
+                    raise HTTPException(status_code=401, detail="User not authenticated")
+            else:
                 raise HTTPException(status_code=401, detail="User not authenticated")
-        else:
-            raise HTTPException(status_code=401, detail="User not authenticated")
-        return frontend.TemplateResponse('product.html', {'request': request, 'products': products, "user_info": user_info})
+            return frontend.TemplateResponse('product.html', {'request': request, 'products': products, "user_info": user_info})
     
     @app.get("/managefarm", response_class=HTMLResponse)
     def managefarm(request: Request):
