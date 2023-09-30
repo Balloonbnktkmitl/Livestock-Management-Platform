@@ -14,10 +14,10 @@
                     <img class="farm_logo" src="/frontend/src/img/cool pig logo 1.png" />
 
                     <!-- farm name -->
-                    <div class="farm_name">{{user_info.farm.farm_name}}</div>
+                    <div class="farm_name">{{farm.farm_name}}</div>
 
                     <!-- farm owner name -->
-                    <p class="farm_owner">farm owner : {{user_info.firstName}} {{user_info.lastName}}</p>
+                    <p class="farm_owner">farm owner : {{user.firstName}} {{user.lastName}}</p>
 
 
                 <!-- menubar -->
@@ -32,8 +32,8 @@
 
                         <!-- menu left -->
                         <a href="/home" class="home_menu">Home</a>
-                        <a href="#" class="product_menu">Products</a>
-                        <a href="#" class="farm_menu">Farms</a>
+                        <a href="/product" class="product_menu">Products</a>
+                        <a href="/farm" class="farm_menu">Farms</a>
 
                         <!-- menu right -->
                         <a href="/logout" class="logout_menu">log out</a>
@@ -48,9 +48,9 @@
             <!-- farm information -->
             <div class="farm_information">
                 <div class="farm_information_bg">
-                    <p class="address">Address : {{user_info.farm.location.address}} {{user_info.farm.location.city}} {{user_info.farm.country.country_name}} {{user_info.farm.region.region_name}} {{user_info.farm.location.zip}}</p>
-                    <p class="phone">Phone: {{user_info.farm.farm_phone}}</p>
-                    <p class="email">E-mail: {{user_info.farm.farm_email}}</p>
+                    <p class="address">Address : {{location.address}} {{location.city}} {{country.country_name}} {{region.region_name}} {{location.zip}}</p>
+                    <p class="phone">Phone: {{farm.farm_phone}}</p>
+                    <p class="email">E-mail: {{farm.farm_email}}</p>
                 </div>
             </div>
             
@@ -77,8 +77,8 @@
             <!-- product box อันนี้คือมีสินค้า-->
             <!-- แบ่งคอลัมให้แล้ว 3 คอลลัม แถวก็ขึ้นอยู่กับว่ามันจัดได้กี่แถว กรอบจะเก็บได้เป็น 2x3 ที่ล้นก็มีแถบให้เลื่อนลงได้-->
             <div class="product_section">
-              {% for product in products %}
-              {% if product.farm_id.farm_id == user_info.farm.farm_id %}
+              {% for product in product %}
+              {% if product.farm_id.farm_id == farm.farm_id %}
                 <!-- อันนี้คือกรอบสินค้า เวลาจะเพิ่มก็เพิ่มทั้งกล่อง-->
                 {% if product.animal_code is none %}
                 <div class="product_box">
@@ -89,7 +89,7 @@
                     </div>
                     <div class="product_information">
                         <!-- ใส่ชื่อสินค้า -->
-                        <div class="product_name">{{product.product_name}}.</div>
+                        <div class="product_name">{{product.product_name}}</div>
                         <!-- ใส่ฟาร์ม -->
                         <div class="product_farm">{{product.farm_id.farm_name}}</div>
                         <!-- ใส่ราคา-->
@@ -117,7 +117,7 @@
               {% endfor %}
             </div>
             <!-- อันนี้คือ ยังไม่มีสินค้า ใส่ visibility: hidden; ในcss อยู่จะได้ปิดการมองเห็น-->
-            {% if products == [] %}
+            {% if product == [] %}
             <div class="product_none">
                 <div class="no">There are no product</div>
                 <div class="ellipse">
@@ -125,6 +125,7 @@
                 </div>
             </div>
             {% endif %}
+
         </div>
     </div>
 
