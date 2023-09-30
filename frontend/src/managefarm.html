@@ -10,9 +10,6 @@
 
   <!-- หน้าprofile -->
   <div class="right_page">
-
-
-
     <!-- หน้าprofile  -->
     <div id="profile">
       <div class="text">Farm Profile</div>
@@ -659,68 +656,45 @@
     </div>
 
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   </div>
-
-
-
-
-
-
-
 
 
   <!-- แถบข้างขาว -->
   <div class="white_bar">
     <!-- แสดงprofile -->
     <div class="profile">
-      <img class="profile-user" src="img/cool-pig-logo-1.png" />
+      <img class="profile-user" src="/frontend/src/img/cool-pig-logo-1.png" />
       <!-- ชื่อ ฟาร์ม -->
-      <div class="profile_font">Piggy Farm</div>
+      <div class="profile_font">{{user_info.farm.farm_name}}</div>
     </div>
 
     <!-- กดเพื่อไปหน้าแก้ไขข้อมูลProfile -->
-    <div class="edit profile_edit">
+    <div id="editprofile" class="edit profile_edit">
         <div class="white_text white_menu_font">Profile</div>
     </div>
 
     <!-- กดเพื่อไปหน้าแก้ไขรหัสผ่าน -->
-    <div class="edit product_edit">
+    <div id="editproduct" class="edit product_edit">
         <div class="white_text white_menu_font">Products</div>
     </div>
 
     <!-- กดเพื่อไปหน้าแก้ไขพนักงาน -->
-    <div class="edit staff_edit">
+    <div id="staffprofile" class="edit staff_edit">
         <div class="white_text white_menu_font">Staffs</div>
     </div> 
 
     <!-- กดเพื่อไปหน้าแก้ไขงาน -->
-    <div class="edit job_edit">
+    <div id="editjob" class="edit job_edit">
       <div class="white_text white_menu_font">Jobs</div>
     </div> 
 
     <!-- กดเพื่อไปหน้าแก้ไขสัตว์ -->
-    <div class="edit animal_edit">
+    <div id="editanimal" class="edit animal_edit">
       <div class="white_text white_menu_font">Animals</div>
     </div> 
 
     <!-- กดเพื่อไปหน้าแก้ไขออเดอร์ -->
-    <div class="edit order_edit">
+    <div id="editorder" class="edit order_edit">
       <div class="white_text white_menu_font">Orders</div>
     </div> 
     
@@ -731,7 +705,7 @@
       
     <!-- menu left -->
     <a href="/home" class="home_menu menu_font">Home</a>
-    <a href="#" class="product_menu menu_font">Products</a>
+    <a href="/product" class="product_menu menu_font">Products</a>
     <a href="#" class="farm_menu menu_font">Farms</a>
 
     <!-- logo -->
@@ -748,5 +722,105 @@
         <img class="profile-user-menu" src="/frontend/src/img/profile-user.png" />
     </a>
   </div>
+
+<script>
+  const edit_profile_page = document.getElementById("editprofile");
+  const edit_product_page = document.getElementById("editproduct");
+  const edit_staff_page = document.getElementById("staffprofile");
+  const edit_job_page = document.getElementById("editjob");
+  const edit_animal_page = document.getElementById("editanimal");
+  const edit_order_page = document.getElementById("editorder");
+
+  edit_profile_page.addEventListener("click", () => {
+    document.getElementById("profile").style.display = "block";
+    document.getElementById("product").style.display = "none";
+    document.getElementById("staff").style.display = "none";
+    document.getElementById("job").style.display = "none";
+    document.getElementById("animal").style.display = "none";
+    document.getElementById("order").style.display = "none";
+    edit_profile_page.style.backgroundColor = "#FFE4BB";
+    edit_product_page.style.backgroundColor = null;
+    edit_staff_page.style.backgroundColor = null;
+    edit_job_page.style.backgroundColor = null;
+    edit_animal_page.style.backgroundColor = null;
+    edit_order_page.style.backgroundColor = null;
+  });
+
+  edit_product_page.addEventListener("click",()=>{
+    document.getElementById("profile").style.display = "none";
+    document.getElementById("product").style.display = "block";
+    document.getElementById("staff").style.display = "none";
+    document.getElementById("job").style.display = "none";
+    document.getElementById("animal").style.display = "none";
+    document.getElementById("order").style.display = "none";
+    edit_profile_page.style.backgroundColor = null;
+    edit_product_page.style.backgroundColor = "#FFE4BB";
+    edit_staff_page.style.backgroundColor = null;
+    edit_job_page.style.backgroundColor = null;
+    edit_animal_page.style.backgroundColor = null;
+    edit_order_page.style.backgroundColor = null;
+  });
+
+  edit_staff_page.addEventListener("click",()=>{
+    document.getElementById("profile").style.display = "none";
+    document.getElementById("product").style.display = "none";
+    document.getElementById("staff").style.display = "block";
+    document.getElementById("job").style.display = "none";
+    document.getElementById("animal").style.display = "none";
+    document.getElementById("order").style.display = "none";
+    edit_profile_page.style.backgroundColor = null;
+    edit_product_page.style.backgroundColor = null;
+    edit_staff_page.style.backgroundColor = "#FFE4BB";
+    edit_job_page.style.backgroundColor = null;
+    edit_animal_page.style.backgroundColor = null;
+    edit_order_page.style.backgroundColor = null;
+  });
+
+  edit_animal_page.addEventListener("click",()=>{
+    document.getElementById("profile").style.display = "none";
+    document.getElementById("product").style.display = "none";
+    document.getElementById("staff").style.display = "none";
+    document.getElementById("job").style.display = "none";
+    document.getElementById("animal").style.display = "block";
+    document.getElementById("order").style.display = "none";
+    edit_profile_page.style.backgroundColor = null;
+    edit_product_page.style.backgroundColor = null;
+    edit_staff_page.style.backgroundColor = null;
+    edit_job_page.style.backgroundColor = null;
+    edit_animal_page.style.backgroundColor = "#FFE4BB";
+    edit_order_page.style.backgroundColor = null;
+  });
+
+  edit_job_page.addEventListener("click",()=>{
+    document.getElementById("profile").style.display = "none";
+    document.getElementById("product").style.display = "none";
+    document.getElementById("staff").style.display = "none";
+    document.getElementById("job").style.display = "block";
+    document.getElementById("animal").style.display = "none";
+    document.getElementById("order").style.display = "none";
+    edit_profile_page.style.backgroundColor = null;
+    edit_product_page.style.backgroundColor = null;
+    edit_staff_page.style.backgroundColor = null;
+    edit_job_page.style.backgroundColor = "#FFE4BB";
+    edit_animal_page.style.backgroundColor = null;
+    edit_order_page.style.backgroundColor = null;
+  });
+
+  edit_order_page.addEventListener("click",()=>{
+    document.getElementById("profile").style.display = "none";
+    document.getElementById("product").style.display = "none";
+    document.getElementById("staff").style.display = "none";
+    document.getElementById("job").style.display = "none";
+    document.getElementById("animal").style.display = "none";
+    document.getElementById("order").style.display = "block";
+    edit_profile_page.style.backgroundColor = null;
+    edit_product_page.style.backgroundColor = null;
+    edit_staff_page.style.backgroundColor = null;
+    edit_job_page.style.backgroundColor = null;
+    edit_animal_page.style.backgroundColor = null;
+    edit_order_page.style.backgroundColor = "#FFE4BB";
+  });
+  
+</script>
 </body>
 </html>

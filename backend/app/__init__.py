@@ -11,6 +11,10 @@ from passlib.context import CryptContext
 from typing import Optional
 from io import BytesIO
 
+def get_all_farms():
+    with db_session:
+        farms = select(farm for farm in Farms)[:]
+        return farms
     
 def get_product_image_by_code(product: int):
     with db_session:
@@ -372,6 +376,22 @@ def create_app():
         else:
             raise HTTPException(status_code=401, detail="User not authenticated")
         return frontend.TemplateResponse('product.html', {'request': request, 'products': products, "user_info": user_info})
+    
+    @app.get("/managefarm", response_class=HTMLResponse)
+    def managefarm(request: Request):
+        with db_session:
+            if "access_token" in request.cookies:
+                access_token = request.cookies.get("access_token")
+                user_info = get_user_info(access_token)
+                products = get_all_products()
+                animal = get_all_animals()
+                farm = get_all_farms()
+                if not user_info:
+                    raise HTTPException(status_code=401, detail="User not authenticated")
+            else:
+                raise HTTPException(status_code=401, detail="User not authenticated")
+            return frontend.TemplateResponse('managefarm.html', {'request': request, 'products': products, "user_info": user_info, "farm": farm, "animal": animal})
+    
     
     return app
     
