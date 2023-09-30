@@ -5,44 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>manage farm</title>
   <link rel="stylesheet" href="/frontend/style/managefarm.css" />
+
 </head>
 <body>
 
   <!-- หน้าprofile -->
   <div class="right_page">
+
+    <form id="updatefarm">
     <!-- หน้าprofile  -->
     <div id="profile">
       <div class="text">Farm Profile</div>
       <div class="space">
         <div>
           <div class="head_group_font">Farm Name</div>
-          <input type="text" class="group2 group_font" value="Piggy Farm" disabled>
+          <input id="farm_name" type="text" class="group2 group_font" value="{{user_info.farm.farm_name}}" disabled>
         </div>
   
         <div class="box">
           <div>
             <div class="head_group_font">Phone Number</div>
-            <input type="text" class="group group_font" value="089-123-4567" disabled>
+            <input id="farm_phone" type="text" class="group group_font" value="{{user_info.farm.farm_phone}}" disabled>
           </div>
           <div>
             <div class="head_group_font">Email</div>
-            <input type="email" class="group group_font" value="eieihaha@gmail.com" disabled>
+            <input id="farm_email" type="email" class="group group_font" value="{{user_info.farm.farm_email}}" disabled>
           </div>
         </div>
   
         <div>
           <div class="head_group_font">Address</div>
-          <input type="text" class="group2 group_font" value="222/111 ฉลองกรุง1 ลาดกระบัง ลาดกระบัง" disabled>
+          <input id="farm_address" type="text" class="group2 group_font" value="{{user_info.farm.location.address}}" disabled>
         </div>
   
         <div class="box">
           <div>
             <div class="head_group_font">City</div>
-            <input type="text" class="group group_font" value="กรุงเทพ" disabled>
+            <input id="farm_city" type="text" class="group group_font" value="{{user_info.farm.location.city}}" disabled>
           </div>
           <div>
             <div class="head_group_font">Country</div>
-            <input type="email" class="group group_font" value="ไทย" disabled>
+            <input id="farm_country" type="text" class="group group_font" value="{{user_info.farm.country.country_name}}" disabled>
           </div>
         </div>
   
@@ -62,18 +65,26 @@
           </div>
           <div>
             <div class="head_group_font">Zip</div>
-            <input type="email" class="group group_font" value="ไทย" disabled>
+            <input id="farm_zip" type="text" class="group group_font" value="{{user_info.farm.location.zip}}" disabled>
           </div>
         </div>
       </div>
       <!-- ปุ่มแก้ไขข้อมูล -->
+
       <div class="left">
-        <button type="button" class="edit_profile_button">edit profile</button>
+        <button id="editprofilebutton" type="button" class="edit_profile_button">edit profile</button>
       </div>
+
+      <div class="left">
+        <button id="savebutton" type="submit" class="edit_profile_button">Save</button>
+      </div>
+
     </div>
+    <input type="hidden" id="farm_id" name="farm_id" value="{{user_info.farm.farm_id}}">
+    </form>
 
 
-
+    <form id="product">
     <div id="product">
       <!-- search product -->
       <div class="search">
@@ -85,23 +96,26 @@
       <div class="detail_font">click to edit product</div>
 
       <!-- ใส่ product -->
+      {% for product in products %}
+      {% if product.farm_id.farm_id == user_info.farm.farm_id %}
       <div class="product_section">
         <div class="product_box">
           <img src="img/chick.png" class="product_img">
           <div class="product_detail">
-            <div class="detail_font">Product Name: นมวัวแท้ 100%</div>
-            <div class="detail_font">Product Code: 0001</div>
-            <div class="detail_font">Detail: นมสด คั้นจากเต้า สดใหม่ทุกวัน  1 ลิตร</div>
-            <div class="detail_font">Price: 50 บาท</div>
-            <div class="detail_font">Quantity: 100</div>
-            <div class="detail_font">Status: Available</div>
+            <div class="detail_font">Product Name: {{product.product_name}}</div>
+            <div class="detail_font">Product Code: {{product_code}}</div>
+            <div class="detail_font">Detail: {{product_detail}}</div>
+            <div class="detail_font">Price: {{product_price}}</div>
+            <div class="detail_font">Quantity: {{product.quantity}}</div>
+            <div class="detail_font">Status: {{product.product_status}}</div>
           </div>
         </div>
-
+        {% endif %}
+        {% endfor %}
       </div>
       <!-- ปุ่มเพิ่มข้อมูล -->
       <div class="left">
-        <button class="add_product_button">add new product</button>
+        <button type="button" id="addbutton" class="add_product_button">add new product</button>
       </div>
 
 
@@ -153,7 +167,7 @@
 
 
       <!-- เพิ่มของใหม่ -->
-      <div class="add_page">
+      <div id="addproductpage" class="add_page">
         <div class="edit_text">Add New Product</div>
         <div class="edit_box">
           <div class="content">
@@ -197,8 +211,7 @@
 
       </div>
     </div>
-
-
+    </form>
 
     <!-- Staff -->
     <div id="staff">
@@ -730,6 +743,118 @@
   const edit_job_page = document.getElementById("editjob");
   const edit_animal_page = document.getElementById("editanimal");
   const edit_order_page = document.getElementById("editorder");
+  const editprofilebutton = document.getElementById("editprofilebutton");
+  const saveprofilebutton = document.getElementById("savebutton");
+  const update_farm = document.getElementById("updatefarm");
+  const addbutton = document.getElementById("addbutton");
+  const add_product_page = document.getElementById("addproductpage");
+
+  addbutton.addEventListener("click", function() {
+    add_product_page.style.display = "block";
+  });
+
+  update_farm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = {
+      farm_name: document.getElementById('farm_name').value,
+      address: document.getElementById('farm_address').value,
+      city: document.getElementById('farm_city').value,
+      country: document.getElementById('farm_country').value,
+      zip: document.getElementById('farm_zip').value,
+      phone: document.getElementById('farm_phone').value,
+      email: document.getElementById('farm_email').value,
+      region: document.getElementById('region').value,
+      farm_id: document.getElementById('farm_id').value,
+    }
+    if(formData["phone"].length != 10 || isNaN(formData["phone"])){
+      alert("กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก");
+      window.location.reload();
+    }
+    if(formData["zip"].length != 5 || isNaN(formData["zip"])){
+      alert("กรุณากรอกรหัสไปรษณีย์ให้ครบ 5 หลัก");
+      window.location.reload();
+    }
+    if(!formData["email"].includes("@") || checkEmail(formData["email"]) === false){
+      alert("กรุณากรอกอีเมล");
+      window.location.reload();
+    }
+    
+    fetch('/updatefarm', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    }).then(response => response.json())
+    .then(data => {
+      alert(data.message);
+      if (data.message === 'อัปเดตข้อมูลผู้ใช้สำเร็จ') {
+        window.location.reload();
+      }
+       else {
+        alert('Update failed')
+      }
+    })
+    .catch(err => {
+      console.error(err)
+    });
+  });
+
+  function checkEmail(email) {
+
+    var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    function capitalizeFirstLetter(value) {
+        return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+    }
+
+    if (emailPattern.test(email)) {
+        return true;
+    } else {
+        return false;
+    }
+  }
+
+  function toggleButtons() {
+    if (editprofilebutton.style.display !== 'none') {
+      editprofilebutton.style.display = 'none';
+      saveprofilebutton.style.display = 'block';
+    } else {
+      editprofilebutton.style.display = 'block';
+      saveprofilebutton.style.display = 'none';
+    }
+  }
+
+  editprofilebutton.addEventListener("click", function() {
+    // ให้หา element ทุกตัวที่มี class "group" และ "group_font" แล้วยกเลิกสถานะ disabled
+    const inputElements = document.querySelectorAll(".group");
+    const selectElements = document.querySelectorAll(".group_font");
+
+    inputElements.forEach(function(input) {
+      input.removeAttribute("disabled");
+    });
+
+    selectElements.forEach(function(select) {
+      select.removeAttribute("disabled");
+    });
+    toggleButtons()
+    // เมื่อแก้ไขเสร็จแล้วสามารถเพิ่มโค้ดเพิ่มเติมเพื่อปิดการแก้ไขอีกครั้ง
+  });
+
+  saveprofilebutton.addEventListener("click", function() {
+    // ให้หา element ทุกตัวที่มี class "group" และ "group_font" แล้วยกเลิกสถานะ disabled
+    const inputElements = document.querySelectorAll(".group");
+    const selectElements = document.querySelectorAll(".group_font");
+    
+    inputElements.forEach(function(input) {
+      input.setAttribute("disabled", "true");
+    });
+
+    selectElements.forEach(function(select) {
+      select.setAttribute("disabled", "true");
+    });
+    toggleButtons()
+    // เมื่อแก้ไขเสร็จแล้วสามารถเพิ่มโค้ดเพิ่มเติมเพื่อปิดการแก้ไขอีกครั้ง
+  });
 
   edit_profile_page.addEventListener("click", () => {
     document.getElementById("profile").style.display = "block";
@@ -821,6 +946,8 @@
     edit_order_page.style.backgroundColor = "#FFE4BB";
   });
   
+
+
 </script>
 </body>
 </html>

@@ -392,6 +392,24 @@ def create_app():
                 raise HTTPException(status_code=401, detail="User not authenticated")
             return frontend.TemplateResponse('managefarm.html', {'request': request, 'products': products, "user_info": user_info, "farm": farm, "animal": animal})
     
+    @app.post("/updatefarm", response_model=dict)
+    async def updatefarm(request: Request, fromData: dict):
+        with db_session:
+            farm = Farms.get(farm_id=fromData["farm_id"])
+            region = get_or_create_region(fromData["region"])
+            country,temp = get_or_create_country(fromData["country"], region)
+            location,temp = get_or_create_location(fromData["address"], fromData["city"], fromData["zip"], country)
+            if not farm:
+                raise HTTPException(status_code=404, detail="ไม่พบผู้ใช้")
+            
+            farm.farm_name = fromData["farm_name"]
+            farm.farm_email = fromData["email"]
+            farm.farm_phone = fromData["phone"]
+            farm.location_id = location
+            farm.location_id.country_id = country
+            db.commit()
+            
+            return {"message": "อัปเดตข้อมูลผู้ใช้สำเร็จ"}
     
     return app
     

@@ -291,7 +291,6 @@
     return;
   });
 
-  
   // เมื่อคลิกปุ่ม "edit profile"
   editProfile.addEventListener("click", function() {
     // ให้แสดงหน้าแก้ไขข้อมูล
@@ -331,6 +330,7 @@
       saveButton.style.display = 'none';
     }
   }
+
   function checkEmail(email) {
 
     var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -344,6 +344,7 @@
         return false;
     }
     }
+
   // เมื่อคลิกปุ่ม "edit profile"
   editButton.addEventListener("click", function() {
     // ให้หา element ทุกตัวที่มี class "group" และ "group_font" แล้วยกเลิกสถานะ disabled
@@ -378,15 +379,15 @@
     }
     if(formData["phone"].length != 10 || isNaN(formData["phone"])){
       alert("กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก");
-      return;
+      window.location.reload();
     }
     if(formData["zip"].length != 5 || isNaN(formData["zip"])){
       alert("กรุณากรอกรหัสไปรษณีย์ให้ครบ 5 หลัก");
-      return;
+      window.location.reload();
     }
     if(!formData["email"].includes("@") || checkEmail(formData["email"]) === false){
       alert("กรุณากรอกอีเมล");
-      return;
+      window.location.reload();
     }
 
     fetch('/update_data', {
@@ -457,7 +458,7 @@
     });
 
     selectElements.forEach(function(select) {
-      input.setAttribute("disabled", "true");
+      select.setAttribute("disabled", "true");
     });
     toggleButtons()
     // เมื่อแก้ไขเสร็จแล้วสามารถเพิ่มโค้ดเพิ่มเติมเพื่อปิดการแก้ไขอีกครั้ง
