@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>manage farm</title>
+  <link rel="stylesheet" href="/frontend/style/managefarm.css" />
+</head>
+<body>
+
+  <!-- หน้าprofile -->
+  <div class="right_page">
+
+
+
+    <!-- หน้าprofile  -->
+    <div id="profile">
+      <div class="text">Farm Profile</div>
+      <div class="space">
+        <div>
+          <div class="head_group_font">Farm Name</div>
+          <input type="text" class="group2 group_font" value="Piggy Farm" disabled>
+        </div>
+  
+        <div class="box">
+          <div>
+            <div class="head_group_font">Phone Number</div>
+            <input type="text" class="group group_font" value="089-123-4567" disabled>
+          </div>
+          <div>
+            <div class="head_group_font">Email</div>
+            <input type="email" class="group group_font" value="eieihaha@gmail.com" disabled>
+          </div>
+        </div>
+  
+        <div>
+          <div class="head_group_font">Address</div>
+          <input type="text" class="group2 group_font" value="222/111 ฉลองกรุง1 ลาดกระบัง ลาดกระบัง" disabled>
+        </div>
+  
+        <div class="box">
+          <div>
+            <div class="head_group_font">City</div>
+            <input type="text" class="group group_font" value="กรุงเทพ" disabled>
+          </div>
+          <div>
+            <div class="head_group_font">Country</div>
+            <input type="email" class="group group_font" value="ไทย" disabled>
+          </div>
+        </div>
+  
+        <div class="box">
+          <div>
+            <div class="head_group_font">Region</div>
+            <select id="region" class="group group_font" disabled>
+              <option value="{{user_info.region.region_name}}" selected>{{user_info.region.region_name}}</option>
+              <option value="Asia" >Asia</option>
+              <option value="Europe" >Europe</option>
+              <option value="Australia" >Australia</option>
+              <option value="North America" >North America</option>
+              <option value="South America" >South America</option>
+              <option value="Africa" >Africa</option>
+              <option value="Antarctica" >Antarctica</option>
+            </select>
+          </div>
+          <div>
+            <div class="head_group_font">Zip</div>
+            <input type="email" class="group group_font" value="ไทย" disabled>
+          </div>
+        </div>
+      </div>
+      <!-- ปุ่มแก้ไขข้อมูล -->
+      <div class="left">
+        <button type="button" class="edit_profile_button">edit profile</button>
+      </div>
+    </div>
+
+
+
+    <div id="product">
+      <!-- search product -->
+      <div class="search">
+        <div class="search_text">Product</div>
+        <input type="text" placeholder="search product here" class="search_box">
+        <button class="search_button">search</button>
+      </div>
+
+      <div class="detail_font">click to edit product</div>
+
+      <!-- ใส่ product -->
+      <div class="product_section">
+        <div class="product_box">
+          <img src="img/chick.png" class="product_img">
+          <div class="product_detail">
+            <div class="detail_font">Product Name: นมวัวแท้ 100%</div>
+            <div class="detail_font">Product Code: 0001</div>
+            <div class="detail_font">Detail: นมสด คั้นจากเต้า สดใหม่ทุกวัน  1 ลิตร</div>
+            <div class="detail_font">Price: 50 บาท</div>
+            <div class="detail_font">Quantity: 100</div>
+            <div class="detail_font">Status: Available</div>
+          </div>
+        </div>
+
+      </div>
+      <!-- ปุ่มเพิ่มข้อมูล -->
+      <div class="left">
+        <button class="add_product_button">add new product</button>
+      </div>
+
+
+      <!-- เปิดหน้าแก้ไข -->
+      <div class="edit_page">
+        <div class="edit_text">Edit Product</div>
+        <div class="edit_box">
+          <div class="content">
+            <img src="img/chick.png" class="product_img">
+            <div>
+              <div class="head_group_font">Product Image</div>
+              <input type="file" class="group2 group_font">
+            </div>
+            <div>
+              <div class="head_group_font">Product Name</div>
+              <input type="text" class="group2 group_font">
+            </div>
+            <div>
+              <div class="head_group_font">Detail</div>
+              <input type="text" class="group2 group_font">
+            </div>
+            <div class="box2">
+              <div>
+                <div class="head_group_font">Price</div>
+                <input type="text" class="group3 group_font">
+              </div>
+              <div>
+                <div class="head_group_font">Quantity</div>
+                <input type="text" class="group3 group_font">
+              </div>
+            </div>
+            <div class="box3">
+              <div>
+                <div class="head_group_font">Status</div>
+                <input type="text" class="group3 group_font">
+              </div>
+              <div class="box4">
+                <!-- กดลบสินค้า -->
+                <button class="delete_button">delete</button>
+                <!-- แก้ไขสินค้า -->
+                <button class="edit_button">save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- กดปิดหน้า -->
+        <button class="edit_product_close">X</button>
+      </div>
+
+
+      <!-- เพิ่มของใหม่ -->
+      <div class="add_page">
+        <div class="edit_text">Add New Product</div>
+        <div class="edit_box">
+          <div class="content">
+            <img src="img/chick.png" class="product_img">
+            <div>
+              <div class="head_group_font">Product Image</div>
+              <input type="file" class="group2 group_font">
+            </div>
+            <div>
+              <div class="head_group_font">Product Name</div>
+              <input type="text" class="group2 group_font">
+            </div>
+            <div>
+              <div class="head_group_font">Detail</div>
+              <input type="text" class="group2 group_font">
+            </div>
+            <div class="box2">
+              <div>
+                <div class="head_group_font">Price</div>
+                <input type="text" class="group3 group_font">
+              </div>
+              <div>
+                <div class="head_group_font">Quantity</div>
+                <input type="text" class="group3 group_font">
+              </div>
+            </div>
+            <div class="box3">
+              <div>
+                <div class="head_group_font">Status</div>
+                <input type="text" class="group3 group_font">
+              </div>
+              <div class="box5">
+                <!-- เพิ่มสินค้า -->
+                <button class="add_button">add product</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- กดปิดหน้า -->
+        <button class="add_product_close">X</button>
+
+      </div>
+    </div>
+
+
+
+    <!-- Staff -->
+    <div id="staff">
+      <!-- search staff -->
+      <div class="search">
+        <div class="search_text">Staff</div>
+        <input type="text" placeholder="search staff here" class="search_box">
+        <button class="search_button">search</button>
+      </div>
+
+      <div class="detail_font">click staff_id to edit</div>
+      <div class="staff_section">
+        <table class="bordered-table">
+          <thead>
+            <tr>
+              <th>staff_id</th>
+              <th class="staff_name">Full Name</th>
+              <th class="staff_job">Job</th> <!-- job_title-->
+              <th class="staff_phone">phone</th>
+              <th class="staff_email">email</th>
+              <th class="salary">salary</th>
+              <th>status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <th><a href="#">12345</a></th>
+            <th>asfafafsfafsf asfafsafafsdfa</th>
+            <th>คนเลี้ยงสัตว์</th>
+            <th>089-123-4567</th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tbody>
+        </table>
+        <!-- ปุ่มเพิ่มข้อมูล -->
+        <div class="left">
+          <button class="add_staff_button">add new staff</button>
+        </div>
+      </div>
+
+      <!-- เปิดหน้าแก้ไข -->
+      <div class="edit_staff_page">
+        <div class="edit_text">Edit Staff</div>
+        <div class="edit_box">
+          <div class="content3">
+            <div class="box2">
+              <div>
+                <div class="head_group_font">First Name</div>
+                <input type="text" class="group group_font">
+              </div>
+              <div>
+                <div class="head_group_font">Last Name</div>
+                <input type="text" class="group group_font">
+              </div>
+            </div>
+            <div class="box2">
+              <div>
+                <div class="head_group_font">Phone Number</div>
+                <input type="text" class="group group_font">
+              </div>
+              <div>
+                <div class="head_group_font">Email</div>
+                <input type="email" class="group group_font">
+              </div>
+            </div>
+            <div class="box2">
+              <div>
+                <div class="head_group_font">Job</div>
+                <select class="group group_font">
+                  <option value="คนดูแลสัตว์" selected>คนดูแลสัตว์</option>
+                </select>
+              </div>
+              <div>
+                <div class="head_group_font">Gender</div>
+                <select class="group group_font">
+                  <option value="Female" selected>Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Others">Others</option>
+                </select>
+              </div>
+            </div>
+            <div class="box2">
+              <div>
+                <div class="head_group_font">Salary</div>
+                <input type="text" class="group group_font">
+              </div>
+              <div>
+                <div class="head_group_font">Hire Date</div>
+                <input type="date" class="group group_font">
+              </div>
+            </div>
+            <div class="box2">
+              <div>
+                <div class="head_group_font">Status</div>
+                <input type="text" class="group group_font">
+              </div>
+              <div class="content2">
+                <button class="save_staff_btn">save staff</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- กดปิดหน้า -->
+        <button class="edit_staff_close">X</button>
+      </div>
+
+      <!-- เปิดหน้าเพิ่ม staff-->
+      <div class="add_staff_page">
+        <div class="edit_text">Add New Staff</div>
+        <div class="edit_box">
+          <div class="content3">
+            <div class="box2">
+              <div>
+                <div class="head_group_font">First Name</div>
+                <input type="text" class="group group_font">
+              </div>
+              <div>
+                <div class="head_group_font">Last Name</div>
+                <input type="text" class="group group_font">
+              </div>
+            </div>
+            <div class="box2">
+              <div>
+                <div class="head_group_font">Phone Number</div>
+                <input type="text" class="group group_font">
+              </div>
+              <div>
+                <div class="head_group_font">Email</div>
+                <input type="email" class="group group_font">
+              </div>
+            </div>
+            <div class="box2">
+              <div>
+                <div class="head_group_font">Job</div>
+                <select class="group group_font">
+                  <option value="คนดูแลสัตว์" selected>คนดูแลสัตว์</option>
+                </select>
+              </div>
+              <div>
+                <div class="head_group_font">Gender</div>
+                <select class="group group_font">
+                  <option value="Female" selected>Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Others">Others</option>
+                </select>
+              </div>
+            </div>
+            <div class="box2">
+              <div>
+                <div class="head_group_font">Salary</div>
+                <input type="text" class="group group_font">
+              </div>
+              <div>
+                <div class="head_group_font">Hire Date</div>
+                <input type="date" class="group group_font">
+              </div>
+            </div>
+            <div class="box2">
+              <div>
+                <div class="head_group_font">Salary</div>
+                <input type="text" class="group group_font">
+              </div>
+              <div class="content2">
+                <button class="add_staff_btn">add staff</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- กดปิดหน้า -->
+        <button class="add_staff_close">X</button>
+      </div>
+    </div>
+
+    <!-- jobs -->
+    <div id="job">
+      <!-- search job -->
+      <div class="search">
+        <div class="search_text">Job</div>
+        <input type="text" placeholder="search job here" class="search_box">
+        <button class="search_button">search</button>
+      </div>
+      <div class="detail_font">click job_id to edit</div>
+      <div class="job_section">
+        <table class="bordered-table">
+          <thead>
+            <tr>
+              <th>job_id</th>
+              <th class="job_title">job_title</th>
+              <th class="job_des">Job_description</th> <!-- job_title-->
+              <th>min_salary</th>
+              <th>max_salary</th>
+            </tr>
+          </thead>
+          <tbody>
+            <th><a href="#">12345</a></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tbody>
+        </table>
+        <!-- ปุ่มเพิ่มข้อมูล -->
+        <div class="left">
+          <button class="add_job_button">add new job</button>
+        </div>
+      </div>
+
+      <!-- เปิดหน้าแก้ไข -->
+      <div class="edit_job_page">
+        <div class="edit_text">Edit Job</div>
+        <div class="edit_box">
+          <div class="content">
+            <div>
+              <div class="head_group_font">Job</div>
+              <input type="text" class="group group_font">
+            </div>
+            <div>
+              <div class="head_group_font">Job Description</div>
+              <input type="text" class="group2 group_font">
+            </div>
+            <div class="box">
+              <div>
+                <div class="head_group_font">Min Salary</div>
+                <input type="text" class="group3 group_font">
+              </div>
+              <div>
+                <div class="head_group_font">Max Salary</div>
+                <input type="text" class="group3 group_font">
+              </div>
+            </div>
+          </div>
+          <div class="content2">
+            <button class="save_job_btn">save job</button>
+          </div>
+        </div>
+        <!-- กดปิดหน้า -->
+        <button class="edit_job_close">X</button>
+      </div>
+
+      <!-- เปิดหน้าเพิ่ม job -->
+      <div class="add_job_page">
+        <div class="edit_text">Add New Job</div>
+        <div class="edit_box">
+          <div class="content">
+            <div>
+              <div class="head_group_font">Job</div>
+              <input type="text" class="group group_font">
+            </div>
+            <div>
+              <div class="head_group_font">Job Description</div>
+              <input type="text" class="group2 group_font">
+            </div>
+            <div class="box">
+              <div>
+                <div class="head_group_font">Min Salary</div>
+                <input type="text" class="group3 group_font">
+              </div>
+              <div>
+                <div class="head_group_font">Max Salary</div>
+                <input type="text" class="group3 group_font">
+              </div>
+            </div>
+          </div>
+          <div class="content2">
+            <button class="add_job_btn">add job</button>
+          </div>
+        </div>
+        <!-- กดปิดหน้า -->
+        <button class="add_job_close">X</button>
+      </div>
+    </div>
+
+    <!-- animal page -->
+    <div id="animal">
+      <!-- search animal -->
+      <div class="search">
+        <div class="search_text">Animal</div>
+        <input type="text" placeholder="search animal here" class="search_box">
+        <button class="search_button">search</button>
+      </div>
+
+      <div class="detail_font">click to edit animal</div>
+
+      <!-- ใส่ animal -->
+      <div class="animal_section">
+        <div class="animal_box">
+          <img src="img/chick.png" class="animal_img">
+          <div class="product_detail">
+            <div class="detail_font">Animal Code: 0001</div>
+            <div class="detail_font">Animal Type: วัว</div>
+            <div class="detail_font">Detail: วีวนมเพศเมีย พันธุ์ดี อิมพอร์ตจากออสเตรเลีย เลี่ยงด้วยเหล้า</div>
+          </div>
+        </div>
+
+      </div>
+      <!-- ปุ่มเพิ่มข้อมูล -->
+      <div class="left">
+        <button class="add_animal_button">add new animal</button>
+      </div>
+
+      <!-- เปิดหน้าแก้ไข -->
+      <div class="edit_animal_page">
+        <div class="edit_text">Edit Animal</div>
+        <div class="edit_box">
+          <div class="content">
+            <img src="img/chick.png" class="animal_img">
+            <div>
+              <div class="head_group_font">Product Image</div>
+              <input type="file" class="group2 group_font">
+            </div>
+            <div class="box">
+              <div>
+                <div class="head_group_font">Animal Code</div>
+                <input type="text" class="group3 group_font">
+              </div>
+              <div>
+                <div class="head_group_font">Type</div>
+                <input type="text" class="group3 group_font">
+              </div>
+            </div>
+            <div>
+              <div class="head_group_font">Detail</div>
+              <input type="text" class="group2 group_font">
+            </div>
+              <div class="box">
+                <button class="delete_animal_button">delete</button>
+                <button class="edit_animal_button">save</button>
+              </div>
+            </div>
+          </div>
+          <!-- กดปิดหน้า -->
+        <button class="edit_animal_close">X</button>
+      </div>
+
+      <!-- เปิดหน้าเพิ่ม -->
+      <div class="add_animal_page">
+        <div class="edit_text">Add Animal</div>
+        <div class="edit_box">
+          <div class="content">
+            <img src="img/chick.png" class="animal_img">
+            <div>
+              <div class="head_group_font">Product Image</div>
+              <input type="file" class="group2 group_font">
+            </div>
+            <div class="box">
+              <div>
+                <div class="head_group_font">Animal Code</div>
+                <input type="text" class="group3 group_font">
+              </div>
+              <div>
+                <div class="head_group_font">Type</div>
+                <input type="text" class="group3 group_font">
+              </div>
+            </div>
+            <div>
+              <div class="head_group_font">Detail</div>
+              <input type="text" class="group2 group_font">
+            </div>
+            <button class="add_animal_btn">add animal</button>
+            </div>
+          </div>
+          <!-- กดปิดหน้า -->
+        <button class="add_animal_close">X</button>
+      </div>
+    </div>
+
+    <!-- Orders -->
+    <div id="order">
+      <!-- search order -->
+      <div class="search">
+        <div class="search_text">Order</div>
+        <input type="text" placeholder="search order here" class="search_box">
+        <button class="search_button">search</button>
+      </div>
+
+      <div class="detail_font">click order_id to edit order_status</div>
+      <div class="order_section">
+        <table class="bordered-table">
+          <thead>
+            <tr>
+              <th>order_id</th>
+              <th>Product Name</th>
+              <th>Customer</th> <!-- user_id คนที่สั่ง-->
+              <th>order_quantity</th>
+              <th>cost</th>
+              <th>order_date</th>
+              <th>order_status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <th><a href="#">12345</a></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- เปิดหน้าแก้ไข -->
+      <div class="order_page">
+        <div class="edit_text">Order Status</div>
+        <div class="edit_box">
+          <div class="content">
+            <div class="box">
+              <div>
+                <div class="head_group_font">Order_id</div>
+                <input type="text" class="group3 group_font" disabled>
+              </div>
+              <div>
+                <div class="head_group_font">Product Name</div>
+                <input type="text" class="group3 group_font" disabled>
+              </div>
+            </div>
+            <div>
+              <div class="head_group_font">Customer Name</div> <!-- full name-->
+              <input type="text" class="group2 group_font" disabled>
+            </div>
+            <div>
+              <div class="head_group_font">Address</div> <!-- address + city + country + zip-->
+              <input type="text" class="group2 group_font" disabled>
+            </div>
+            <div class="box">
+              <div>
+                <div class="head_group_font">Phone</div>
+                <input type="text" class="group3 group_font" disabled>
+              </div>
+              <div>
+                <div class="head_group_font">Quantity</div>
+                <input type="text" class="group3 group_font" disabled>
+              </div>
+            </div>
+            <div class="box">
+              <div>
+                <div class="head_group_font">Order_date</div>
+                <input type="text" class="group3 group_font" disabled>
+              </div>
+              <div>
+                <div class="head_group_font">Order_status</div>
+                <select class="group3 group_font">
+                  <option value="ส่งพัสดุสำเร็จ" selected>ส่งพัสดุสำเร็จ</option>
+                </select>
+              </div>
+            </div>
+            <div class="content">
+              <button class="order_btn">save</button>
+            </div>
+          </div>
+        </div>
+        <!-- กดปิดหน้า -->
+        <button class="order_close">X</button>
+      </div>
+    </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+
+
+  <!-- แถบข้างขาว -->
+  <div class="white_bar">
+    <!-- แสดงprofile -->
+    <div class="profile">
+      <img class="profile-user" src="img/cool-pig-logo-1.png" />
+      <!-- ชื่อ ฟาร์ม -->
+      <div class="profile_font">Piggy Farm</div>
+    </div>
+
+    <!-- กดเพื่อไปหน้าแก้ไขข้อมูลProfile -->
+    <div class="edit profile_edit">
+        <div class="white_text white_menu_font">Profile</div>
+    </div>
+
+    <!-- กดเพื่อไปหน้าแก้ไขรหัสผ่าน -->
+    <div class="edit product_edit">
+        <div class="white_text white_menu_font">Products</div>
+    </div>
+
+    <!-- กดเพื่อไปหน้าแก้ไขพนักงาน -->
+    <div class="edit staff_edit">
+        <div class="white_text white_menu_font">Staffs</div>
+    </div> 
+
+    <!-- กดเพื่อไปหน้าแก้ไขงาน -->
+    <div class="edit job_edit">
+      <div class="white_text white_menu_font">Jobs</div>
+    </div> 
+
+    <!-- กดเพื่อไปหน้าแก้ไขสัตว์ -->
+    <div class="edit animal_edit">
+      <div class="white_text white_menu_font">Animals</div>
+    </div> 
+
+    <!-- กดเพื่อไปหน้าแก้ไขออเดอร์ -->
+    <div class="edit order_edit">
+      <div class="white_text white_menu_font">Orders</div>
+    </div> 
+    
+  </div>
+
+  <!-- menubar -->
+  <div class="menubar">
+      
+    <!-- menu left -->
+    <a href="/home" class="home_menu menu_font">Home</a>
+    <a href="#" class="product_menu menu_font">Products</a>
+    <a href="#" class="farm_menu menu_font">Farms</a>
+
+    <!-- logo -->
+    <div class="website_logo">
+      <div class="logo_text menu_font">Farm Site</div>
+      <img class="logo" src="/frontend/src/img/farm.png" />
+    </div>
+
+    <!-- menu right -->
+    <a href="/logout" class="logout_menu menu_font">log out</a>
+    <img class="line" src="/frontend/src/svg/line-1.svg" />
+    
+    <a href="/user-profile">
+        <img class="profile-user-menu" src="/frontend/src/img/profile-user.png" />
+    </a>
+  </div>
+</body>
+</html>
