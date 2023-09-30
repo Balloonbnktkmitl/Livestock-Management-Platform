@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie, Response
+from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie, Response, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 from .models import db, Users, Farms, Staffs, Animals, Products, Locations, Countries, Regions, Orders, Animal_Types, Products
@@ -393,6 +393,21 @@ def create_app():
                 raise HTTPException(status_code=401, detail="User not authenticated")
             return frontend.TemplateResponse('managefarm.html', {'request': request, 'products': products, "user_info": user_info, "farm": farm, "animal": animal})
     
+    @app.post("/managefarm", response_class=HTMLResponse)
+    def managefarm(request: Request):
+        with db_session:
+            if "access_token" in request.cookies:
+                access_token = request.cookies.get("access_token")
+                user_info = get_user_info(access_token)
+                products = get_all_products()
+                animal = get_all_animals()
+                farm = get_all_farms()
+                if not user_info:
+                    raise HTTPException(status_code=401, detail="User not authenticated")
+            else:
+                raise HTTPException(status_code=401, detail="User not authenticated")
+            return frontend.TemplateResponse('managefarm.html', {'request': request, 'products': products, "user_info": user_info, "farm": farm, "animal": animal})
+        
     @app.post("/updatefarm", response_model=dict)
     async def updatefarm(request: Request, fromData: dict):
         with db_session:
@@ -411,6 +426,47 @@ def create_app():
             db.commit()
             
             return {"message": "อัปเดตข้อมูลผู้ใช้สำเร็จ"}
+    
+    @app.post("/addproduct")
+    async def addproduct(request: Request, product_image: UploadFile = File(...),
+                         product_name: str = Form(...), 
+                       product_price: float = Form(...), 
+                       product_detail: str = Form(...), 
+                       product_quantity: int = Form(...),
+                       farm_id: int = Form(...)):
+        with db_session:
+            try:
+                image_data = product_image.file.read()
+                product = Products(product_name=product_name, farm_id=farm_id, product_price=product_price, 
+                                   product_detail=product_detail, product_status="Available", product_image=image_data
+                                   ,quantity=product_quantity)
+                db.commit()
+                return RedirectResponse(url="/managefarm")
+            except Exception as e:
+                print(str(e))
+                return {"message": "เพิ่มสินค้าไม่สำเร็จ"}
+            
+    @app.post("/updateproduct")
+    async def updateproduct(request: Request, image: UploadFile = File(...),
+                         name: str = Form(...), 
+                       price: float = Form(...), 
+                       detail: str = Form(...), 
+                       quantity: int = Form(...),
+                       status: str = Form(...),
+                       product_code: int = Form(...)):
+        with db_session:
+            image_data = image.file.read()
+            product = Products.get(product_code=product_code)
+            if not product:
+                raise HTTPException(status_code=404, detail="ไม่พบสินค้า")
+            product.product_name = name
+            product.product_price = price
+            product.product_detail = detail
+            product.quantity = quantity
+            product.product_image = image_data
+            product.product_status = status
+            db.commit()
+            return RedirectResponse(url="/managefarm")
     
     return app
     

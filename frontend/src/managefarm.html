@@ -99,13 +99,13 @@
         <div class="product_section">
           {% for product in products %}
           {% if product.farm_id.farm_id == user_info.farm.farm_id %}
-          <div class="product_box">
-            <img src="img/chick.png" class="product_img">
+          <div class="product_box" onclick="showProductDetail('{{ product.product_name }}', '{{ product.product_code }}', '{{ product.product_detail }}', '{{ product.product_price }}', '{{ product.quantity }}', '{{ product.product_status }}')">
+            <img src="/get-product-image/{{ product.product_code }}" class="product_img">
             <div class="product_detail">
               <div class="detail_font">Product Name: {{product.product_name}}</div>
-              <div class="detail_font">Product Code: {{product_code}}</div>
-              <div class="detail_font">Detail: {{product_detail}}</div>
-              <div class="detail_font">Price: {{product_price}}</div>
+              <div class="detail_font">Product Code: {{product.product_code}}</div>
+              <div class="detail_font">Detail: {{product.product_detail}}</div>
+              <div class="detail_font">Price: {{product.product_price}}</div>
               <div class="detail_font">Quantity: {{product.quantity}}</div>
               <div class="detail_font">Status:{{product.product_status}}</div>
             </div>
@@ -121,96 +121,99 @@
 
 
         <!-- เปิดหน้าแก้ไข -->
-        <div class="edit_page">
+        <div id="edit_product" class="edit_page">
+        <form id="update_product" method="post" action="/updateproduct" enctype="multipart/form-data">
           <div class="edit_text">Edit Product</div>
           <div class="edit_box">
             <div class="content">
-              <img src="img/chick.png" class="product_img">
+              <img id="editProductImage" src="" class="product_img">
               <div>
                 <div class="head_group_font">Product Image</div>
-                <input type="file" class="group2 group_font">
+                <input name="image" type="file" class="group2 group_font" required>
               </div>
               <div>
                 <div class="head_group_font">Product Name</div>
-                <input type="text" class="group2 group_font">
+                <input name="name" id="editProductNameInput" type="text" class="group2 group_font" required>
               </div>
               <div>
                 <div class="head_group_font">Detail</div>
-                <input type="text" class="group2 group_font">
+                <input name="detail" id="editProductDetailInput" type="text" class="group2 group_font" required>
               </div>
               <div class="box2">
                 <div>
                   <div class="head_group_font">Price</div>
-                  <input type="text" class="group3 group_font">
+                  <input name="price" id="editProductPriceInput" type="text" class="group3 group_font" required>
                 </div>
                 <div>
                   <div class="head_group_font">Quantity</div>
-                  <input type="text" class="group3 group_font">
+                  <input name="quantity" id="editProductQuantityInput" type="text" class="group3 group_font" required>
                 </div>
               </div>
               <div class="box3">
                 <div>
                   <div class="head_group_font">Status</div>
-                  <input type="text" class="group3 group_font">
+                  <select name="status" id="editProductStatusInput" class="group group_font" required>
+                    <option value="Available">Available</option>
+                    <option value="Sold Out">Sold Out</option>
+                  </select>
                 </div>
                 <div class="box4">
                   <!-- กดลบสินค้า -->
-                  <button class="delete_button">delete</button>
+                  <button type="button" id="delete_product" class="delete_button">delete</button>
                   <!-- แก้ไขสินค้า -->
-                  <button class="edit_button">save</button>
+                  <button type="submit" id="save_product" class="edit_button">save</button>
                 </div>
-              </div>
             </div>
           </div>
           <!-- กดปิดหน้า -->
-          <button class="edit_product_close">X</button>
+          <button type="button" id="close_product_edit" class="edit_product_close">X</button>
+          <input type="hidden" id="editProductCodeInput" name="product_code" >
+        </form>
         </div>
-
+        </div>
 
         <!-- เพิ่มของใหม่ -->
         <div id="addproductpage" class="add_page">
+          <form id="add_product" action="/addproduct" method="post" enctype="multipart/form-data">
           <div class="edit_text">Add New Product</div>
           <div class="edit_box">
             <div class="content">
-              <img src="img/chick.png" class="product_img">
               <div>
                 <div class="head_group_font">Product Image</div>
-                <input type="file" class="group2 group_font">
+                <input accept="image/*" name="product_image" id="product_image" type="file" class="group2 group_font" required>
               </div>
               <div>
                 <div class="head_group_font">Product Name</div>
-                <input type="text" class="group2 group_font">
+                <input name="product_name" id="product_name" type="text" class="group2 group_font" required>
               </div>
               <div>
                 <div class="head_group_font">Detail</div>
-                <input type="text" class="group2 group_font">
+                <input name="product_detail" id="product_detail" type="text" class="group2 group_font" required>
               </div>
               <div class="box2">
                 <div>
                   <div class="head_group_font">Price</div>
-                  <input type="text" class="group3 group_font">
+                  <input name="product_price" id="product_price" type="text" class="group3 group_font" required>
                 </div>
                 <div>
                   <div class="head_group_font">Quantity</div>
-                  <input type="text" class="group3 group_font">
+                  <input name="product_quantity" id="product_quantity" type="text" class="group3 group_font" required>
                 </div>
               </div>
               <div class="box3">
-                <div>
-                  <div class="head_group_font">Status</div>
-                  <input type="text" class="group3 group_font">
-                </div>
                 <div class="box5">
                   <!-- เพิ่มสินค้า -->
-                  <button class="add_button">add product</button>
+                  <button type="submit" id="add_product_button" class="add_button">add product</button>
                 </div>
               </div>
             </div>
           </div>
           <!-- กดปิดหน้า -->
-          <button class="add_product_close">X</button>
-
+          <button type="button" id="close_add_product" class="add_product_close">X</button>
+          <input type="hidden" id="farm_id" name="farm_id" value="{{user_info.farm.farm_id}}">
+      </form>
         </div>
+        
       </div>
     <!-- </form> -->
 
@@ -749,6 +752,12 @@
   const update_farm = document.getElementById("updatefarm");
   const addbutton = document.getElementById("addbutton");
   const add_product_page = document.getElementById("addproductpage");
+  const close_add_product = document.getElementById("close_add_product");
+  const add_product = document.getElementById("add_product");
+  const fileInput = document.getElementById('product_image');
+  const close_product_edit = document.getElementById("close_product_edit");
+  const edit_product = document.getElementById("edit_product");
+
 
   addbutton.addEventListener("click", function() {
     add_product_page.style.display = "block";
@@ -946,7 +955,38 @@
     edit_animal_page.style.backgroundColor = null;
     edit_order_page.style.backgroundColor = "#FFE4BB";
   });
+
+  close_add_product.addEventListener("click",()=>{
+    add_product_page.style.display = "none";
+  });
+
+  function showProductDetail(name, code, detail, price, quantity, status) {
+    // ในส่วนนี้คุณสามารถทำอะไรก็ได้กับข้อมูลสินค้าที่คุณได้รับ
+    // ตัวอย่าง: แสดงข้อมูลในหน้าแก้ไข
+    document.getElementById('editProductNameInput').value = name;
+    document.getElementById('editProductDetailInput').value = detail;
+    document.getElementById('editProductPriceInput').value = price;
+    document.getElementById('editProductQuantityInput').value = quantity;
+    document.getElementById('editProductCodeInput').value = code;
+
+    var productImageElement = document.getElementById('editProductImage');
+    productImageElement.src = '/get-product-image/' + code;
+    // เรียกใช้งานหน้าแก้ไขหรือแสดงโมดอัพ
+    // ตัวอย่าง: แสดงหน้าแก้ไข
+
+    var statusSelectElement = document.getElementById('editProductStatusInput');
+    for (var i = 0; i < statusSelectElement.options.length; i++) {
+      if (statusSelectElement.options[i].value === status) {
+        statusSelectElement.options[i].selected = true;
+        break;
+    }
+  }
+    edit_product.style.display = 'block';
+  }
   
+  close_product_edit.addEventListener("click",()=>{
+    edit_product.style.display = 'none';
+  });
 
 
 </script>
