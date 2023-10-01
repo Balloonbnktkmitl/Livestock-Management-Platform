@@ -95,7 +95,7 @@
     <div class="product_section">
         <!-- อันนี้คือกรอบสินค้า เวลาจะเพิ่มก็เพิ่มทั้งกล่อง-->
         {% for product in products %}
-        <div class="product_box">
+        <div class="product_box" onclick="showProductDetail('{{ product.product_name }}', '{{ product.product_code }}', '{{ product.product_detail }}', '{{ product.product_price }}', '{{ product.quantity }}', '{{ product.product_status }}', '{{product.farm_id.farm_name}}', '{{product.farm_id.farm_id}}')">
           <div class="product_img">
               <!-- ใส่รูปตรงนี้ -->
               
@@ -103,7 +103,7 @@
           </div>
           <div class="product_information">
               <!-- ใส่ชื่อสินค้า -->
-              <div class="product_name">{{product.product_name}}.</div>
+              <div class="product_name">{{product.product_name}}</div>
               <!-- ใส่ฟาร์ม -->
               <div class="product_farm">{{product.farm_id.farm_name}}</div>
               <!-- ใส่ราคา-->
@@ -124,24 +124,24 @@
     {% endif %}
 
     <!-- กดสินค้า แล้วจะขึ้นจอข้อมูล -->
-    <div class="product_detail">
+    <div id="showdetail" class="product_detail">
 
       <!-- กดปิดหน้า -->
-      <button class="close">X</button>
+      <button id="close" class="close">X</button>
       
       <!-- ใส่รูป -->
       <div class="box">
-        <img src="img/chick.png">
+        <img id="image" src="">
       </div>
 
       <!-- ชื่อสินค้า -->
-      <div class="name">ปีกไก่ 1 แพค</div>
+      <div id="proname" class="name"></div>
       <!-- ชื่อฟาร์ม ลิงค์ไปหน้า ฟาร์มได้-->
-      <a class="farm_name" href="#">chick chick farm << click to view</a>
+      <a id="farmpro" class="farm_name" href="/farmprofile/{}">chick chick farm << click to view</a>
       <!-- detailสินค้า-->
-      <div class="detail">เนื้อไก่ หอมมัน หวาน แน่นๆ เหมาะสำหรับคนรักสุขภาพ</div>
+      <div id="prodetail" class="detail"></div>
       <!-- ราคา -->
-      <div class="bath"> 200 บาท</div>
+      <div id="proprice" class="bath"></div>
 
       <!-- จำนวนสินค้า -->
       <div class="quantity">
@@ -163,4 +163,30 @@
     </div>
 
 </body>
+<script>
+  const showdetail = document.getElementById('showdetail')
+  const close = document.getElementById("close");
+
+  function showProductDetail(name, code, detail, price, quantity, status, farmname, farmcode) {
+  // Set the content of the product detail section
+  // Set other product details here, e.g., farm name, image source, detail, price, quantity, status
+    
+    document.getElementById("proname").textContent = name;
+    document.getElementById("prodetail").textContent = detail;
+    document.getElementById("proprice").textContent = price + " บาท";
+    document.getElementById("farmpro").href = "/farmprofile/" + farmcode;
+    document.getElementById("farmpro").textContent = farmname + " << click to view";
+
+    var productImageElement = document.getElementById('image');
+    productImageElement.src = '/get-product-image/' + code;
+  // Show the product detail section
+  
+  showdetail.style.visibility = "visible";
+}
+
+// Close the product detail section
+close.onclick = function() {
+  showdetail.style.visibility = "hidden";
+}
+</script>
 </html>
