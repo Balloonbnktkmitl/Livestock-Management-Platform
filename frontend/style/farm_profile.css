@@ -163,6 +163,7 @@ a{
   display: flex;
   flex-direction: column;
   justify-content: end;
+  visibility: hidden;
 }
 
 .manage_btn {
