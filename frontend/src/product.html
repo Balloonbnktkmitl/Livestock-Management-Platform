@@ -95,6 +95,8 @@
     <div class="product_section">
         <!-- อันนี้คือกรอบสินค้า เวลาจะเพิ่มก็เพิ่มทั้งกล่อง-->
         {% for product in products %}
+        {% if product.quantity != 0 %}
+        {% if product.product_status != "soldout" %}
         <div class="product_box" onclick="showProductDetail('{{ product.product_name }}', '{{ product.product_code }}', '{{ product.product_detail }}', '{{ product.product_price }}', '{{ product.quantity }}', '{{ product.product_status }}', '{{product.farm_id.farm_name}}', '{{product.farm_id.farm_id}}')">
           <div class="product_img">
               <!-- ใส่รูปตรงนี้ -->
@@ -110,6 +112,8 @@
               <div class="cost">{{product.product_price}} บาท</div>
           </div>
       </div>
+          {% endif %}
+        {% endif %}
       {% endfor %}
     </div>
 
@@ -125,9 +129,9 @@
 
     <!-- กดสินค้า แล้วจะขึ้นจอข้อมูล -->
     <div id="showdetail" class="product_detail">
-
+      <form action="/addorder" method="post">
       <!-- กดปิดหน้า -->
-      <button id="close" class="close">X</button>
+      <button type="button" id="close" class="close">X</button>
       
       <!-- ใส่รูป -->
       <div class="box">
@@ -137,7 +141,7 @@
       <!-- ชื่อสินค้า -->
       <div id="proname" class="name"></div>
       <!-- ชื่อฟาร์ม ลิงค์ไปหน้า ฟาร์มได้-->
-      <a id="farmpro" class="farm_name" href="/farmprofile/{}">chick chick farm << click to view</a>
+      <a id="farmpro" class="farm_name" href=""></a>
       <!-- detailสินค้า-->
       <div id="prodetail" class="detail"></div>
       <!-- ราคา -->
@@ -146,10 +150,10 @@
       <!-- จำนวนสินค้า -->
       <div class="quantity">
         <!-- ลดจำนวน ลดน้อยกว่า 1 -->
-        <button class="add">-</button>
-        <div class="many">1</div>
+        <button id="delval" type="button" class="add">-</button>
+        <div id="many" class="many">1</div>
         <!-- เพิ่มจำนวน ห้ามมากกว่าสินค้าที่มี -->
-        <button class="add">+</button>
+        <button id="addval" type="button" class="add">+</button>
       </div>
 
       <!-- สั่งของได้ -->
@@ -166,6 +170,32 @@
 <script>
   const showdetail = document.getElementById('showdetail')
   const close = document.getElementById("close");
+    const many = document.getElementById("many");
+    const addButton = document.getElementById("addval");
+    const minusButton = document.getElementById("delval");
+
+    // รายการค่าสำหรับจำนวนสินค้า
+    let quantity = 1;
+
+    // เพิ่มจำนวนสินค้าเมื่อคลิกปุ่ม "เพิ่ม"
+    addButton.addEventListener("click", () => {
+        quantity++;
+        updateQuantityDisplay();
+    });
+
+    // ลดจำนวนสินค้าเมื่อคลิกปุ่ม "ลด" แต่ไม่ให้ลดน้อยกว่า 1
+    minusButton.addEventListener("click", () => {
+        if (quantity > 1) {
+            quantity--;
+            updateQuantityDisplay();
+        }
+    });
+
+    // อัปเดตการแสดงค่าจำนวนสินค้าใน HTML
+    function updateQuantityDisplay() {
+        many.textContent = quantity;
+    }
+
 
   function showProductDetail(name, code, detail, price, quantity, status, farmname, farmcode) {
   // Set the content of the product detail section
