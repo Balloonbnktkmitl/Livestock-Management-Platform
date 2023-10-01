@@ -167,7 +167,7 @@
           </div>
           <!-- กดปิดหน้า -->
           <button type="button" id="close_product_edit" class="edit_product_close">X</button>
-          <input type="hidden" id="editProductCodeInput" name="product_code" >
+          <input type="hidden" id="editProductCodeInput" name="product_code">
         </form>
         </div>
         </div>
@@ -405,25 +405,25 @@
       </div>
       <div class="detail_font">click job_id to edit</div>
       <div class="job_section">
-        <table class="bordered-table">
+        <table id= "job_table" class="bordered-table">
           <thead>
             <tr>
               <th>job_id</th>
-              <th class="job_title">job_title</th>
-              <th class="job_des">Job_description</th> <!-- job_title-->
-              <th>min_salary</th>
-              <th>max_salary</th>
+              <th  class="job_title_table">job_title</th>
+              <th  class="job_des_table">Job_description</th> <!-- job_title-->
+              <th  class="job_min_table">min_salary</th>
+              <th  class="job_max_table">max_salary</th>
             </tr>
           </thead>
           <tbody>
             <tr>
             {% for job in job %}
             <tr>
-            <td><a href="#">{{job.job_id}}</a></td>
-            <td>{{job.job_title}}</td>
-            <td>{{job.job_detail}}</td>
-            <td>{{job.min_salary}}</td>
-            <td>{{job.max_salary}}</td>
+            <td id="job_id">{{job.job_id}}</td>
+            <td id="job_ti">{{job.job_title}}</td>
+            <td id="job_de">{{job.job_detail}}</td>
+            <td id="job_mi">{{job.min_salary}}</td>
+            <td id="job_ma">{{job.max_salary}}</td>
           </tr>
           {% endfor %}
         </tr>
@@ -437,34 +437,37 @@
 
       <!-- เปิดหน้าแก้ไข -->
       <div id= "edit_job" class="edit_job_page">
+        <form id="edit_job" action="/updatejob" method="post">
         <div class="edit_text">Edit Job</div>
         <div class="edit_box">
           <div class="content">
             <div>
               <div class="head_group_font">Job</div>
-              <input type="text" class="group group_font">
+              <input name="nameedit" id="nameedit" type="text" class="group group_font">
             </div>
             <div>
               <div class="head_group_font">Job Description</div>
-              <input type="text" class="group2 group_font">
+              <input name="desedit" id="desedit" type="text" class="group2 group_font">
             </div>
             <div class="box">
               <div>
                 <div class="head_group_font">Min Salary</div>
-                <input type="text" class="group3 group_font">
+                <input name="minedit" id="minedit"type="text" class="group3 group_font">
               </div>
               <div>
                 <div class="head_group_font">Max Salary</div>
-                <input type="text" class="group3 group_font">
+                <input name="maxedit" id="maxedit" type="text" class="group3 group_font">
               </div>
             </div>
           </div>
           <div class="content2">
-            <button class="save_job_btn">save job</button>
+            <button type="submit" class="save_job_btn">save job</button>
           </div>
         </div>
         <!-- กดปิดหน้า -->
-        <button class="edit_job_close">X</button>
+        <button type="button" id="closeeditjob" class="edit_job_close">X</button>
+        <input type="hidden" id="job_id_edit" name="job_id">
+        </form>
       </div>
 
       <!-- เปิดหน้าเพิ่ม job -->
@@ -776,6 +779,8 @@
   const addjob = document.getElementById("addjob");
   const closeaddbutton = document.getElementById("closeaddbutton");
   const edit_job = document.getElementById("edit_job");
+  const jobTable = document.getElementById('job_table');
+  const closeeditjob = document.getElementById("closeeditjob");
 
 
   addbutton.addEventListener("click", function() {
@@ -1038,6 +1043,40 @@
     addjob.style.display = "none";
   });
 
+  jobTable.addEventListener('click', (event) => {
+  const target = event.target;
+  
+  // ตรวจสอบว่าคลิกที่เซลล์ข้อมูลของแถว
+  if (target.tagName === 'TD') {
+    // แสดงหน้าแก้ไข
+    edit_job.style.display = 'block';
+    
+    // นำข้อมูลจากแถวที่คลิกมาแสดงในหน้าแก้ไข
+    const row = target.parentElement;
+    const jobId = row.querySelector('#job_id').textContent; // ใช้ '#job_id'
+    const jobTitle = row.querySelector('#job_ti').textContent; // ใช้ '#job_ti'
+    const jobDescription = row.querySelector('#job_de').textContent; // ใช้ '#job_de'
+    const minSalary = row.querySelector('#job_mi').textContent; // ใช้ '#job_mi'
+    const maxSalary = row.querySelector('#job_ma').textContent;
+    
+    // นำข้อมูลไปแสดงในฟิลด์ที่เหมาะสมในหน้าแก้ไข
+    const jobInput = document.getElementById('nameedit');
+    const jobDescriptionInput = document.getElementById('desedit');
+    const minSalaryInput = document.getElementById('minedit');
+    const maxSalaryInput = document.getElementById('maxedit');
+    const job_id = document.getElementById('job_id_edit');
+    
+    jobInput.value = jobTitle;
+    jobDescriptionInput.value = jobDescription;
+    minSalaryInput.value = minSalary;
+    maxSalaryInput.value = maxSalary;
+    job_id.value = jobId;
+  }
+});
+
+  closeeditjob.addEventListener("click",()=>{
+  edit_job.style.display = 'none';
+});
 
 
 </script>

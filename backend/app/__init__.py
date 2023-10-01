@@ -523,6 +523,18 @@ def create_app():
             db.commit()
             return RedirectResponse(url="/managefarm")
         
+    @app.post("/updatejob")
+    async def updatejob(request: Request, nameedit: str = Form(...), desedit: str = Form(...), minedit: float = Form(...)
+                        , maxedit: float = Form(...), job_id: int = Form(...)):
+        job = Jobs.get(job_id=job_id)
+        if not job:
+            raise HTTPException(status_code=404, detail="ไม่พบงาน")
+        job.job_title = nameedit
+        job.job_detail = desedit
+        job.min_salary = minedit
+        job.max_salary = maxedit
+        db.commit()
+        return RedirectResponse(url="/managefarm")
     return app
     
 create_app()
