@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie, Response, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
-from .models import db, Users, Farms, Staffs, Animals, Products, Locations, Countries, Regions, Orders, Animal_Types, Products
+from .models import db, Users, Farms, Staffs, Animals, Products, Locations, Countries, Regions, Orders, Animal_Types, Products, Jobs
 from pony.orm import db_session, get, select,  ObjectNotFound
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -11,6 +11,16 @@ from passlib.context import CryptContext
 from typing import Optional
 from io import BytesIO
 
+def get_all_jobs():
+    with db_session:
+        jobs = select(job for job in Jobs)[:]
+        return jobs
+
+def get_all_staffs():
+    with db_session:
+        staffs = select(staff for staff in Staffs)[:]
+        return staffs
+    
 def get_all_farms():
     with db_session:
         farms = select(farm for farm in Farms)[:]
@@ -387,11 +397,14 @@ def create_app():
                 products = get_all_products()
                 animal = get_all_animals()
                 farm = get_all_farms()
+                staff = get_all_staffs()
+                job = get_all_jobs()
                 if not user_info:
                     raise HTTPException(status_code=401, detail="User not authenticated")
             else:
                 raise HTTPException(status_code=401, detail="User not authenticated")
-            return frontend.TemplateResponse('managefarm.html', {'request': request, 'products': products, "user_info": user_info, "farm": farm, "animal": animal})
+            return frontend.TemplateResponse('managefarm.html', {'request': request, 'products': products, "user_info": user_info, "farm": farm, 
+                                                                 "animal": animal, "staff": staff, "job": job})
     
     @app.post("/managefarm", response_class=HTMLResponse)
     def managefarm(request: Request):
@@ -402,11 +415,14 @@ def create_app():
                 products = get_all_products()
                 animal = get_all_animals()
                 farm = get_all_farms()
+                staff = get_all_staffs()
+                job = get_all_jobs()
                 if not user_info:
                     raise HTTPException(status_code=401, detail="User not authenticated")
             else:
                 raise HTTPException(status_code=401, detail="User not authenticated")
-            return frontend.TemplateResponse('managefarm.html', {'request': request, 'products': products, "user_info": user_info, "farm": farm, "animal": animal})
+            return frontend.TemplateResponse('managefarm.html', {'request': request, 'products': products, "user_info": user_info, 
+                                                                 "farm": farm, "animal": animal, "staff": staff, "job": job})
         
     @app.post("/updatefarm", response_model=dict)
     async def updatefarm(request: Request, fromData: dict):
@@ -499,6 +515,14 @@ def create_app():
             return frontend.TemplateResponse('farm_profile.html', {'request': request, "farm": farm, 
             "location": location, "country": country, "region": region, "user": user, "product": product})
     
+    
+    @app.post("/addjob")
+    async def addjob(request: Request, name: str = Form(...), des: str = Form(...), min: float = Form(...), max: float = Form(...)):
+        with db_session:
+            job = Jobs(job_title=name, job_detail=des, min_salary=min, max_salary=max)
+            db.commit()
+            return RedirectResponse(url="/managefarm")
+        
     return app
     
 create_app()

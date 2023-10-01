@@ -53,7 +53,6 @@
               {% for product in products %}
               {% if product.farm_id.farm_id == user_info.farm.farm_id %}
                 <!-- อันนี้คือกรอบสินค้า เวลาจะเพิ่มก็เพิ่มทั้งกล่อง-->
-                {% if product.animal_code is none %}
                 <div class="product_box">
                     <div class="product_img">
                         <!-- ใส่รูปตรงนี้ -->
@@ -68,22 +67,6 @@
                         <div class="cost">{{product.product_price}} บาท</div>
                     </div>
                 </div>
-                {% else %}
-                <div class="product_box">
-                    <div class="product_img">
-                        <!-- ใส่รูปตรงนี้ -->
-                        <img class="img" src='/get-product-image/{{ product.product_code }}' />
-                    </div>
-                    <div class="product_information">
-                        <!-- ใส่ชื่อสินค้า -->
-                        <div class="product_name">{{product.product_name}}.</div>
-                        <!-- ใส่ฟาร์ม -->
-                        <div class="product_farm">{{product.farm_id.farm_name}}</div>
-                        <!-- ใส่ราคา-->
-                        <div class="cost">{{product.product_price}} บาท</div>
-                    </div>
-                </div>
-                {% endif %}
                 {% endif %}
               {% endfor %}
             </div>
@@ -104,7 +87,7 @@
     <!-- menu left -->
     <a href="/home" class="home_menu menu_font">Home</a>
     <a href="/product" class="product_menu menu_font">Products</a>
-    <a href="#" class="farm_menu menu_font">Farms</a>
+    <a href="/farm" class="farm_menu menu_font">Farms</a>
 
     <!-- logo -->
     <div class="website_logo">

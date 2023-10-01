@@ -241,13 +241,19 @@
             </tr>
           </thead>
           <tbody>
-            <th><a href="#">12345</a></th>
-            <th>asfafafsfafsf asfafsafafsdfa</th>
-            <th>คนเลี้ยงสัตว์</th>
-            <th>089-123-4567</th>
-            <th></th>
-            <th></th>
-            <th></th>
+            {% for staff in staff %}
+              {% if staff.farm_id.farm_id == user_info.farm.farm_id %}
+            <tr>
+            <th><a href="#">{{staff.staff_id}}</a></th>
+            <th>{{staff.firstName}} {{staff.lastName}}</th>
+            <th>{{staff.job_id.job_title}}</th>
+            <th>{{staff.staff_phone}}</th>
+            <th>{{staff.staff_email}}</th>
+            <th>{{staff.salary}}</th>
+            <th>{{staff.status}}</th>
+          </tr>
+            {% endif %}
+          {% endfor %}
           </tbody>
         </table>
         <!-- ปุ่มเพิ่มข้อมูล -->
@@ -410,21 +416,27 @@
             </tr>
           </thead>
           <tbody>
-            <th><a href="#">12345</a></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-          </tbody>
+            <tr>
+            {% for job in job %}
+            <tr>
+            <td><a href="#">{{job.job_id}}</a></td>
+            <td>{{job.job_title}}</td>
+            <td>{{job.job_detail}}</td>
+            <td>{{job.min_salary}}</td>
+            <td>{{job.max_salary}}</td>
+          </tr>
+          {% endfor %}
+        </tr>
+        </tbody>
         </table>
         <!-- ปุ่มเพิ่มข้อมูล -->
         <div class="left">
-          <button class="add_job_button">add new job</button>
+          <button id="addjobutton" type="button" class="add_job_button">add new job</button>
         </div>
       </div>
 
       <!-- เปิดหน้าแก้ไข -->
-      <div class="edit_job_page">
+      <div id= "edit_job" class="edit_job_page">
         <div class="edit_text">Edit Job</div>
         <div class="edit_box">
           <div class="content">
@@ -456,36 +468,38 @@
       </div>
 
       <!-- เปิดหน้าเพิ่ม job -->
-      <div class="add_job_page">
+      <div id="addjob" class="add_job_page">
+        <form id="addjobform" method="post" action="/addjob">
         <div class="edit_text">Add New Job</div>
         <div class="edit_box">
           <div class="content">
             <div>
               <div class="head_group_font">Job</div>
-              <input type="text" class="group group_font">
+              <input name="name" type="text" class="group group_font">
             </div>
             <div>
               <div class="head_group_font">Job Description</div>
-              <input type="text" class="group2 group_font">
+              <input name="des" type="text" class="group2 group_font">
             </div>
             <div class="box">
               <div>
                 <div class="head_group_font">Min Salary</div>
-                <input type="text" class="group3 group_font">
+                <input name="min" type="text" class="group3 group_font">
               </div>
               <div>
                 <div class="head_group_font">Max Salary</div>
-                <input type="text" class="group3 group_font">
+                <input name="max" type="text" class="group3 group_font">
               </div>
             </div>
           </div>
           <div class="content2">
-            <button class="add_job_btn">add job</button>
+            <button type="submit" class="add_job_btn">add job</button>
           </div>
         </div>
         <!-- กดปิดหน้า -->
-        <button class="add_job_close">X</button>
+        <button type="button" id="closeaddbutton" class="add_job_close">X</button>
       </div>
+    </form>
     </div>
 
     <!-- animal page -->
@@ -758,6 +772,10 @@
   const close_product_edit = document.getElementById("close_product_edit");
   const edit_product = document.getElementById("edit_product");
   const delete_product = document.getElementById("delete_product");
+  const addjobbutton = document.getElementById("addjobutton");
+  const addjob = document.getElementById("addjob");
+  const closeaddbutton = document.getElementById("closeaddbutton");
+  const edit_job = document.getElementById("edit_job");
 
 
   addbutton.addEventListener("click", function() {
@@ -1011,6 +1029,17 @@
     });
         }
     });
+  
+  addjobbutton.addEventListener("click",()=>{
+    addjob.style.display = "block";
+  });
+
+  closeaddbutton.addEventListener("click",()=>{
+    addjob.style.display = "none";
+  });
+
+
+
 </script>
 </body>
 </html>

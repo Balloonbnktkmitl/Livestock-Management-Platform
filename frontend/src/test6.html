@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="/frontend/style/home_farmmer.css" />
+  </head>
+  <body>
+    <div class="profile">
+        <div class="div">
+            <div class="top">
+
+                <!-- farm header -->
+                    <img class="img_header" src="/frontend/src/img/winery home 1.png" />
+                    <div class="rectangle"></div>
+                    <img class="farm_logo" src="/frontend/src/img/cool pig logo 1.png" />
+
+                    <!-- farm name -->
+                    <div class="farm_name">{{user_info.farm.farm_name}}</div>
+
+                    <!-- farm owner name -->
+                    <p class="farm_owner">farm owner : {{user_info.firstName}} {{user_info.lastName}}</p>
+
+                    <!-- manage farm button -->
+                    <a href="/managefarm">
+                        <div class="manage_button">
+                            <button class="manage_button_color"><div class="manage_button_font">manage farm</div></button>
+                        </div>
+                    </a>
+
+                <!-- menubar -->
+                <div class="bar">
+                    <div class="menubar">
+
+                        <!-- logo -->
+                        <div class="website_logo">
+                            <div class="logo_text">Farm Site</div>
+                            <img class="logo" src="/frontend/src/img/farm.png" />
+                        </div>
+
+                        <!-- menu left -->
+                        <a href="/home" class="home_menu">Home</a>
+                        <a href="/product" class="product_menu">Products</a>
+                        <a href="/farm" class="farm_menu">Farms</a>
+
+                        <!-- menu right -->
+                        <a href="/logout" class="logout_menu">log out</a>
+                        <img class="line" src="/frontend/src/svg/line-1.svg" />
+                        <a href="/user-profile">
+                            <img class="profile-user" src="/frontend/src/img/profile-user.png" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- farm information -->
+            <div class="farm_information">
+                <div class="farm_information_bg">
+                    <p class="address">Address : {{user_info.farm.location.address}} {{user_info.farm.location.city}} {{user_info.farm.country.country_name}} {{user_info.farm.region.region_name}} {{user_info.farm.location.zip}}</p>
+                    <p class="phone">Phone: {{user_info.farm.farm_phone}}</p>
+                    <p class="email">E-mail: {{user_info.farm.farm_email}}</p>
+                </div>
+            </div>
+            
+                <!-- search form -->
+            <div class="search_form">
+                <form id="search_form">
+                    <div class="search_text">
+                        <input type="text" class="search_txt" id="search_input" placeholder="Search product">
+                    </div>
+                    <div class="search">
+                        <button type="submit" id="search_button" class="search_button"> <div class="search_font">Search</div> </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- search results -->
+            <div id="search_results" class="product_section">
+                <!-- ที่นี่จะแสดงผลลัพธ์การค้นหา -->
+            </div>
+
+            <!-- head -->
+            <div class="head">PRODUCT</div> 
+
+            <!-- product box อันนี้คือมีสินค้า-->
+            <!-- แบ่งคอลัมให้แล้ว 3 คอลลัม แถวก็ขึ้นอยู่กับว่ามันจัดได้กี่แถว กรอบจะเก็บได้เป็น 2x3 ที่ล้นก็มีแถบให้เลื่อนลงได้-->
+            <div class="product_section">
+              {% for product in products %}
+              {% if product.farm_id.farm_id == user_info.farm.farm_id %}
+                <!-- อันนี้คือกรอบสินค้า เวลาจะเพิ่มก็เพิ่มทั้งกล่อง-->
+                <div class="product_box">
+                    <div class="product_img">
+                        <!-- ใส่รูปตรงนี้ -->
+                        
+                        <img class="img" src='/get-product-image/{{ product.product_code }}' />
+                    </div>
+                    <div class="product_information">
+                        <!-- ใส่ชื่อสินค้า -->
+                        <div class="product_name">{{product.product_name}}.</div>
+                        <!-- ใส่ฟาร์ม -->
+                        <div class="product_farm">{{product.farm_id.farm_name}}</div>
+                        <!-- ใส่ราคา-->
+                        <div class="cost">{{product.product_price}} บาท</div>
+                    </div>
+                </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <!-- อันนี้คือ ยังไม่มีสินค้า ใส่ visibility: hidden; ในcss อยู่จะได้ปิดการมองเห็น-->
+            {% if products == [] %}
+            <div class="product_none">
+                <div class="no">There are no product</div>
+                <div class="ellipse">
+                    <img class="searching" src="/frontend/src/img/searching 1.png" />
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+<script>
+    const searchInput = document.getElementById("search_input");
+    const searchButton = document.getElementById("search_button");
+    const searchResults = document.getElementById("search_results");
+
+    // เพิ่ม Event Listener สำหรับคลิกที่ปุ่ม "Search"
+    searchButton.addEventListener("click", function () {
+        performSearch();
+    });
+
+    // เพิ่ม Event Listener สำหรับการกด Enter ในช่องค้นหา
+    searchInput.addEventListener("keyup", function (event) {
+        if (event.key === "Enter") {
+            performSearch();
+        }
+    });
+
+    // ฟังก์ชันสำหรับการค้นหา
+    function performSearch() {
+        const query = searchInput.value.trim(); // รับค่าที่ป้อนในช่องค้นหา
+
+        // กรองรายการสินค้าตามคำค้นหา
+        const filteredProducts = filterProducts(query);
+
+        // แสดงผลลัพธ์การค้นหา
+        displaySearchResults(filteredProducts);
+    }
+
+    // ฟังก์ชันสำหรับกรองรายการสินค้าตามคำค้นหา (ตัวอย่างเท่านั้น)
+    function filterProducts(query) {
+        // กรองรายการสินค้าจากข้อมูลที่มีอยู่แล้ว
+        // คุณควรใช้ข้อมูลที่เหมาะสมจากแหล่งข้อมูลของคุณ
+
+        const filteredProducts = products.filter(product => {
+            return product.product_name.toLowerCase().includes(query.toLowerCase());
+        });
+
+        return filteredProducts;
+    }
+
+    // ฟังก์ชันสำหรับแสดงผลลัพธ์การค้นหา
+    function displaySearchResults(results) {
+        const resultsHtml = results.map(product => `
+            <div class="product_box">
+                <div class="product_information">
+                    <div class="product_name">${product.product_name}</div>
+                </div>
+            </div>
+        `).join("");
+
+        searchResults.innerHTML = resultsHtml;
+    }
+</script>
+
+  </body>
+</html>
