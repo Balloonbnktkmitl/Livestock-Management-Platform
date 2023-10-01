@@ -18,7 +18,7 @@
         <!-- menu left -->
         <a href="/home" class="home_menu menu_font">Home</a>
         <a href="/product" class="product_menu menu_font">Products</a>
-        <a href="#" class="farm_menu menu_font">Farms</a>
+        <a href="/farm" class="farm_menu menu_font">Farms</a>
   
         <!-- logo -->
         <div class="website_logo">
@@ -97,23 +97,6 @@
     <div class="product_section">
         <!-- อันนี้คือกรอบสินค้า เวลาจะเพิ่มก็เพิ่มทั้งกล่อง-->
         {% for product in products %}
-              {% if product.farm_id.farm_id == user_info.farm.farm_id %}
-              {% if product.animal_code is none %}
-        <div class="product_box">
-            <div class="product_img">
-                <!-- ใส่รูปตรงนี้ -->
-                <img class="img" src="/frontend/src/img/chick.png" />
-            </div>
-            <div class="product_information">
-                <!-- ใส่ชื่อสินค้า -->
-                <div class="product_name">น่องไก่ 1 แพ็ค</div>
-                <!-- ใส่ฟาร์ม -->
-                <div class="product_farm">chick chick farm</div>
-                <!-- ใส่ราคา-->
-                <div class="cost">50 บาท</div>
-            </div>
-        </div>
-        {% else %}
         <div class="product_box">
           <div class="product_img">
               <!-- ใส่รูปตรงนี้ -->
@@ -129,8 +112,6 @@
               <div class="cost">{{product.product_price}} บาท</div>
           </div>
       </div>
-      {% endif %}
-      {% endif %}
       {% endfor %}
     </div>
 

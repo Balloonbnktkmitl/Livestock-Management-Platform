@@ -477,6 +477,28 @@ def create_app():
             product.delete()
             db.commit()
             return RedirectResponse(url="/managefarm")
+        
+    @app.get("/farm", response_class=HTMLResponse)
+    def farm(request: Request):
+        with db_session:
+            farm = get_all_farms()
+            return frontend.TemplateResponse('farm.html', {'request': request, "farm": farm})
+    
+    @app.get("/farmprofile/{farm_id}", response_class=HTMLResponse)
+    async def farmprofile(request: Request, farm_id: int):
+        with db_session:
+            farm = Farms.get(farm_id=farm_id)
+            if not farm:
+                raise HTTPException(status_code=404, detail="ไม่พบฟาร์ม")
+            location = farm.location_id
+            country = location.country_id
+            region = country.region_id
+            user = farm.user_id
+            product = get_all_products()
+            
+            return frontend.TemplateResponse('farm_profile.html', {'request': request, "farm": farm, 
+            "location": location, "country": country, "region": region, "user": user, "product": product})
+    
     return app
     
 create_app()
