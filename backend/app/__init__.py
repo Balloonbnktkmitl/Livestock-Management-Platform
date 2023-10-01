@@ -535,8 +535,19 @@ def create_app():
         job.max_salary = maxedit
         db.commit()
         return RedirectResponse(url="/managefarm")
-    return app
     
+    @app.post("/addstaff", response_model=dict)
+    async def addstaff(request: Request, first: str = Form(...), last: str = Form(...), job: int = Form(...),
+                       email: str = Form(...), phone: str = Form(...), farm_id: int = Form(...), gender: str = Form(...), salary: float = Form(...),
+                       hiredate: str = Form(...)):
+        with db_session:
+            staff = Staffs(firstName=first, lastName=last, job_id=job, staff_email=email, staff_phone=phone, staff_gender=gender, farm_id=farm_id, 
+                           salary=salary, status="Active", hire_date=hiredate)
+            db.commit()
+            return RedirectResponse(url="/managefarm")          
+    
+    return app
+
 create_app()
 
 

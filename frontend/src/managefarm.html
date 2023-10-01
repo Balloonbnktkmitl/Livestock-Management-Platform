@@ -228,7 +228,7 @@
 
       <div class="detail_font">click staff_id to edit</div>
       <div class="staff_section">
-        <table class="bordered-table">
+        <table id="staff_table" class="bordered-table">
           <thead>
             <tr>
               <th>staff_id</th>
@@ -244,13 +244,13 @@
             {% for staff in staff %}
               {% if staff.farm_id.farm_id == user_info.farm.farm_id %}
             <tr>
-            <th><a href="#">{{staff.staff_id}}</a></th>
-            <th>{{staff.firstName}} {{staff.lastName}}</th>
-            <th>{{staff.job_id.job_title}}</th>
-            <th>{{staff.staff_phone}}</th>
-            <th>{{staff.staff_email}}</th>
-            <th>{{staff.salary}}</th>
-            <th>{{staff.status}}</th>
+            <th id="staff_id_table">{{staff.staff_id}}</th>
+            <th id="staff_name_table">{{staff.firstName}} {{staff.lastName}}</th>
+            <th id="staff_title_table">{{staff.job_id.job_title}}</th>
+            <th id="staff_phone_table">{{staff.staff_phone}}</th>
+            <th id="staff_email_table">{{staff.staff_email}}</th>
+            <th id="staff_salary_table">{{staff.salary}}</th>
+            <th id="staff_status_table">{{staff.status}}</th>
           </tr>
             {% endif %}
           {% endfor %}
@@ -258,7 +258,7 @@
         </table>
         <!-- ปุ่มเพิ่มข้อมูล -->
         <div class="left">
-          <button class="add_staff_button">add new staff</button>
+          <button id="addstaffbutton" class="add_staff_button">add new staff</button>
         </div>
       </div>
 
@@ -329,40 +329,43 @@
       </div>
 
       <!-- เปิดหน้าเพิ่ม staff-->
-      <div class="add_staff_page">
+      <div id="add_staff" class="add_staff_page">
+        <form id="add_staff" action="/addstaff" method="post">
         <div class="edit_text">Add New Staff</div>
         <div class="edit_box">
           <div class="content3">
             <div class="box2">
               <div>
                 <div class="head_group_font">First Name</div>
-                <input type="text" class="group group_font">
+                <input name="first" type="text" class="group group_font">
               </div>
               <div>
                 <div class="head_group_font">Last Name</div>
-                <input type="text" class="group group_font">
+                <input name="last" type="text" class="group group_font">
               </div>
             </div>
             <div class="box2">
               <div>
                 <div class="head_group_font">Phone Number</div>
-                <input type="text" class="group group_font">
+                <input name="phone" type="text" class="group group_font">
               </div>
               <div>
                 <div class="head_group_font">Email</div>
-                <input type="email" class="group group_font">
+                <input name="email" type="email" class="group group_font">
               </div>
             </div>
             <div class="box2">
               <div>
                 <div class="head_group_font">Job</div>
-                <select class="group group_font">
-                  <option value="คนดูแลสัตว์" selected>คนดูแลสัตว์</option>
+                <select name="job" id="jobInput" class="group group_font">
+                  {% for job in job %}
+                  <option value="{{job.job_id}}">{{job.job_title}}</option>
+                  {% endfor %}
                 </select>
               </div>
               <div>
                 <div class="head_group_font">Gender</div>
-                <select class="group group_font">
+                <select name="gender"class="group group_font">
                   <option value="Female" selected>Female</option>
                   <option value="Male">Male</option>
                   <option value="Others">Others</option>
@@ -372,26 +375,24 @@
             <div class="box2">
               <div>
                 <div class="head_group_font">Salary</div>
-                <input type="text" class="group group_font">
+                <input name="salary" type="text" class="group group_font">
               </div>
               <div>
                 <div class="head_group_font">Hire Date</div>
-                <input type="date" class="group group_font">
+                <input name="hiredate" type="date" class="group group_font">
               </div>
             </div>
             <div class="box2">
-              <div>
-                <div class="head_group_font">Salary</div>
-                <input type="text" class="group group_font">
-              </div>
               <div class="content2">
-                <button class="add_staff_btn">add staff</button>
+                <button id="add_staff_button"class="add_staff_btn">add staff</button>
               </div>
             </div>
           </div>
         </div>
         <!-- กดปิดหน้า -->
-        <button class="add_staff_close">X</button>
+        <button type="button" id="close_add_staff" class="add_staff_close">X</button>
+        <input type="hidden" id="farm_id" name="farm_id" value="{{user_info.farm.farm_id}}">
+        </form>
       </div>
     </div>
 
@@ -781,6 +782,10 @@
   const edit_job = document.getElementById("edit_job");
   const jobTable = document.getElementById('job_table');
   const closeeditjob = document.getElementById("closeeditjob");
+  const add_staff_button = document.getElementById("addstaffbutton");
+  const add_staff = document.getElementById("add_staff");
+  const close_add_staff = document.getElementById("close_add_staff");
+  const jobSelect = document.getElementById('jobInput');
 
 
   addbutton.addEventListener("click", function() {
@@ -1072,11 +1077,20 @@
     maxSalaryInput.value = maxSalary;
     job_id.value = jobId;
   }
-});
-
+  });
+  
   closeeditjob.addEventListener("click",()=>{
-  edit_job.style.display = 'none';
-});
+    edit_job.style.display = 'none';
+  });
+
+  add_staff_button.addEventListener("click",()=>{
+    add_staff.style.display = "block";
+  });
+
+  close_add_staff.addEventListener("click",()=>{
+    add_staff.style.display = "none";
+  });
+
 
 
 </script>
