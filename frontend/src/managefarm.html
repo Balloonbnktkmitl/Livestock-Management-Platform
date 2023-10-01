@@ -644,13 +644,17 @@
             {% for order in order %}
               {% if order.farm_id.farm_id == user_info.farm.farm_id %}
             <tr>
-            <td>{{order.order_id}}</td>
-            <td>{{order.product_code.product_name}}</td>
-            <td>{{order.user_id.firstName}}</td>
-            <td>{{order.order_quantity}}</td>
-            <td>{{order.order_quantity * order.product_code. product_price}}</td>
-            <td>{{order.order_date}}</td>
-            <td>{{order.order_status}}</td>
+            <td id="id">{{order.order_id}}</td>
+            <td id="name">{{order.product_code.product_name}}</td>
+            <td id="cus">{{order.user_id.firstName}}</td>
+            <td id="quan">{{order.order_quantity}}</td>
+            <td id="price">{{order.order_quantity * order.product_code. product_price}}</td>
+            <td id="date">{{order.order_date}}</td>
+            <td id="status">{{order.order_status}}</td>
+            <td id="address" style="display:none">{{order.user_id.location_id.address}} {{order.user_id.location_id.city}} {{order.user_id.location_id.country_id.country_name}} {{order.user_id.location_id.country_id.region_id.region_name}} {{order.user_id.location_id.zip}}</td>
+            <td id="userid" style="display:none">{{order.user_id.user_id}}</td>
+            <td id="productid" style="display:none">{{order.product_code.product_code}}</td>
+            <td id="phone" style="display:none">{{order.user_id.phone}}</td>
             </tr>
               {% endif %}
             {% endfor %}
@@ -659,47 +663,49 @@
       </div>
 
       <!-- เปิดหน้าแก้ไข -->
-      <div class="order_page">
+      <div id="order_edit" class="order_page">
+        <form id="edit_order" action="/updateorder" method="post">
         <div class="edit_text">Order Status</div>
         <div class="edit_box">
           <div class="content">
             <div class="box">
               <div>
                 <div class="head_group_font">Order_id</div>
-                <input type="text" class="group3 group_font" disabled>
+                <input name="showorderid" id="showorderid" type="text" class="group3 group_font">
               </div>
               <div>
                 <div class="head_group_font">Product Name</div>
-                <input type="text" class="group3 group_font" disabled>
+                <input id="pdname" type="text" class="group3 group_font" disabled>
               </div>
             </div>
             <div>
               <div class="head_group_font">Customer Name</div> <!-- full name-->
-              <input type="text" class="group2 group_font" disabled>
+              <input id="cusname" type="text" class="group2 group_font" disabled>
             </div>
             <div>
               <div class="head_group_font">Address</div> <!-- address + city + country + zip-->
-              <input type="text" class="group2 group_font" disabled>
+              <input id="showaddress" type="text" class="group2 group_font" disabled>
             </div>
             <div class="box">
               <div>
                 <div class="head_group_font">Phone</div>
-                <input type="text" class="group3 group_font" disabled>
+                <input id="showphone" type="text" class="group3 group_font" disabled>
               </div>
               <div>
                 <div class="head_group_font">Quantity</div>
-                <input type="text" class="group3 group_font" disabled>
+                <input id="showquan" type="text" class="group3 group_font" disabled>
               </div>
             </div>
             <div class="box">
               <div>
                 <div class="head_group_font">Order_date</div>
-                <input type="text" class="group3 group_font" disabled>
+                <input id="showdate" type="text" class="group3 group_font" disabled>
               </div>
               <div>
                 <div class="head_group_font">Order_status</div>
-                <select class="group3 group_font">
-                  <option value="ส่งพัสดุสำเร็จ" selected>ส่งพัสดุสำเร็จ</option>
+                <select name="status" id="showstatus" class="group3 group_font">
+                  <option value="Finish" selected>Finish</option>
+                  <option value="Transit" selected>Transit</option>
                 </select>
               </div>
             </div>
@@ -709,8 +715,9 @@
           </div>
         </div>
         <!-- กดปิดหน้า -->
-        <button class="order_close">X</button>
+        <button type="button" id="oreder_edit_close" class="order_close">X</button>
       </div>
+    </form>
     </div>
 
     </div>
@@ -818,7 +825,9 @@
   const edit_animal = document.getElementById("edit_animal");
   const close_editanimal_button = document.getElementById("close_editanimal_button");
   const delete_animal = document.getElementById("delete_animal");
-
+  const order_edit_close = document.getElementById('oreder_edit_close');
+  const order_edit = document.getElementById('order_edit');
+  const orderTable = document.getElementById('order_id');
 
   addbutton.addEventListener("click", function() {
     add_product_page.style.display = "block";
@@ -1226,6 +1235,58 @@
     });
         }
     });
+  
+  order_edit_close.addEventListener("click",()=>{
+    order_edit.style.display = 'none';
+  });
+
+  orderTable.addEventListener('click', (event) => {
+    const target = event.target;
+    if (target.tagName === 'TD') {
+      // แสดงหน้าแก้ไข
+      order_edit.style.display = 'block';
+      
+      const row = target.parentElement;
+      const orderId = row.querySelector('#id').textContent;
+      const orderDate = row.querySelector('#date').textContent;
+      const orderStatus = row.querySelector('#status').textContent;
+      const orderQuantity = row.querySelector('#quan').textContent;
+      const orderProductId = row.querySelector('#id').textContent;
+      const orderUserId = row.querySelector('#userid').textContent;
+      const orderAddress = row.querySelector('#address').textContent;
+      const orderPhone = row.querySelector('#phone').textContent;
+      const ordercus = row.querySelector('#cus').textContent;
+      const productname = row.querySelector('#name').textContent;
+      
+        
+      
+      // นำข้อมูลไปแสดงในฟิลด์ที่เหมาะสมในหน้าแก้ไข
+      const orderIdInput = document.getElementById('showorderid');
+      const orderDateInput = document.getElementById('showdate');
+      const orderStatusInput = document.getElementById('showstatus');
+      const orderQuantityInput = document.getElementById('showquan');
+      const orderProductIdInput = document.getElementById('productid');
+      const orderUserIdInput = document.getElementById('userid');
+      const orderAddressInput = document.getElementById('showaddress');
+      const orderPhoneInput = document.getElementById('showphone');
+      const ordercusInput = document.getElementById('cusname');
+      const pdnameInput = document.getElementById('pdname');
+
+      orderIdInput.value = orderId;
+      orderDateInput.value = orderDate;
+      orderStatusInput.value = orderStatus;
+      orderQuantityInput.value = orderQuantity;
+      orderProductIdInput.value = orderProductId;
+      orderUserIdInput.value = orderUserId;
+      orderAddressInput.value = orderAddress;
+      orderPhoneInput.value = orderPhone;
+      ordercusInput.value = ordercus;
+      pdnameInput.value = productname;
+
+
+    }
+    });
+        
 
 </script>
 </body>

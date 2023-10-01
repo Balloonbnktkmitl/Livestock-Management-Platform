@@ -642,6 +642,16 @@ def create_app():
             animal.delete()
             db.commit()
             return RedirectResponse(url="/managefarm")
+        
+    @app.post("/updateorder")
+    async def updateorder(request: Request, showorderid: int = Form(...), status: str = Form(...)):
+        with db_session:
+            order = Orders.get(order_id=showorderid)
+            if not order:
+                raise HTTPException(status_code=404, detail="ไม่พบสัตว์")
+            order.order_status = status
+            db.commit()
+            return RedirectResponse(url="/managefarm")
     
     return app
 
