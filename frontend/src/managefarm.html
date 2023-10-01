@@ -244,13 +244,15 @@
             {% for staff in staff %}
               {% if staff.farm_id.farm_id == user_info.farm.farm_id %}
             <tr>
-            <th id="staff_id_table">{{staff.staff_id}}</th>
-            <th id="staff_name_table">{{staff.firstName}} {{staff.lastName}}</th>
-            <th id="staff_title_table">{{staff.job_id.job_title}}</th>
-            <th id="staff_phone_table">{{staff.staff_phone}}</th>
-            <th id="staff_email_table">{{staff.staff_email}}</th>
-            <th id="staff_salary_table">{{staff.salary}}</th>
-            <th id="staff_status_table">{{staff.status}}</th>
+            <td id="staff_id_table">{{staff.staff_id}}</td>
+            <td id="staff_name_table">{{staff.firstName}} {{staff.lastName}}</td>
+            <td id="staff_title_table">{{staff.job_id.job_title}}</td>
+            <td id="staff_phone_table">{{staff.staff_phone}}</td>
+            <td id="staff_email_table">{{staff.staff_email}}</td>
+            <td id="staff_salary_table">{{staff.salary}}</td>
+            <td id="staff_status_table">{{staff.status}}</td>
+            <td id="staff_gender_table" style="display:none">{{staff.staff_gender}}</td>
+            <td id="job_id_staff" style="display:none">{{staff.job_id.job_id}}</td>
           </tr>
             {% endif %}
           {% endfor %}
@@ -263,40 +265,43 @@
       </div>
 
       <!-- เปิดหน้าแก้ไข -->
-      <div class="edit_staff_page">
+      <div id="edit_staff" class="edit_staff_page">
+        <form id="edit_staff" action="/updatestaff" method="post">
         <div class="edit_text">Edit Staff</div>
         <div class="edit_box">
           <div class="content3">
             <div class="box2">
               <div>
                 <div class="head_group_font">First Name</div>
-                <input type="text" class="group group_font">
+                <input name="first" id="editfirst" type="text" class="group group_font">
               </div>
               <div>
                 <div class="head_group_font">Last Name</div>
-                <input type="text" class="group group_font">
+                <input name="last" id="editlast" type="text" class="group group_font">
               </div>
             </div>
             <div class="box2">
               <div>
                 <div class="head_group_font">Phone Number</div>
-                <input type="text" class="group group_font">
+                <input name="phone" id="editphonenum" type="text" class="group group_font">
               </div>
               <div>
                 <div class="head_group_font">Email</div>
-                <input type="email" class="group group_font">
+                <input name="mail" id="editmail" type="email" class="group group_font">
               </div>
             </div>
             <div class="box2">
               <div>
                 <div class="head_group_font">Job</div>
-                <select class="group group_font">
-                  <option value="คนดูแลสัตว์" selected>คนดูแลสัตว์</option>
+                <select name="editjobstaff" id="editjobstaff" class="group group_font">
+                  {% for job in job %}
+                  <option value="{{job.job_id}}">{{job.job_title}}</option>
+                  {% endfor %}
                 </select>
               </div>
               <div>
                 <div class="head_group_font">Gender</div>
-                <select class="group group_font">
+                <select name="gender" id="editgenderstaff" class="group group_font">
                   <option value="Female" selected>Female</option>
                   <option value="Male">Male</option>
                   <option value="Others">Others</option>
@@ -306,26 +311,27 @@
             <div class="box2">
               <div>
                 <div class="head_group_font">Salary</div>
-                <input type="text" class="group group_font">
+                <input name="sala" id="editsalary" type="text" class="group group_font">
               </div>
               <div>
-                <div class="head_group_font">Hire Date</div>
-                <input type="date" class="group group_font">
+                <div class="head_group_font">Status</div>
+                <select name="status" id="editstatus" class="group group_font">
+                  <option value="Active" selected>Active</option>
+                  <option value="Resign">Resign</option>
+                </select>
               </div>
             </div>
             <div class="box2">
               <div>
-                <div class="head_group_font">Status</div>
-                <input type="text" class="group group_font">
-              </div>
-              <div class="content2">
-                <button class="save_staff_btn">save staff</button>
+                <button type="submit" id="savestafsbutton" class="save_staff_btn">save staff</button>
               </div>
             </div>
           </div>
         </div>
+        <input type="hidden" id="staff_idnow" name="staff_id">
         <!-- กดปิดหน้า -->
-        <button class="edit_staff_close">X</button>
+        <button type="button" id="closeeditstaff" class="edit_staff_close">X</button>
+        </form>
       </div>
 
       <!-- เปิดหน้าเพิ่ม staff-->
@@ -786,6 +792,9 @@
   const add_staff = document.getElementById("add_staff");
   const close_add_staff = document.getElementById("close_add_staff");
   const jobSelect = document.getElementById('jobInput');
+  const staffTable = document.getElementById('staff_table');
+  const closeeditstaff = document.getElementById("closeeditstaff");
+  const edit_staff = document.getElementById("edit_staff");
 
 
   addbutton.addEventListener("click", function() {
@@ -1091,7 +1100,55 @@
     add_staff.style.display = "none";
   });
 
+  staffTable.addEventListener('click', (event) => {
+  const target = event.target;
+  
+  // ตรวจสอบว่าคลิกที่เซลล์ข้อมูลของแถว
+  if (target.tagName === 'TD') {
+    // แสดงหน้าแก้ไข
+    edit_staff.style.display = 'block';
+    
+    // นำข้อมูลจากแถวที่คลิกมาแสดงในหน้าแก้ไข
+    const row = target.parentElement;
+    const staffNameElement = row.querySelector('#staff_name_table').textContent;
+    const [firstName, lastName] = staffNameElement.split(' ');
+    const staffEmail = row.querySelector('#staff_email_table').textContent; // ใช้ '#job_ti'
+    const staffPhone = row.querySelector('#staff_phone_table').textContent; // ใช้ '#job_de'
+    const staffStatus = row.querySelector('#staff_status_table').textContent;
+    const staffSalary = row.querySelector('#staff_salary_table').textContent;
+    const staffId = row.querySelector('#staff_id_table').textContent;
+    const staffGender = row.querySelector('#staff_gender_table').textContent;
+    const job_id = row.querySelector('#job_id_staff').textContent;
 
+    
+      
+    
+    // นำข้อมูลไปแสดงในฟิลด์ที่เหมาะสมในหน้าแก้ไข
+    const Name = document.getElementById('editfirst');
+    const Email = document.getElementById('editmail');
+    const Phone = document.getElementById('editphonenum');
+    const last = document.getElementById('editlast');
+    const gender = document.getElementById('editgenderstaff');
+    const status = document.getElementById('editstatus');
+    const salary = document.getElementById('editsalary');
+    const job = document.getElementById('editjobstaff');
+    const staff_id = document.getElementById('staff_idnow');
+
+    Name.value = firstName;
+    last.value = lastName;
+    Email.value = staffEmail;
+    Phone.value = staffPhone;
+    gender.value = staffGender;
+    status.value = staffStatus;
+    salary.value = staffSalary;
+    job.value = job_id;
+    staff_id.value = staffId;
+  }
+  });
+  
+  closeeditstaff.addEventListener("click",()=>{
+    edit_staff.style.display = 'none';
+  });
 
 </script>
 </body>

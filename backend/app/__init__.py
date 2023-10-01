@@ -536,7 +536,7 @@ def create_app():
         db.commit()
         return RedirectResponse(url="/managefarm")
     
-    @app.post("/addstaff", response_model=dict)
+    @app.post("/addstaff")
     async def addstaff(request: Request, first: str = Form(...), last: str = Form(...), job: int = Form(...),
                        email: str = Form(...), phone: str = Form(...), farm_id: int = Form(...), gender: str = Form(...), salary: float = Form(...),
                        hiredate: str = Form(...)):
@@ -546,6 +546,25 @@ def create_app():
             db.commit()
             return RedirectResponse(url="/managefarm")          
     
+    @app.post("/updatestaff")
+    async def updatestaff(request: Request, first: str = Form(...), last: str = Form(...), phone: str = Form(...),
+                          mail: str = Form(...), editjobstaff: str= Form(...), gender: str = Form(...), sala: float = Form(...),
+                          status: str = Form(...), staff_id: int = Form(...)):
+        with db_session:
+            staff = Staffs.get(staff_id=staff_id)
+            if not staff:
+                raise HTTPException(status_code=404, detail="ไม่พบพนักงาน")
+            staff.firstName = first
+            staff.lastName = last
+            staff.staff_phone = phone
+            staff.staff_email = mail
+            staff.job_id = editjobstaff
+            staff.status = status
+            staff.salary = sala
+            staff.staff_gender = gender
+            db.commit()
+            return RedirectResponse(url="/managefarm")
+            
     return app
 
 create_app()
