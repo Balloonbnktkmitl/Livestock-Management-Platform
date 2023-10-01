@@ -95,10 +95,11 @@ body{
   }
   
   .head_product{
-      position: absolute;
-      width:100vh;
-      top:-40px;
-      left:0px;
+    position: absolute;
+    width:100vw;
+    top:-40px;
+    left:0px;
+    object-fit: cover;
   }
   
   /* search */

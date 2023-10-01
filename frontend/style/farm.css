@@ -96,9 +96,10 @@ body{
   
   .head_farm{
       position: absolute;
-      width:100vh;
+      width:100vw;
       top:-40px;
       left:0px;
+      object-fit: cover;
   }
   
   /* search */
