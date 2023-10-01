@@ -11,10 +11,10 @@
             <img class="farm_logo" src="/frontend/src/img/cool pig logo 1.png" />
             <div class="farm_head">
                 <!-- farm name -->
-                <div class="farm_name">{{user_info.farm.farm_name}}</div>
+                <div class="farm_name">{{farm.farm_name}}</div>
 
                 <!-- farm owner name -->
-                <p class="farm_owner">farm owner : {{user_info.firstName}} {{user_info.lastName}}</p>
+                <p class="farm_owner">farm owner : {{user.firstName}} {{user.lastName}}</p>
             </div>
             <!-- manage farm button ปิดแล้ว ไม่ต้องทำอะไร -->
                 <div class="manage_button">
@@ -22,12 +22,11 @@
                 </div>
         </div>
     </div>
-
     <!-- farm information -->
     <div class="farm_information">
-        <p class="information_text">Address : {{user_info.farm.location.address}} {{user_info.farm.location.city}} {{user_info.farm.country.country_name}} {{user_info.farm.region.region_name}} {{user_info.farm.location.zip}}</p>
-        <p class="information_text">Phone: {{user_info.farm.farm_phone}}</p>
-        <p class="information_text">E-mail: {{user_info.farm.farm_email}}</p>
+        <p class="information_text">Address : {{location.address}} {{location.city}} {{country.country_name}} {{region.region_name}} {{location.zip}}</p>
+        <p class="information_text">Phone: {{farm.farm_phone}}</p>
+        <p class="information_text">E-mail: {{farm.farm_email}}</p>
     </div>
 
     <div class="space">
@@ -48,8 +47,8 @@
             <!-- product box อันนี้คือมีสินค้า-->
             <!-- แบ่งคอลัมให้แล้ว 3 คอลลัม แถวก็ขึ้นอยู่กับว่ามันจัดได้กี่แถว กรอบจะเก็บได้เป็น 2x3 ที่ล้นก็มีแถบให้เลื่อนลงได้-->
             <div class="product_section">
-              {% for product in products %}
-              {% if product.farm_id.farm_id == user_info.farm.farm_id %}
+              {% for product in product %}
+              {% if product.farm_id.farm_id == farm.farm_id %}
                 <!-- อันนี้คือกรอบสินค้า เวลาจะเพิ่มก็เพิ่มทั้งกล่อง-->
                 <div class="product_box">
                     <div class="product_img">

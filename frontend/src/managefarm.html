@@ -525,85 +525,96 @@
 
       <!-- ใส่ animal -->
       <div class="animal_section">
-        <div class="animal_box">
-          <img src="img/chick.png" class="animal_img">
+        {% for animal in animal %}
+        {% if animal.farm_id.farm_id == user_info.farm.farm_id %}
+        <div class="animal_box" onclick="showAnimalDetail('{{ animal.animal_code }}', '{{ animal.animal_detail }}', '{{ animal.type_id,type_name }}')">
+          <img src="/get-animals-image/{{animal.animal_code}}" class="animal_img" >
           <div class="product_detail">
-            <div class="detail_font">Animal Code: 0001</div>
-            <div class="detail_font">Animal Type: วัว</div>
-            <div class="detail_font">Detail: วีวนมเพศเมีย พันธุ์ดี อิมพอร์ตจากออสเตรเลีย เลี่ยงด้วยเหล้า</div>
+            <div class="detail_font">Animal Code: {{animal.animal_code}}</div>
+            <div class="detail_font">Animal Type: {{animal.type_id.type_name}}</div>
+            <div class="detail_font">Detail: {{animal.animal_detail}}</div>
           </div>
         </div>
-
+        {% endif %}
+        {% endfor %}
       </div>
       <!-- ปุ่มเพิ่มข้อมูล -->
       <div class="left">
-        <button class="add_animal_button">add new animal</button>
+        <button id="add_animal_button" class="add_animal_button">add new animal</button>
       </div>
 
       <!-- เปิดหน้าแก้ไข -->
-      <div class="edit_animal_page">
+      <div id= "edit_animal" class="edit_animal_page">
+        <form id="edit_animal_form" action="/updateanimal" method="post" enctype="multipart/form-data">
         <div class="edit_text">Edit Animal</div>
         <div class="edit_box">
           <div class="content">
-            <img src="img/chick.png" class="animal_img">
+            <img id="editAnimalImage" src="" class="animal_img">
             <div>
               <div class="head_group_font">Product Image</div>
-              <input type="file" class="group2 group_font">
+              <input name="imageanimal" id="editAnimalImage" type="file" class="group2 group_font" required>
             </div>
             <div class="box">
               <div>
                 <div class="head_group_font">Animal Code</div>
-                <input type="text" class="group3 group_font">
+                <input name="codeanimal" id="editAnimalCodeInput" type="text" class="group3 group_font"required>
               </div>
               <div>
                 <div class="head_group_font">Type</div>
-                <input type="text" class="group3 group_font">
+                <select name="typeanimal" id="editAnimalTypeInput" class="group3 group_font" required>
+                  {% for typeanimal in typeanimal %}
+                  <option value="{{typeanimal.type_id}}">{{typeanimal.type_name}}</option>
+                  {% endfor %}
+                </select>
               </div>
             </div>
             <div>
               <div class="head_group_font">Detail</div>
-              <input type="text" class="group2 group_font">
+              <input name="detailanimal" id="editAnimalDetailInput" type="text" class="group2 group_font">
             </div>
               <div class="box">
-                <button class="delete_animal_button">delete</button>
-                <button class="edit_animal_button">save</button>
+                <button type="button" id="delete_animal" class="delete_animal_button">delete</button>
+                <button type="submit" id="saveanimal" class="edit_animal_button">save</button>
               </div>
             </div>
           </div>
           <!-- กดปิดหน้า -->
-        <button class="edit_animal_close">X</button>
+        <button type="button" id="close_editanimal_button" class="edit_animal_close">X</button>
+      </form>
       </div>
 
       <!-- เปิดหน้าเพิ่ม -->
-      <div class="add_animal_page">
+      <div id="add_animal" class="add_animal_page">
+        <form id="add_animal_form" action="/addanimals" method="post" enctype="multipart/form-data">
         <div class="edit_text">Add Animal</div>
         <div class="edit_box">
           <div class="content">
-            <img src="img/chick.png" class="animal_img">
             <div>
               <div class="head_group_font">Product Image</div>
-              <input type="file" class="group2 group_font">
+              <input name="imageanimal" type="file" class="group2 group_font">
             </div>
             <div class="box">
               <div>
                 <div class="head_group_font">Animal Code</div>
-                <input type="text" class="group3 group_font">
+                <input name="codeanimal" type="text" class="group3 group_font">
               </div>
               <div>
                 <div class="head_group_font">Type</div>
-                <input type="text" class="group3 group_font">
+                <input name="typeanimal" type="text" class="group3 group_font">
               </div>
             </div>
             <div>
               <div class="head_group_font">Detail</div>
-              <input type="text" class="group2 group_font">
+              <input name="detailanimal" type="text" class="group2 group_font">
             </div>
-            <button class="add_animal_btn">add animal</button>
+            <button type="submit" class="add_animal_btn">add animal</button>
             </div>
           </div>
           <!-- กดปิดหน้า -->
-        <button class="add_animal_close">X</button>
+          <input type="hidden" id="farm_id" name="farm_id" value="{{user_info.farm.farm_id}}">
+        <button type="button" id="close_addanimal_button" class="add_animal_close">X</button>
       </div>
+    </form>
     </div>
 
     <!-- Orders -->
@@ -617,26 +628,26 @@
 
       <div class="detail_font">click order_id to edit order_status</div>
       <div class="order_section">
-        <table class="bordered-table">
+        <table id="order_id" class="bordered-table">
           <thead>
             <tr>
-              <th>order_id</th>
-              <th>Product Name</th>
-              <th>Customer</th> <!-- user_id คนที่สั่ง-->
-              <th>order_quantity</th>
-              <th>cost</th>
-              <th>order_date</th>
-              <th>order_status</th>
+              <th class="order_id_column" >order_id</th>
+              <th class="product_name_column">Product Name</th>
+              <th class="order_user_column">Customer</th> <!-- user_id คนที่สั่ง-->
+              <th class="order_quantity_column">order_quantity</th>
+              <th class="order_price_column">cost</th>
+              <th class="order_date_column">order_date</th>
+              <th class="order_status_column">order_status</th>
             </tr>
           </thead>
           <tbody>
-            <th><a href="#">12345</a></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
+            <td><a href="#">12345</a></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
           </tbody>
         </table>
       </div>
@@ -795,6 +806,12 @@
   const staffTable = document.getElementById('staff_table');
   const closeeditstaff = document.getElementById("closeeditstaff");
   const edit_staff = document.getElementById("edit_staff");
+  const add_animal_button = document.getElementById("add_animal_button");
+  const add_animal = document.getElementById("add_animal");
+  const close_addanimal_button = document.getElementById("close_addanimal_button");
+  const edit_animal = document.getElementById("edit_animal");
+  const close_editanimal_button = document.getElementById("close_editanimal_button");
+  const delete_animal = document.getElementById("delete_animal");
 
 
   addbutton.addEventListener("click", function() {
@@ -1022,6 +1039,25 @@
     edit_product.style.display = 'block';
   }
   
+  function showAnimalDetail(code, detail, type) {
+    // ในส่วนนี้คุณสามารถทำอะไรก็ได้กับข้อมูลสินค้าที่คุณได้รับ
+    // ตัวอย่าง: แสดงข้อมูลในหน้าแก้ไข
+    document.getElementById('editAnimalCodeInput').value = code;
+    document.getElementById('editAnimalDetailInput').value = detail;
+    var animalImageElement = document.getElementById('editAnimalImage');
+    animalImageElement.src = '/get-animals-image/' + code;
+    // เรียกใช้งานหน้าแก้ไขหรือแสดงโมดอัพ
+    // ตัวอย่าง: แสดงหน้าแก้ไข
+    var statusSelectElement = document.getElementById('editAnimalTypeInput');
+    for (var i = 0; i < statusSelectElement.options.length; i++) {
+      if (statusSelectElement.options[i].value === type) {
+        statusSelectElement.options[i].selected = true;
+        break;
+    }
+    edit_animal.style.display = 'block';
+  }
+}
+
   close_product_edit.addEventListener("click",()=>{
     edit_product.style.display = 'none';
   });
@@ -1149,6 +1185,41 @@
   closeeditstaff.addEventListener("click",()=>{
     edit_staff.style.display = 'none';
   });
+
+  add_animal_button.addEventListener("click",()=>{
+    add_animal.style.display = "block";
+  });
+
+  close_addanimal_button.addEventListener("click",()=>{
+    add_animal.style.display = "none";
+  });
+
+  close_editanimal_button.addEventListener("click",()=>{
+    edit_animal.style.display = "none";
+  });
+
+  delete_animal.addEventListener('click', function() {
+    // แสดงกล่องยืนยันการลบ
+    if (confirm("คุณต้องการลบสัตว์นี้ใช่หรือไม่?")) {
+      var animalCode = document.getElementById('editAnimalCodeInput').value;
+
+    // ส่งคำขอลบไปยังเซิร์ฟเวอร์
+    fetch('/deleteanimal/' + animalCode, {
+        method: 'post'
+    })
+    .then(response => {
+        if (response.ok) {
+            // ถ้าลบสำเร็จ โหลดหน้าใหม่หรือทำสิ่งที่คุณต้องการ
+            window.location.reload();
+        } else {
+            alert('เกิดข้อผิดพลาดในการลบสัตว์');
+        }
+    })
+    .catch(error => {
+        console.error('เกิดข้อผิดพลาดในการส่งคำขอ: ', error);
+    });
+        }
+    });
 
 </script>
 </body>

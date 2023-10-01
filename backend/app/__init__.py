@@ -31,6 +31,11 @@ def get_product_image_by_code(product: int):
         product = Products.get(product_code=product)
         return product.product_image
     
+def get_animals_image_by_code(animal: int):
+    with db_session:
+        animal = Animals.get(animal_code=animal)
+        return animal.animal_image
+
 def get_all_animals():
     with db_session:
         animals = select(animal for animal in Animals)[:]
@@ -46,6 +51,14 @@ def get_all_orders():
     orders = Orders.select()[:]
     return orders
     
+def get_or_create_type(type_name):
+    with db_session:
+        existing_type = Animal_Types.get(type_name=type_name)
+        if existing_type is None:
+            existing_type = Animal_Types(type_name=type_name)
+            db.commit()
+    return existing_type.type_id
+            
 def get_or_create_region(region_name):
     with db_session:
         existing_region = Regions.get(region_name=region_name)
@@ -319,6 +332,14 @@ def create_app():
         # สร้าง FileResponse จากข้อมูลรูปภาพและระบุ media_type ถูกต้อง
         return StreamingResponse(BytesIO(product_image), media_type="image/jpeg")
     
+    @app.get("/get-animals-image/{animal_code}", response_class=StreamingResponse)
+    async def get_animals_image(animal_code: int):
+        animals_image = get_animals_image_by_code(animal_code)
+        if animals_image is None:
+            raise HTTPException(status_code=404, detail="Animals image not found")
+        return StreamingResponse(BytesIO(animals_image), media_type="image/jpeg")
+    
+    
     @app.post("/update_data", response_model=dict)
     async def update_data(request: Request, fromData: dict):
         with db_session:
@@ -399,12 +420,14 @@ def create_app():
                 farm = get_all_farms()
                 staff = get_all_staffs()
                 job = get_all_jobs()
+                Orders = get_all_orders()
+                typeanimal = select(type for type in Animal_Types)[:]
                 if not user_info:
                     raise HTTPException(status_code=401, detail="User not authenticated")
             else:
                 raise HTTPException(status_code=401, detail="User not authenticated")
             return frontend.TemplateResponse('managefarm.html', {'request': request, 'products': products, "user_info": user_info, "farm": farm, 
-                                                                 "animal": animal, "staff": staff, "job": job})
+                                                                 "animal": animal, "staff": staff, "job": job, "typeanimal": typeanimal})
     
     @app.post("/managefarm", response_class=HTMLResponse)
     def managefarm(request: Request):
@@ -417,12 +440,13 @@ def create_app():
                 farm = get_all_farms()
                 staff = get_all_staffs()
                 job = get_all_jobs()
+                typeanimal = select(type for type in Animal_Types)[:]
                 if not user_info:
                     raise HTTPException(status_code=401, detail="User not authenticated")
             else:
                 raise HTTPException(status_code=401, detail="User not authenticated")
             return frontend.TemplateResponse('managefarm.html', {'request': request, 'products': products, "user_info": user_info, 
-                                                                 "farm": farm, "animal": animal, "staff": staff, "job": job})
+                                                                 "farm": farm, "animal": animal, "staff": staff, "job": job, "typeanimal": typeanimal})
         
     @app.post("/updatefarm", response_model=dict)
     async def updatefarm(request: Request, fromData: dict):
@@ -515,6 +539,20 @@ def create_app():
             return frontend.TemplateResponse('farm_profile.html', {'request': request, "farm": farm, 
             "location": location, "country": country, "region": region, "user": user, "product": product})
     
+    @app.post("/farmprofile/{farm_id}", response_class=HTMLResponse)
+    async def farmprofile(request: Request, farm_id: int):
+        with db_session:
+            farm = Farms.get(farm_id=farm_id)
+            if not farm:
+                raise HTTPException(status_code=404, detail="ไม่พบฟาร์ม")
+            location = farm.location_id
+            country = location.country_id
+            region = country.region_id
+            user = farm.user_id
+            product = get_all_products()
+            
+            return frontend.TemplateResponse('farm_profile.html', {'request': request, "farm": farm, 
+            "location": location, "country": country, "region": region, "user": user, "product": product})
     
     @app.post("/addjob")
     async def addjob(request: Request, name: str = Form(...), des: str = Form(...), min: float = Form(...), max: float = Form(...)):
@@ -565,6 +603,45 @@ def create_app():
             db.commit()
             return RedirectResponse(url="/managefarm")
             
+    @app.post("/addanimals")
+    async def addanimals(request: Request, codeanimal: int = Form(...), typeanimal: str = Form(...), farm_id: int = Form(...),
+                         imageanimal: UploadFile=File (...), detailanimal: str = Form(...)):
+        with db_session:
+            try:
+                image_data = imageanimal.file.read()
+                type_id = get_or_create_type(typeanimal)
+                animal = Animals(animal_code=codeanimal, type_id=type_id, farm_id=farm_id, animal_image=image_data, animal_detail=detailanimal)
+                db.commit()
+                return RedirectResponse(url="/managefarm")
+            except Exception as e:
+                print(str(e))
+                return {"message": "เพิ่มสินค้าไม่สำเร็จ"}
+    
+    @app.post("/updateanimal")
+    async def updateanimals(request: Request, codeanimal: int = Form(...), typeanimal: str = Form(...),
+                         imageanimal: UploadFile=File (...), detailanimal: str = Form(...)):
+        with db_session:
+            image_data = imageanimal.file.read()
+            animal = Animals.get(animal_code=codeanimal)
+            if not animal:
+                raise HTTPException(status_code=404, detail="ไม่พบสัตว์")
+            animal.animal_code = codeanimal
+            animal.animal_detail = detailanimal
+            animal.animal_image = image_data
+            animal.type_id = typeanimal
+            db.commit()
+            return RedirectResponse(url="/managefarm")
+        
+    @app.post("/deleteanimal/{animal_id}", response_model=dict)
+    async def deleteanimal(animal_id: int, response: Response):
+        with db_session:
+            animal = Animals.get(animal_code=animal_id)
+            if not animal:
+                raise HTTPException(status_code=404, detail="ไม่พบสัตว์")
+            animal.delete()
+            db.commit()
+            return RedirectResponse(url="/managefarm")
+    
     return app
 
 create_app()
