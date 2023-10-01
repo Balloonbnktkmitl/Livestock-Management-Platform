@@ -125,6 +125,45 @@
                 </div>
             </div>
             {% endif %}
+
+            <!-- กดสินค้า แล้วจะขึ้นจอข้อมูล -->
+    <div class="product_detail">
+
+        <!-- กดปิดหน้า -->
+        <button class="close">X</button>
+  
+        <!-- ใส่รูป -->
+        <div class="box">
+          <img src="img/chick.png">
+        </div>
+  
+        <!-- ชื่อสินค้า -->
+        <div class="name">ปีกไก่ 1 แพค</div>
+        <!-- ชื่อฟาร์ม ลิงค์ไปหน้า ฟาร์มได้-->
+        <a class="farm_name" href="#">chick chick farm << click to view</a>
+        <!-- detailสินค้า-->
+        <div class="detail">เนื้อไก่ หอมมัน หวาน แน่นๆ เหมาะสำหรับคนรักสุขภาพ</div>
+        <!-- ราคา -->
+        <div class="bath"> 200 บาท</div>
+  
+        <!-- จำนวนสินค้า -->
+        <div class="quantity">
+          <!-- ลดจำนวน ลดน้อยกว่า 1 -->
+          <button class="add">-</button>
+          <div class="many">1</div>
+          <!-- เพิ่มจำนวน ห้ามมากกว่าสินค้าที่มี -->
+          <button class="add">+</button>
+        </div>
+  
+        <!-- สั่งของได้ -->
+        <button class="can_order_button">สั่งซื้อ</button>
+  
+        <!-- สั่งของไม่ได้ -->
+        <button class="cant_order_button">สั่งซื้อ</button>
+        <!-- บอกว่าสินค้าหมด -->
+        <div class="soldout">สินค้าหมด</div>
+  
+      </div>
         </div>
     </div>
 
