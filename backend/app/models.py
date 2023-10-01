@@ -100,7 +100,7 @@ class Orders(db.Entity):
     order_id = PrimaryKey(int, auto=True)
     product_code = Required(Products)
     farm_id = Required(Farms)
-    users_id = Required(Users)
+    user_id = Required(Users)
     order_date = Required(datetime)
     order_status = Required(str)
     order_quantity = Required(int)
