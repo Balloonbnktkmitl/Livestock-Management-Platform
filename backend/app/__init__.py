@@ -420,14 +420,14 @@ def create_app():
                 farm = get_all_farms()
                 staff = get_all_staffs()
                 job = get_all_jobs()
-                Orders = get_all_orders()
+                order = get_all_orders()
                 typeanimal = select(type for type in Animal_Types)[:]
                 if not user_info:
                     raise HTTPException(status_code=401, detail="User not authenticated")
             else:
                 raise HTTPException(status_code=401, detail="User not authenticated")
             return frontend.TemplateResponse('managefarm.html', {'request': request, 'products': products, "user_info": user_info, "farm": farm, 
-                                                                 "animal": animal, "staff": staff, "job": job, "typeanimal": typeanimal})
+                                                                 "animal": animal, "staff": staff, "job": job, "typeanimal": typeanimal, "order": order})
     
     @app.post("/managefarm", response_class=HTMLResponse)
     def managefarm(request: Request):
@@ -440,13 +440,14 @@ def create_app():
                 farm = get_all_farms()
                 staff = get_all_staffs()
                 job = get_all_jobs()
+                order = get_all_orders() 
                 typeanimal = select(type for type in Animal_Types)[:]
                 if not user_info:
                     raise HTTPException(status_code=401, detail="User not authenticated")
             else:
                 raise HTTPException(status_code=401, detail="User not authenticated")
             return frontend.TemplateResponse('managefarm.html', {'request': request, 'products': products, "user_info": user_info, 
-                                                                 "farm": farm, "animal": animal, "staff": staff, "job": job, "typeanimal": typeanimal})
+                                                                 "farm": farm, "animal": animal, "staff": staff, "job": job, "typeanimal": typeanimal, "order": order})
         
     @app.post("/updatefarm", response_model=dict)
     async def updatefarm(request: Request, fromData: dict):

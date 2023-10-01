@@ -641,13 +641,19 @@
             </tr>
           </thead>
           <tbody>
-            <td><a href="#">12345</a></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            {% for order in order %}
+              {% if order.farm_id.farm_id == user_info.farm.farm_id %}
+            <tr>
+            <td>{{order.order_id}}</td>
+            <td>{{order.product_code.product_name}}</td>
+            <td>{{order.user_id.user_id}}</td>
+            <td>{{order.order_quantity}}</td>
+            <td>{{order.order_quantity * order.product_code. product_price}}</td>
+            <td>{{order.order_date}}</td>
+            <td>{{order.order_status}}</td>
+            </tr>
+              {% endif %}
+            {% endfor %}
           </tbody>
         </table>
       </div>
