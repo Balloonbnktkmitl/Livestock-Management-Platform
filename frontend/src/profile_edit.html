@@ -229,7 +229,7 @@
           <tbody>
             <tr>
               {% for order in orders %}
-              {% if order.farm_id.farm_id == user_info.farm.farm_id %}
+              {% if order.user_id.user_ID == user_info.user_ID %}
                         <tr>
                             <td>{{ order.order_id }}</td>
                             <td>{{ order.product_code.product_name }}</td>
