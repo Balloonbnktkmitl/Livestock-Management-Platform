@@ -646,7 +646,7 @@ button{
 }
 .staff_section{
     margin-top: 40px;
-    max-height: 410px;
+    max-height: 300px;
     overflow: auto;
     display: inline-grid;
     grid-template-columns: auto;
