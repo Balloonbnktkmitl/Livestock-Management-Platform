@@ -97,7 +97,7 @@
         {% for product in products %}
         {% if product.quantity != 0 %}
         {% if product.product_status != "soldout" %}
-        <div class="product_box" onclick="showProductDetail('{{ product.product_name }}', '{{ product.product_code }}', '{{ product.product_detail }}', '{{ product.product_price }}', '{{ product.quantity }}', '{{ product.product_status }}', '{{product.farm_id.farm_name}}', '{{product.farm_id.farm_id}}')">
+        <div class="product_box" onclick="showProductDetail('{{ product.product_name }}', '{{ product.product_code }}', '{{ product.product_detail }}', '{{ product.product_price }}', '{{ product.quantity }}', '{{ product.product_status }}', '{{product.farm_id.farm_name}}', '{{product.farm_id.farm_id}}', '{{user_info.user_ID}}')">
           <div class="product_img">
               <!-- ใส่รูปตรงนี้ -->
               
@@ -129,7 +129,7 @@
 
     <!-- กดสินค้า แล้วจะขึ้นจอข้อมูล -->
     <div id="showdetail" class="product_detail">
-      <form action="/addorder" method="post">
+      <form id="addorder">
       <!-- กดปิดหน้า -->
       <button type="button" id="close" class="close">X</button>
       
@@ -146,6 +146,9 @@
       <div id="prodetail" class="detail"></div>
       <!-- ราคา -->
       <div id="proprice" class="bath"></div>
+      <input type="hidden" id="productcodes" name="productcodes">
+      <input type="hidden" id="farmids" name="farmids">
+      <input type="hidden" id="usersids" name="usersids">
 
       <!-- จำนวนสินค้า -->
       <div class="quantity">
@@ -159,10 +162,7 @@
       <!-- สั่งของได้ -->
       <button class="can_order_button">สั่งซื้อ</button>
 
-      <!-- สั่งของไม่ได้ -->
-      <button class="cant_order_button">สั่งซื้อ</button>
-      <!-- บอกว่าสินค้าหมด -->
-      <div class="soldout">สินค้าหมด</div>
+      </form>
 
     </div>
 
@@ -170,21 +170,21 @@
 <script>
   const showdetail = document.getElementById('showdetail')
   const close = document.getElementById("close");
-    const many = document.getElementById("many");
-    const addButton = document.getElementById("addval");
-    const minusButton = document.getElementById("delval");
-
+  const many = document.getElementById("many");
+  const addButton = document.getElementById("addval");
+  const minusButton = document.getElementById("delval");
+  const addorder = document.getElementById("addorder");
     // รายการค่าสำหรับจำนวนสินค้า
-    let quantity = 1;
+  let quantity = 1;
 
     // เพิ่มจำนวนสินค้าเมื่อคลิกปุ่ม "เพิ่ม"
-    addButton.addEventListener("click", () => {
+  addButton.addEventListener("click", () => {
         quantity++;
         updateQuantityDisplay();
     });
 
     // ลดจำนวนสินค้าเมื่อคลิกปุ่ม "ลด" แต่ไม่ให้ลดน้อยกว่า 1
-    minusButton.addEventListener("click", () => {
+  minusButton.addEventListener("click", () => {
         if (quantity > 1) {
             quantity--;
             updateQuantityDisplay();
@@ -192,20 +192,23 @@
     });
 
     // อัปเดตการแสดงค่าจำนวนสินค้าใน HTML
-    function updateQuantityDisplay() {
+  function updateQuantityDisplay() {
         many.textContent = quantity;
     }
 
 
-  function showProductDetail(name, code, detail, price, quantity, status, farmname, farmcode) {
+  function showProductDetail(name, code, detail, price, quantity, status, farmname, farmcode, user_id) {
   // Set the content of the product detail section
   // Set other product details here, e.g., farm name, image source, detail, price, quantity, status
-    
+  alert(user_id)
     document.getElementById("proname").textContent = name;
     document.getElementById("prodetail").textContent = detail;
     document.getElementById("proprice").textContent = price + " บาท";
     document.getElementById("farmpro").href = "/farmprofile/" + farmcode;
     document.getElementById("farmpro").textContent = farmname + " << click to view";
+    document.getElementById("farmids").value = farmcode;
+    document.getElementById("usersids").value = user_id;
+    document.getElementById("productcodes").value = code;
 
     var productImageElement = document.getElementById('image');
     productImageElement.src = '/get-product-image/' + code;
@@ -214,9 +217,42 @@
   showdetail.style.visibility = "visible";
 }
 
-// Close the product detail section
-close.onclick = function() {
-  showdetail.style.visibility = "hidden";
-}
+  addorder.addEventListener("submit" , (e) => {
+    e.preventDefault();
+    const formData = {
+      product_name: document.getElementById("proname").textContent,
+      quantity: document.getElementById("many").textContent,
+      farm_name: document.getElementById("farmpro").textContent,
+      productcode: document.getElementById("productcodes").value,
+      farmids: document.getElementById("farmids").value,
+      usersids: document.getElementById("usersids").value
+    }
+
+    fetch('/addorder', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    }).then(response => response.json())
+    .then(data => {
+      if (data.message === 'สินค้าไม่เพียงพอ') {
+        alert('สินค้าไม่เพียงพอ, สินค้าที่มีในสต็อก: ' + data.available_quantity);
+      } else if (data.message === 'เพิ่มสินค้าสำเร็จ') {
+        alert('สั่งซื้อสินค้าสำเร็จ');
+        window.location.reload();
+      } else {
+        alert('สั่งซื้อสินค้าไม่สำเร็จ');
+      }
+    })
+    .catch(error => {
+    console.error('เกิดข้อผิดพลาดในการส่งคำขอ: ', error);
+    alert('เกิดข้อผิดพลาดในการส่งคำขอ');
+  });
+  });
+  // Close the product detail section
+  close.onclick = function() {
+    showdetail.style.visibility = "hidden";
+  }
 </script>
 </html>

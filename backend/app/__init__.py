@@ -653,6 +653,25 @@ def create_app():
             db.commit()
             return RedirectResponse(url="/managefarm")
     
+    @app.post("/addorder", response_model=dict)
+    async def addorder(request: Request, formData: dict):
+        user_id = formData["usersids"]
+        product_id = formData["productcode"]
+        quantity = formData["quantity"]
+        pdname = formData["product_name"]
+        farm_id = formData["farmids"]
+        with db_session:
+            product = Products.get(product_code=product_id)
+            if int(product.quantity) < int(quantity):
+                return {"message": "สินค้าไม่เพียงพอ",  "available_quantity": product.quantity}
+            order = Orders(user_id=user_id, product_code=product_id, order_status="Pending", farm_id=farm_id, order_quantity=quantity
+                           ,order_date=datetime.now())
+            product.quantity = int(product.quantity) - int(quantity)
+            if int(product.quantity) == 0:
+                product.product_status = "soldout"
+            db.commit()
+            return {"message": "เพิ่มสินค้าสำเร็จ"}
+    
     return app
 
 create_app()
